@@ -49,10 +49,10 @@ const handleMessage = (msg) => {
                 useast                
             }
             
-            if(!args.includes(_servername)){
+            if(!args === _servername){
                 msg.channel.send("Server is not recognized by the bot");
             }else{
-                turnOnServer();
+                turnOnServer(args);
             }
 
         } catch (e) {
@@ -68,10 +68,10 @@ const handleMessage = (msg) => {
                 useast                
             }
             
-            if(!args.includes(_servername)){
+            if(!args === _servername){
                 msg.channel.send("Server is not recognized by the bot");
             }else{
-                turnOffServer();
+                turnOffServer(args);
             }
 
         } catch (e) {
