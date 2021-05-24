@@ -12,4 +12,9 @@ function updateQueue(queue){
     fs.writeFileSync(path, data);
 }
 
-module.exports = {getQueue, updateQueue}
+function deleteQueue(){
+    let data = JSON.stringify([]);
+    fs.writeFileSync(path,data);
+}
+
+module.exports = {getQueue, updateQueue, deleteQueue}
