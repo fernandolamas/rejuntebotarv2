@@ -2,6 +2,25 @@ const {convertIDtoString} = require("../generalFunctions")
 
 const Discord = require("discord.js");
 
+function mapEmbed(message, emojis, maps) {
+	const serverEmbed = new Discord.MessageEmbed()
+	.setColor('#04c779')
+	.setTitle('Vote Server')
+	.setDescription(`${emojis[0]} EU West\n${emojis[1]} EU Central\n${emojis[2]} Brazil`)
+	.setFooter('venny, pls i need some food')
+	return serverEmbed;
+}
+
+function serverEmbed(message, emojis) {
+	
+	const serverEmbed = new Discord.MessageEmbed()
+	.setColor('#04c779')
+	.setTitle('Vote Server')
+	.setDescription(`${emojis[0]} EU West\n${emojis[1]} EU Central\n${emojis[2]} Brazil`)
+	.setFooter('venny, pls i need some food')
+	return serverEmbed;
+}
+
 function teamsEmbed(message, team1, team2) {
     var team1 = convertIDtoString(message, team1);
     var team2 = convertIDtoString(message, team2);
@@ -19,7 +38,8 @@ function teamsEmbed(message, team1, team2) {
 	.setDescription(team2)
 	.setFooter('venny, pls i need fill my stomach')
     message.channel.send(blueTeamEmbed)
+	
 }
 
 
-module.exports = { teamsEmbed }
+module.exports = { teamsEmbed, serverEmbed, mapEmbed }
