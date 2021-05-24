@@ -1,4 +1,4 @@
 {
     "prefix": ["!", "+", "-"],
-    "matchsize": 2
+    "matchsize": 8
 }
