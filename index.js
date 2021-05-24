@@ -1,8 +1,9 @@
-import { init as initDiscord } from './discord/client.js';
+let { init } = require('./discord/client.js');
+
 
 const main = async () => {
   try {
-    initDiscord();
+    init();
   } catch (error) {
     console.error(`Aborting: ${error}`);
     process.exit(0);
