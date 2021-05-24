@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { getQueue, updateQueue } = require('./queueHandler');
 
-function addToQueue(client, message){
+function addToQueue(message){
 
     var queue = getQueue();
     if(!queue.includes(message.author.id)){
@@ -15,15 +15,17 @@ function addToQueue(client, message){
     }
 }
 
-function leaveToQueue(client, message){
+function leaveToQueue(message){
 
     var queue = getQueue();
     if(queue.includes(message.author.id)){
-        queue.filter((id) => id !=message.author.id)
+        queue = queue.filter((id) => id !=message.author.id)
+        updateQueue(queue)
     }
     else
     {
-
+        message.channel.send("You are not in the Queue");
+        return;
     }
 }
 

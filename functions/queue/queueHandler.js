@@ -1,13 +1,15 @@
 const fs = require('fs')
+const path = './functions/queue/queueData.json';
 
 function getQueue(){
-    var queue = require("./queueData.json");
+    var file = fs.readFileSync(path);
+    let queue = JSON.parse(file);
     return queue;
 }
 
 function updateQueue(queue){
     let data = JSON.stringify(queue);
-    fs.writeFileSync("./functions/queue/queueData.json", data);
+    fs.writeFileSync(path, data);
 }
 
 module.exports = {getQueue, updateQueue}

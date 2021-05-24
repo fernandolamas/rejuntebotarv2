@@ -1,4 +1,4 @@
 {
-    "addCommands": ["++", "add"],
-    "removeCommands": ["--", "leave", "l"]
+    "addCommands": ["+", "add"],
+    "removeCommands": ["-", "leave", "l"]
 }
