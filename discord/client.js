@@ -1,27 +1,32 @@
-import { Client } from 'discord.js';
-import { handleMessage } from '../msg/handler.js';
+let { Client } = require('discord.js');
+let { handleMessage } = require('../msg/handler.js');
+let { token } = require('../config/token.json');
 //should be env variable
 
 let client = null;
-let discordToken = "";
+let discordToken = null;
 
-export const init = () => {
+const init = () => {
 
-    client = new Client()
-    if (!discordToken) {
-        throw new Error('Missing env variable PICKUPBOT_DISCORD_TOKEN');
-    }
+        client = new Client()
+        discordToken = token;
+        if (!discordToken) {
+            throw new Error('Missing variable token');
+        }
 
-    console.debug('Discord token loaded successfully from env variable');
+        console.debug('Discord token loaded successfully from json');
 
 
-    client.on("ready", () => {
-        console.log("Startup complete");
-    }),
-
-        client.on('message', msg => {
-            handleMessage(msg);
+        client.on("ready", () => {
+            console.log("Startup complete");
         }),
 
-        client.login(discordToken);
-}
+            client.on('message', msg => {
+                handleMessage(msg);
+            }),
+
+            client.login(discordToken);
+    }
+
+
+module.exports = {init}

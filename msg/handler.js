@@ -1,7 +1,7 @@
 
 
 
-export const handleMessage = (msg) => {
+const handleMessage = (msg) => {
     const { content } = msg;
     console.log(content);
 
@@ -36,3 +36,5 @@ export const handleMessage = (msg) => {
         }
     }
 }
+
+module.exports = {handleMessage }
