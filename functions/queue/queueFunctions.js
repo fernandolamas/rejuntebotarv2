@@ -1,21 +1,30 @@
 const fs = require('fs');
-const { getQueue, setQueue } = require('./queueHandler');
+const { getQueue, updateQueue } = require('./queueHandler');
 
-module.exports = {
+function addToQueue(client, message){
 
-    addToQueue: function addToQueue(client, message){
-        
-        var queue = getQueue();
-        if(!queue.includes(message.author.id)){
-            setQueue(queue.push(message.author.id))
-        }
-        else
-        {
-            message.channel.send("You are already in the Queue");
-            return;
-        }
-        
+    var queue = getQueue();
+    if(!queue.includes(message.author.id)){
+        queue.push(message.author.id)
+        updateQueue(queue)
+    }
+    else
+    {
+        message.channel.send("You are already in the Queue");
+        return;
+    }
+}
+
+function leaveToQueue(client, message){
+
+    var queue = getQueue();
+    if(queue.includes(message.author.id)){
+        queue.filter((id) => id !=message.author.id)
+    }
+    else
+    {
 
     }
-
 }
+
+module.exports = {addToQueue, leaveToQueue}
