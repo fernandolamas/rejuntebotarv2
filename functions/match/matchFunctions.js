@@ -1,7 +1,8 @@
 
 const { getQueue } = require("../queue/queueHandler");
 const { teamsEmbed } = require("./matchEmbed");
-const config = require("../../config/config.json")
+const config = require("../../config/config.json");
+const { setMatch } = require("./matchHandler");
 
 function createMatch(message){
     var queue = getQueue()
@@ -15,7 +16,7 @@ function createMatch(message){
     });
     
     teamsEmbed(message, team1, team2)
-
+    setMatch(team1, team2, 'any');
 }
 
 module.exports = {createMatch}

@@ -20,8 +20,8 @@ function addToQueue(message){
     }
 
     if(queue.length === config.matchsize){
-        message.channel.send("Doing matchmaking")
         createMatch(message);
+        
     }
 }
 
