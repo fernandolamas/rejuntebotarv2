@@ -3,7 +3,7 @@ import { handleMessage } from '../msg/handler.js';
 //should be env variable
 
 let client = null;
-let discordToken = "NzM0NTc4MDA5NDIzNzQwOTM5.XxTvFQ.WQpGeJhIhUw4iJC1dm_tQlGT40M";
+let discordToken = "";
 
 export const init = () => {
 
