@@ -1,5 +1,4 @@
-const {prefix} = require("./config.json");
-const aliases = requie("./commands.json");
+
 
 
 export const handleMessage = (msg) => {
