@@ -1,5 +1,5 @@
 
-const { getQueue } = require("../queue/queueHandler");
+const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
 const config = require("../../config/config.json");
 const { setMatch, getMaps } = require("./matchHandler");
@@ -138,6 +138,7 @@ function showMatch(message, server, map) {
     matchEmbed(message, team1, team2, server, map)
     
     setMatch(team1, team2, server, map);
+    deleteQueue();
 }
 
 function createMatch(message) {

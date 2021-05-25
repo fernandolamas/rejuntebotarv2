@@ -1,4 +1,7 @@
 {
     "addCommands": ["+", "add"],
-    "removeCommands": ["-", "leave", "l"]
+    "removeCommands": ["-", "leave", "l"],
+
+    "bansCommands": ["ban"],
+    "unbansCommands": ["unban"]
 }

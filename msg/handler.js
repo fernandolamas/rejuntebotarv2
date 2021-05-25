@@ -1,6 +1,7 @@
 const {prefix} = require('../config/config.json');
 const aliases = require('../config/commands.json');
-const { addToQueue, leaveToQueue } = require('../functions/queue/queueFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue } = require('../functions/queue/queueFunctions');
+
 
 
 const handleMessage = (msg) => {
@@ -24,7 +25,6 @@ const handleMessage = (msg) => {
     {
         try{
             addToQueue(msg)
-            return;
         }
         catch(e){
             console.log(e)
@@ -36,11 +36,38 @@ const handleMessage = (msg) => {
     {
         try{
             leaveToQueue(msg)
-            return;
+            
         }
         catch(e){
             console.log(e)
         }
+        return;
+    }
+
+    if(aliases.bansCommands.includes(command))
+    {
+        try
+        {
+            banPlayerFromQueue(msg, args)
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+        return;
+    }
+
+    if(aliases.unbansCommands.includes(command))
+    {
+        try
+        {
+            unbanPlayerFromQueue(msg, args)
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+        return;
     }
 }
 
