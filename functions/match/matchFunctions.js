@@ -113,6 +113,7 @@ function voteMap(message,server) {
                 return;
             }
 
+            if(map === "") map = maps[0];
             showTeams(message,server,map);
 
         });

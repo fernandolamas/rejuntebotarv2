@@ -1,13 +1,13 @@
 {
-    "id": 8,
-    "date": "2021-05-25T03:25:13.391Z",
-    "server": "uscenter",
+    "id": 10,
+    "date": "2021-05-25T03:31:54.154Z",
+    "server": "brasil",
     "team1": [
         "181121093342461952"
     ],
     "team2": [
         "303695993462063106"
     ],
-    "map": "high_flag",
+    "map": "chimkey_l",
     "state": "incomplete"
 }

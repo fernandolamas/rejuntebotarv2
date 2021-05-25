@@ -16,7 +16,6 @@ function getMaps() {
   for (let i = 0; i < arr.length; i++) {
     maps.push(allMaps[arr[i]]);
   }
-
   return maps;
 }
 
