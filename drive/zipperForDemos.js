@@ -1,7 +1,6 @@
 var file_system = require('fs');
 var archiver = require('archiver');
 
-let isDone = false;
 
 async function createDemos(target,source_dir) {
 
@@ -34,8 +33,6 @@ async function createDemos(target,source_dir) {
   archive.directory('subdir/', 'new-subdir');
 
   archive.finalize();
-  console.log("state is true")
-  isDone = true;
 }
 
 module.exports = {createDemos, isDone}
