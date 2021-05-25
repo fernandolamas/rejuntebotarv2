@@ -1,20 +1,10 @@
 const fs = require('fs');
 const config = require('../../config/config.json')
-const { getQueue, updateQueue, banFromQueue, getBans, getBansID, updateBans, addToBans, timeoutBans } = require('./queueHandler');
+const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans } = require('./queueHandler');
 const { createMatch} = require('../match/matchFunctions');
-const { queueEmbed } = require('./queueEmbeds')
-
-function getUserFromMention(mention) {
-	if (!mention) return;
-	if (mention.startsWith('<@') && mention.endsWith('>')) {
-		mention = mention.slice(2, -1);
-
-		if (mention.startsWith('!')) {
-			mention = mention.slice(1);
-		}
-		return mention;
-	}
-}
+const { queueEmbed } = require('./queueEmbeds');
+const { getUserFromMention } = require('../generalFunctions');
+const { getUsersInMatchsIncomplete } = require('../match/matchHandler');
 
 function unbanPlayerFromQueue(message, args)
 {
@@ -56,6 +46,12 @@ function banPlayerFromQueue(message, args){
 
 function addToQueue(message){
 
+    var usersInMatch = getUsersInMatchsIncomplete();
+    if(usersInMatch.includes(message.author.id)){
+        message.channel.send("You are playing a match, finish them.")
+        return;
+    }
+    
     var bans = getBansID();
     if(bans.includes(message.author.id))
     {
@@ -65,6 +61,12 @@ function addToQueue(message){
     }
 
     var queue = getQueue();
+    if(queue.length === config.matchsize)
+    {
+        message.channel.send("Queue full")
+        return;
+    }
+
     if(!queue.includes(message.author.id)){
         updateQueue(queue, message.author.id, "a")
         message.channel.send("Added to Queue")

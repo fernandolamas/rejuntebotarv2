@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = './functions/queue/queueData.json';
 const pathBan = './functions/queue/queuePlayerBan.json'
-const { queueEmbed } = require('./queueEmbeds')
 
 function getBansID(){
     var file = fs.readFileSync(pathBan);
@@ -31,13 +30,12 @@ function timeoutBans(userid){
     var indexBanned = bans.indexOf(userid);
     bans = getBans();
     var user = bans[indexBanned];
-    console.log(user);
     setTimeout(function(){updateBans(userid)}, user.timeout*60*1000);
 }
 
 function addToBans(user, timeout){
     var bans = getBans()
-    if(!timeout) timeout = 30;
+    if(!timeout || isNaN(timeout)) timeout = 30;
     bans.push({
         "userid": user,
         "timeout": timeout

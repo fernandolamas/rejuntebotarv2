@@ -1,6 +1,18 @@
 const fs = require('fs')
 const path = './functions/match/matchTemplate.json';
-const pathMap = './functions/match/matchMaps.json'
+const pathMap = './functions/match/matchMaps.json';
+const pathMatchs = './functions/match/matchlog';
+
+function setMatchComplete(idmatch){
+  var file = fs.readFileSync(`${pathMatchs}/match_${idmatch}.json`);
+  let match = JSON.parse(file);
+  let jsonMatch = {
+    ...match,
+    ["state"]: "complete"
+  }
+  let data = JSON.stringify(jsonMatch);
+  fs.writeFileSync(`${pathMatchs}/match_${idmatch}.json`, data);
+}
 
 function getMaps() {
   var maps = []
@@ -44,6 +56,27 @@ function setMatch(team1, team2, server, map) {
 
   let data = JSON.stringify(jsonFile);
   fs.writeFileSync(`./functions/match/matchlog/${fileName}.json`, data);
+
+  setTimeout(function(){ setMatchComplete(matchJson.id)}, 120000)
 }
 
-module.exports = { setMatch, getMaps }
+function getUsersInMatchsIncomplete(){
+  var playersInMatch = [];
+  var matchFiles = fs.readdirSync(pathMatchs);  
+  matchFiles.forEach(file => {
+      var fileMatch = fs.readFileSync(`${pathMatchs}/${file}`);
+      let match = JSON.parse(fileMatch);
+      if(match.state === "incomplete")
+      {
+        match.team1.forEach(userid => {
+          playersInMatch.push(userid)
+        });
+        match.team2.forEach(userid => {
+          playersInMatch.push(userid)
+        });
+      }
+  });
+  return playersInMatch;
+}
+
+module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete }

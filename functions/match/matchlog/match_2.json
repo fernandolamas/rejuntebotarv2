@@ -1,13 +1,13 @@
 {
-    "id": 0,
-    "date": "2021-05-25T15:01:44.354Z",
-    "server": "brasil",
+    "id": 2,
+    "date": "2021-05-25T22:14:34.897Z",
+    "server": "useast",
     "team1": [
         "303695993462063106"
     ],
     "team2": [
         "181121093342461952"
     ],
-    "map": "alchimy_l2",
+    "map": "raiden5",
     "state": "complete"
 }

@@ -1,1 +1,13 @@
-{"id":1,"date":"2021-05-25T21:18:12.709Z","server":"useast","team1":["303695993462063106"],"team2":["255834576742645761"],"map":"shutdown2","state":"incomplete"}
+{
+    "id": 1,
+    "date": "2021-05-25T21:18:12.709Z",
+    "server": "useast",
+    "team1": [
+        "303695993462063106"
+    ],
+    "team2": [
+        "255834576742645761"
+    ],
+    "map": "shutdown2",
+    "state": "complete"
+}
