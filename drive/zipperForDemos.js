@@ -35,4 +35,4 @@ async function createDemos(target,source_dir) {
   archive.finalize();
 }
 
-module.exports = {createDemos, isDone}
+module.exports = {createDemos}

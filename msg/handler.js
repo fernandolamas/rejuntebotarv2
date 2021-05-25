@@ -1,6 +1,7 @@
 const {prefix} = require('../config/config.json');
 const aliases = require('../config/commands.json');
 const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue } = require('../functions/queue/queueFunctions');
+const { getDemos } = require('../functions/demos/demosFunctions');
 
 
 
@@ -69,6 +70,17 @@ const handleMessage = (msg) => {
         }
         return;
     }
+    if(aliases.downloadDemoCommands.includes(command))
+    {
+        //up server function(args)
+        try {
+            getDemos(msg);
+        } catch (error) {
+            console.log(error)
+        }
+  
+        return;
+    }
 }
 
-module.exports = {handleMessage }
+module.exports = {handleMessage}

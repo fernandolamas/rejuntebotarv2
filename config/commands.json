@@ -3,5 +3,7 @@
     "removeCommands": ["-", "leave", "l"],
 
     "bansCommands": ["ban"],
-    "unbansCommands": ["unban"]
+    "unbansCommands": ["unban"],
+
+    "downloadDemoCommands": ["demos"]
 }

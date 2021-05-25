@@ -4065,3 +4065,5 @@ node_modules/teeny-request/LICENSE
 node_modules/teeny-request/package.json
 node_modules/teeny-request/README.md
 rcon/servercredentials.json
+discord/client.js
+lastuploaddemodate.txt
