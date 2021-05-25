@@ -2,78 +2,9 @@
 const { getQueue } = require("../queue/queueHandler");
 const { teamsEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
 const config = require("../../config/config.json");
-const { setMatch } = require("./matchHandler");
+const { setMatch, getMaps } = require("./matchHandler");
 const emojisServer = ["😂", "😁", "😀"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
-
-function voteMap(message) {
-    message.channel.send({ embed: mapEmbed(message, emojis) }).then(embedMessage => {
-
-        embedMessage.react(emojisMap[0]);
-        embedMessage.react(emojisMap[1]);
-        embedMessage.react(emojisMap[2]);
-        embedMessage.react(emojisMap[3]);
-        embedMessage.react(emojisMap[4]);
-
-        var vote1 = 0, vote2 = 0, vote3 = 0, vote4 = 0, vote5 = 0;
-
-        const filter = (reaction, user) => {
-            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id;
-        };
-
-        const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 5000, errors: ['time'] });
-
-        collector.on('collect', (reaction, user) => {
-            console.log(`Collected ${reaction.emoji.name} from ${user.tag}`);
-            switch (reaction.emoji.name) {
-                case `${emojis[0]}`:
-                    vote1++;
-                    break;
-                case `${emojis[1]}`:
-                    vote2++;
-                    break;
-                case `${emojis[2]}`:
-                    vote3++;
-                    break;
-                case `${emojis[3]}`:
-                    vote4++;
-                    break;
-                case `${emojis[4]}`:
-                    vote5++;
-                    break;
-            }
-        });
-
-        collector.on('end', collected => {
-            if (vote1 >= config.matchsize / 2) {
-                message.channel.send("Setup para server WEST")
-
-                showTeams(message);
-            }
-            if (vote2 >= config.matchsize / 2) {
-                message.channel.send("Setup para server CENTRAL")
-                showTeams(message);
-            }
-            showTeams(message);
-            message.channel.send("Setup para server BRASIL");
-
-
-        });
-
-    })
-}
-
-function showTeams(message) {
-    var queue = getQueue()
-    const shuffledArray = queue.sort((a, b) => 0.5 - Math.random());
-    var team1 = [];
-    var team2 = [];
-    shuffledArray.forEach(id => {
-        if (team1.length < config.matchsize / 2) team1.push(id);
-        else team2.push(id);
-    });
-    teamsEmbed(message, team1, team2)
-}
 
 function voteServer(message) {
 
@@ -89,46 +20,126 @@ function voteServer(message) {
             return emojisServer.includes(reaction.emoji.name) && user.id !== embedMessage.author.id;
         };
 
-        const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 5000, errors: ['time'] });
+        const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 60000, errors: ['time'] });
 
         collector.on('collect', (reaction, user) => {
             console.log(`Collected ${reaction.emoji.name} from ${user.tag}`);
             switch (reaction.emoji.name) {
-                case `${emojis[0]}`:
+                case `${emojisServer[0]}`:
                     vote1++;
                     break;
-                case `${emojis[1]}`:
+                case `${emojisServer[1]}`:
                     vote2++;
                     break;
-                case `${emojis[2]}`:
+                case `${emojisServer[2]}`:
                     vote3++;
                     break;
             }
         });
 
         collector.on('end', collected => {
+            server = "";
+            
             if (vote1 >= config.matchsize / 2) {
-                message.channel.send("Setup para server WEST")
-                showTeams(message);
+                server = "useast"
             }
             if (vote2 >= config.matchsize / 2) {
-                message.channel.send("Setup para server CENTRAL")
-                showTeams(message);
+                server = "uscenter"
             }
-            showTeams(message);
-            message.channel.send("Setup para server BRASIL");
+            if(server === "") server ="brasil";
+           
+            voteMap(message, server)
+        });
 
+    })
+}
+
+function voteMap(message,server) {
+    var maps = getMaps()
+    message.channel.send({ embed: mapEmbed(message, emojisMap, maps) }).then(embedMessage => {
+
+        embedMessage.react(emojisMap[0]);
+        embedMessage.react(emojisMap[1]);
+        embedMessage.react(emojisMap[2]);
+        embedMessage.react(emojisMap[3]);
+        embedMessage.react(emojisMap[4]);
+
+        var vote1 = 0, vote2 = 0, vote3 = 0, vote4 = 0, vote5 = 0;
+        
+        const filter = (reaction, user) => {
+            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id;
+        };
+
+        const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 60000, errors: ['time'] });
+
+        collector.on('collect', (reaction, user) => {
+            console.log(`Collected ${reaction.emoji.name} from ${user.tag}`);
+            switch (reaction.emoji.name) {
+                case `${emojisMap[0]}`:
+                    vote1++;
+                    break;
+                case `${emojisMap[1]}`:
+                    vote2++;
+                    break;
+                case `${emojisMap[2]}`:
+                    vote3++;
+                    break;
+                case `${emojisMap[3]}`:
+                    vote4++;
+                    break;
+                case `${emojisMap[4]}`:
+                    vote5++;
+                    break;
+            }
+        });
+
+        collector.on('end', collected => {
+            var map = ""
+            
+            if (vote1 >= config.matchsize / 2) {
+                map = maps[0]
+            }
+            if (vote2 >= config.matchsize / 2) {
+                map = maps[1]
+            }
+            if (vote3 >= config.matchsize / 2) {
+                map = maps[2]
+            }
+            if (vote4 >= config.matchsize / 2) {
+                map = maps[3]
+            }
+            if (vote5 >= config.matchsize / 2) {
+                voteMap(message,server)
+                return;
+            }
+
+            showTeams(message,server,map);
 
         });
 
     })
 }
 
+function showTeams(message, server, map) {
+    
+    var queue = getQueue()
+    const shuffledArray = queue.sort((a, b) => 0.5 - Math.random());
+    var team1 = [];
+    var team2 = [];
+    shuffledArray.forEach(id => {
+        if (team1.length < config.matchsize / 2) team1.push(id);
+        else team2.push(id);
+    });
+    teamsEmbed(message, team1, team2)
+    
+    setMatch(team1, team2, server, map);
+}
+
 function createMatch(message) {
     voteServer(message)
 
 
-    //setMatch(team1, team2, "", "server");
+    
 }
 
 module.exports = { createMatch }

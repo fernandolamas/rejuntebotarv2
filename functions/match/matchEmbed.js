@@ -3,12 +3,16 @@ const {convertIDtoString} = require("../generalFunctions")
 const Discord = require("discord.js");
 
 function mapEmbed(message, emojis, maps) {
-	const serverEmbed = new Discord.MessageEmbed()
+	const mapEmbed = new Discord.MessageEmbed()
 	.setColor('#04c779')
 	.setTitle('Vote Server')
-	.setDescription(`${emojis[0]} EU West\n${emojis[1]} EU Central\n${emojis[2]} Brazil`)
+	.setDescription(`${emojis[0]} ${maps[0]}
+	\n${emojis[1]} ${maps[1]}
+	\n${emojis[2]} ${maps[2]}
+	\n${emojis[3]} ${maps[3]}
+	\n${emojis[4]} Re roll`)
 	.setFooter('venny, pls i need some food')
-	return serverEmbed;
+	return mapEmbed;
 }
 
 function serverEmbed(message, emojis) {
@@ -16,7 +20,7 @@ function serverEmbed(message, emojis) {
 	const serverEmbed = new Discord.MessageEmbed()
 	.setColor('#04c779')
 	.setTitle('Vote Server')
-	.setDescription(`${emojis[0]} EU West\n${emojis[1]} EU Central\n${emojis[2]} Brazil`)
+	.setDescription(`${emojis[0]} US East\n${emojis[1]} US Central\n${emojis[2]} Brasil`)
 	.setFooter('venny, pls i need some food')
 	return serverEmbed;
 }
