@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = './functions/queue/queueData.json';
 const pathBan = './functions/queue/queuePlayerBan.json'
+const { queueEmbed } = require('./queueEmbeds')
 
 function getBansID(){
     var file = fs.readFileSync(pathBan);
@@ -25,8 +26,18 @@ function updateBans(userid){
     fs.writeFileSync(pathBan, data);
 }
 
-function banFromQueue(user, timeout){
+function timeoutBans(userid){
+    var bans = getBansID()
+    var indexBanned = bans.indexOf(userid);
+    bans = getBans();
+    var user = bans[indexBanned];
+    console.log(user);
+    setTimeout(function(){updateBans(userid)}, user.timeout*60*1000);
+}
+
+function addToBans(user, timeout){
     var bans = getBans()
+    if(!timeout) timeout = 30;
     bans.push({
         "userid": user,
         "timeout": timeout
@@ -41,7 +52,15 @@ function getQueue(){
     return queue;
 }
 
-function updateQueue(queue){
+function updateQueue(queue, userid, option){
+    switch(option){
+        case "a":
+            queue.push(userid)
+            break;
+        case "r":
+            queue = queue.filter((id) => id != userid)
+            break;
+    }
     let data = JSON.stringify(queue);
     fs.writeFileSync(path, data);
 }
@@ -51,4 +70,4 @@ function deleteQueue(){
     fs.writeFileSync(path,data);
 }
 
-module.exports = {getQueue, updateQueue, deleteQueue, banFromQueue, getBans, getBansID, updateBans}
+module.exports = {getQueue, updateQueue, deleteQueue, addToBans, getBans, getBansID, updateBans, timeoutBans}
