@@ -47,8 +47,10 @@ function voteServer(message) {
                 server = "uscenter"
             }
             if(server === "") server ="brasil";
-           
+            
+            embedMessage.delete();
             voteMap(message, server)
+
         });
 
     })
@@ -109,11 +111,13 @@ function voteMap(message,server) {
                 map = maps[3]
             }
             if (vote5 >= config.matchsize / 2) {
+                embedMessage.delete();
                 voteMap(message,server)
                 return;
             }
 
             if(map === "") map = maps[Math.floor(Math.random() * maps.length)];
+            embedMessage.delete();
             showMatch(message,server,map);
 
         });
@@ -138,9 +142,6 @@ function showMatch(message, server, map) {
 
 function createMatch(message) {
     voteServer(message)
-
-
-    
 }
 
 module.exports = { createMatch }
