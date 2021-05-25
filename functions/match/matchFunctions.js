@@ -1,6 +1,6 @@
 
 const { getQueue } = require("../queue/queueHandler");
-const { teamsEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
+const { matchEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
 const config = require("../../config/config.json");
 const { setMatch, getMaps } = require("./matchHandler");
 const emojisServer = ["😂", "😁", "😀"]
@@ -113,15 +113,15 @@ function voteMap(message,server) {
                 return;
             }
 
-            if(map === "") map = maps[0];
-            showTeams(message,server,map);
+            if(map === "") map = maps[Math.floor(Math.random() * maps.length)];
+            showMatch(message,server,map);
 
         });
 
     })
 }
 
-function showTeams(message, server, map) {
+function showMatch(message, server, map) {
     
     var queue = getQueue()
     const shuffledArray = queue.sort((a, b) => 0.5 - Math.random());
@@ -131,7 +131,7 @@ function showTeams(message, server, map) {
         if (team1.length < config.matchsize / 2) team1.push(id);
         else team2.push(id);
     });
-    teamsEmbed(message, team1, team2)
+    matchEmbed(message, team1, team2, server, map)
     
     setMatch(team1, team2, server, map);
 }
