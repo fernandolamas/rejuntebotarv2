@@ -1,7 +1,30 @@
 const fs = require('fs')
 const path = './functions/match/matchTemplate.json';
-const pathMap = './functions/match/matchMaps.json';
+const pathMap = './functions/match/maps/mapsData.json';
 const pathMatchs = './functions/match/matchlog';
+const pathMapBan = './functions/match/maps/mapsBan.json';
+const timeOut = 10000
+
+function setMapUnban(map,server){
+  var file = fs.readFileSync(pathMapBan);
+  let mapsBans = JSON.parse(file);
+  console.log(mapsBans);
+  var serverMaps =  mapsBans[server]
+  serverMaps = serverMaps.filter(m=> m != map);
+  console.log(serverMaps);
+  mapsBans[server] = serverMaps;
+  let data = JSON.stringify(mapsBans);
+  fs.writeFileSync(pathMapBan, data);
+}
+
+function setMapBan(map, server){
+  var file = fs.readFileSync(pathMapBan);
+  let mapsBans = JSON.parse(file);
+  mapsBans[server].push(map);
+  let data = JSON.stringify(mapsBans);
+  fs.writeFileSync(pathMapBan, data);
+  setTimeout(function(){ setMapUnban(map,server)},timeOut)
+}
 
 function setMatchComplete(idmatch){
   var file = fs.readFileSync(`${pathMatchs}/match_${idmatch}.json`);
@@ -14,20 +37,30 @@ function setMatchComplete(idmatch){
   fs.writeFileSync(`${pathMatchs}/match_${idmatch}.json`, data);
 }
 
-function getMaps() {
+function getMapsBannedServer(server){
+    // Obtengo la lista de mapas general, luego consulto si esta baneado en ese server (tengo q traer el nombre del sv)
+    // una vez que sale la votacion y el mapa esta votado tengo que traer servidor y nombre del mapa en otra func y de ahi agregarla
+    // en el json de mapa baneado.
+    var file = fs.readFileSync(pathMapBan);
+    let allServersBans = JSON.parse(file);
+    return allServersBans[server]; 
+}
+
+function getMaps(server) {
   var maps = []
   var file = fs.readFileSync(pathMap);
   let allMaps = JSON.parse(file);
-  var arr = [];
-  while(arr.length<5)
+  var bannedMaps = getMapsBannedServer(server);
+
+  while(maps.length<5)
   {
     var random = Math.floor(Math.random() * allMaps.length);
-    if(!arr.includes(random)) arr.push(random);
+    if(!maps.includes(allMaps[random]) || !bannedMaps.includes(allMaps[random])) maps.push(allMaps[random]);
   }
-
+/*
   for (let i = 0; i < arr.length; i++) {
-    maps.push(allMaps[arr[i]]);
-  }
+    if(!bannedMaps.includes(allMaps[arr[i]])) maps.push(allMaps[arr[i]]);
+  }*/ 
   return maps;
 }
 
@@ -79,4 +112,4 @@ function getUsersInMatchsIncomplete(){
   return playersInMatch;
 }
 
-module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete }
+module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete,setMapBan }

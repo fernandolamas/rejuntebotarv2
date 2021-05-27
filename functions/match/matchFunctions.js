@@ -2,7 +2,7 @@
 const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
 const config = require("../../config/config.json");
-const { setMatch, getMaps } = require("./matchHandler");
+const { setMatch, getMaps, setMapBan } = require("./matchHandler");
 const emojisServer = ["😂", "😁", "😀"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
@@ -57,8 +57,8 @@ function voteServer(message) {
 }
 
 function voteMap(message,server) {
-    var maps = getMaps()
-    message.channel.send({ embed: mapEmbed(message, emojisMap, maps) }).then(embedMessage => {
+    var maps = getMaps(server)
+    message.channel.send({ embed: mapEmbed(message, emojisMap, maps, server) }).then(embedMessage => {
 
         embedMessage.react(emojisMap[0]);
         embedMessage.react(emojisMap[1]);
@@ -138,6 +138,7 @@ function showMatch(message, server, map) {
     matchEmbed(message, team1, team2, server, map)
     
     setMatch(team1, team2, server, map);
+    setMapBan(map,server);
     deleteQueue();
 }
 
