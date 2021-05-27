@@ -1,10 +1,19 @@
 const fs = require('fs');
 const config = require('../../config/config.json')
-const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans } = require('./queueHandler');
+const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, deleteQueue } = require('./queueHandler');
 const { createMatch} = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
 const { getUsersInMatchsIncomplete } = require('../match/matchHandler');
+
+function checkInMatchIncomplete(message){
+    var usersInMatch = getUsersInMatchsIncomplete();
+    if(usersInMatch.includes(message.author.id)){
+        message.channel.send("You are playing a match, finish them.")
+        return true;
+    }
+    return false;
+}
 
 function unbanPlayerFromQueue(message, args)
 {
@@ -46,9 +55,8 @@ function banPlayerFromQueue(message, args){
 
 function addToQueue(message){
 
-    var usersInMatch = getUsersInMatchsIncomplete();
-    if(usersInMatch.includes(message.author.id)){
-        message.channel.send("You are playing a match, finish them.")
+    if(checkInMatchIncomplete(message))
+    {
         return;
     }
     
@@ -78,12 +86,19 @@ function addToQueue(message){
         return;
     }
 
+    setTimeout(()=>deleteQueue(), config.matchTimeout)
+
     if(queue.length === config.matchsize){
         createMatch(message);
     }
 }
 
 function leaveToQueue(message){
+
+    if(checkInMatchIncomplete(message))
+    {
+        return;
+    }
 
     var queue = getQueue();
     if(queue.includes(message.author.id)){

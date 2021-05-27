@@ -1,17 +1,46 @@
 const fs = require('fs')
 const path = './functions/match/matchTemplate.json';
-const pathMap = './functions/match/maps/mapsData.json';
 const pathMatchs = './functions/match/matchlog';
+const pathMap = './functions/match/maps/mapsData.json';
 const pathMapBan = './functions/match/maps/mapsBan.json';
-const timeOut = 10000
+const pathServer = './functions/match/servers/serversData.json';
+const pathServerBan = './functions/match/servers/serversInUse.json';
+const config = require('../../config/config.json');
+
+function getServers(){
+  var file = fs.readFileSync(pathServer)
+  let servers = JSON.parse(file);
+  file = fs.readFileSync(pathServerBan);
+  let serversBans = JSON.parse(file);
+  var serversAvailable = [];
+  servers.forEach(s => {
+    if(!serversBans.includes(s)) serversAvailable.push(s);
+  });
+  return serversAvailable;
+}
+
+function setServerUnban(server){
+  var file = fs.readFileSync(pathServerBan)
+  let serverBans = JSON.parse(file)
+  serverBans = serverBans.filter(s=> s != server);
+  let data = JSON.stringify(serverBans);
+  fs.writeFileSync(pathServerBan, data)
+}
+
+function setServerBan(server){
+  var file = fs.readFileSync(pathServerBan);
+  let serverBans = JSON.parse(file)
+  serverBans.push(server)
+  let data = JSON.stringify(serverBans);
+  fs.writeFileSync(pathServerBan, data);
+  setTimeout(function(){setServerUnban(server)},config.matchTimeout)
+}
 
 function setMapUnban(map,server){
   var file = fs.readFileSync(pathMapBan);
   let mapsBans = JSON.parse(file);
-  console.log(mapsBans);
   var serverMaps =  mapsBans[server]
   serverMaps = serverMaps.filter(m=> m != map);
-  console.log(serverMaps);
   mapsBans[server] = serverMaps;
   let data = JSON.stringify(mapsBans);
   fs.writeFileSync(pathMapBan, data);
@@ -23,7 +52,7 @@ function setMapBan(map, server){
   mapsBans[server].push(map);
   let data = JSON.stringify(mapsBans);
   fs.writeFileSync(pathMapBan, data);
-  setTimeout(function(){ setMapUnban(map,server)},timeOut)
+  setTimeout(function(){ setMapUnban(map,server)},config.mapTimeout)
 }
 
 function setMatchComplete(idmatch){
@@ -38,9 +67,6 @@ function setMatchComplete(idmatch){
 }
 
 function getMapsBannedServer(server){
-    // Obtengo la lista de mapas general, luego consulto si esta baneado en ese server (tengo q traer el nombre del sv)
-    // una vez que sale la votacion y el mapa esta votado tengo que traer servidor y nombre del mapa en otra func y de ahi agregarla
-    // en el json de mapa baneado.
     var file = fs.readFileSync(pathMapBan);
     let allServersBans = JSON.parse(file);
     return allServersBans[server]; 
@@ -52,15 +78,12 @@ function getMaps(server) {
   let allMaps = JSON.parse(file);
   var bannedMaps = getMapsBannedServer(server);
 
-  while(maps.length<5)
+  while(maps.length<4)
   {
     var random = Math.floor(Math.random() * allMaps.length);
     if(!maps.includes(allMaps[random]) || !bannedMaps.includes(allMaps[random])) maps.push(allMaps[random]);
   }
-/*
-  for (let i = 0; i < arr.length; i++) {
-    if(!bannedMaps.includes(allMaps[arr[i]])) maps.push(allMaps[arr[i]]);
-  }*/ 
+
   return maps;
 }
 
@@ -90,7 +113,7 @@ function setMatch(team1, team2, server, map) {
   let data = JSON.stringify(jsonFile);
   fs.writeFileSync(`./functions/match/matchlog/${fileName}.json`, data);
 
-  setTimeout(function(){ setMatchComplete(matchJson.id)}, 120000)
+  setTimeout(function(){ setMatchComplete(matchJson.id)}, config.matchTimeout)
 }
 
 function getUsersInMatchsIncomplete(){
@@ -112,4 +135,4 @@ function getUsersInMatchsIncomplete(){
   return playersInMatch;
 }
 
-module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete,setMapBan }
+module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete,setMapBan, setServerBan, getServers }

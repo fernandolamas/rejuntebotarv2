@@ -3,25 +3,31 @@ const footer = "Pickup System";
 const Discord = require("discord.js");
 
 function mapEmbed(message, emojis, maps) {
+	var maplist = "";
+	for (let index = 0; index < maps.length; index++) {
+		maplist += `${emojis[index]} ${maps[index]}\n`
+	}
+	maplist += `${emojis[4]} Re roll maps`;
+	
 	const mapEmbed = new Discord.MessageEmbed()
 	.setColor('#04c779')
 	.setTitle('Vote Server')
-	.addField("List of maps:", `${emojis[0]} ${maps[0]}
-	\n${emojis[1]} ${maps[1]}
-	\n${emojis[2]} ${maps[2]}
-	\n${emojis[3]} ${maps[3]}
-	\n${emojis[4]} Re roll`)
+	.setDescription(maplist)
 	.setFooter(footer)
 	return mapEmbed;
 }
 
-function serverEmbed(message, emojis) {
-	
+function serverEmbed(message, emojis, servers) {
+	var serverlist = "";
+	for (let index = 0; index < servers.length; index++) {
+		serverlist +=`${emojis[index]} ${servers[index]}\n`
+	}
 	const serverEmbed = new Discord.MessageEmbed()
 	.setColor('#04c779')
 	.setTitle('Vote Server')
-	.addField("List of servers:",`${emojis[0]} US East\n${emojis[1]} US Central\n${emojis[2]} Brasil`)
+	.setDescription(serverlist)
 	.setFooter(footer)
+	
 	return serverEmbed;
 }
 

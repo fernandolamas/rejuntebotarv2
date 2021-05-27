@@ -2,17 +2,17 @@
 const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
 const config = require("../../config/config.json");
-const { setMatch, getMaps, setMapBan } = require("./matchHandler");
-const emojisServer = ["😂", "😁", "😀"]
+const { setMatch, getMaps, setMapBan, getServers, setServerBan } = require("./matchHandler");
+const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
 function voteServer(message) {
-
-    message.channel.send({ embed: serverEmbed(message, emojisServer) }).then(embedMessage => {
-
-        embedMessage.react(emojisServer[0]);
-        embedMessage.react(emojisServer[1]);
-        embedMessage.react(emojisServer[2]);
+    var servers = getServers();
+    message.channel.send({ embed: serverEmbed(message, emojisServer, servers) }).then(embedMessage => {
+       
+        for (let index = 0; index < servers.length; index++) {
+            embedMessage.react(emojisServer[index]);
+        }
 
         var vote1 = 0, vote2 = 0, vote3 = 0;
 
@@ -23,7 +23,6 @@ function voteServer(message) {
         const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 60000, errors: ['time'] });
 
         collector.on('collect', (reaction, user) => {
-            console.log(`Collected ${reaction.emoji.name} from ${user.tag}`);
             switch (reaction.emoji.name) {
                 case `${emojisServer[0]}`:
                     vote1++;
@@ -41,14 +40,18 @@ function voteServer(message) {
             server = "";
             
             if (vote1 >= config.matchsize / 2) {
-                server = "useast"
+                server = servers[0]
             }
             if (vote2 >= config.matchsize / 2) {
-                server = "uscenter"
+                server = servers[1]
             }
-            if(server === "") server ="brasil";
-            
+            if(vote3 >= config.matchsize/2) {
+                server = servers[2];
+            }
+
+            if(server === "") server = servers[Math.floor(Math.random() * maps.length)];
             embedMessage.delete();
+            
             voteMap(message, server)
 
         });
@@ -139,6 +142,7 @@ function showMatch(message, server, map) {
     
     setMatch(team1, team2, server, map);
     setMapBan(map,server);
+    setServerBan(server);
     deleteQueue();
 }
 
