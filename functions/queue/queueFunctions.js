@@ -77,7 +77,7 @@ function addToQueue(message){
 
     if(!queue.includes(message.author.id)){
         updateQueue(queue, message.author.id, "a")
-        message.channel.send("Added to Queue")
+        //message.channel.send("Added to Queue")
         queueEmbed(message, queue);
     }
     else
@@ -86,7 +86,10 @@ function addToQueue(message){
         return;
     }
 
-    setTimeout(()=>deleteQueue(), config.matchTimeout)
+    setTimeout(function(){
+        deleteQueue()
+        message.channel.send("Clearing Queue");
+    }, config.matchTimeout)
 
     if(queue.length === config.matchsize){
         createMatch(message);
@@ -103,7 +106,7 @@ function leaveToQueue(message){
     var queue = getQueue();
     if(queue.includes(message.author.id)){
         updateQueue(queue, message.author.id, "r")
-        message.channel.send("Leave from Queue")
+        //message.channel.send("Leave from Queue")
         queueEmbed(message, getQueue());
     }
     else
