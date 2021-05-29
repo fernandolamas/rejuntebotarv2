@@ -49,7 +49,7 @@ function voteServer(message) {
                 server = servers[2];
             }
 
-            if(server === "") server = servers[Math.floor(Math.random() * maps.length)];
+            if(server === "") server = servers[Math.floor(Math.random() * servers.length)];
             embedMessage.delete();
             
             voteMap(message, server)
