@@ -3921,6 +3921,7 @@ node_modules/zip-stream/index.js
 node_modules/zip-stream/LICENSE
 node_modules/zip-stream/package.json
 node_modules/zip-stream/README.md
+rcon/servercredentials.json
 functions/server/awscredentials.json
 node_modules/@google-cloud/common/build/src/index.d.ts
 node_modules/@google-cloud/common/build/src/index.js
@@ -4064,6 +4065,3 @@ node_modules/teeny-request/CHANGELOG.md
 node_modules/teeny-request/LICENSE
 node_modules/teeny-request/package.json
 node_modules/teeny-request/README.md
-rcon/servercredentials.json
-discord/client.js
-lastuploaddemodate.txt
