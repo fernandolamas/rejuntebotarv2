@@ -1,7 +1,9 @@
 const fs = require('fs');
 const Compute = require("@google-cloud/compute");
+const { getServers } = require('../match/matchHandler');
+const { Message } = require('discord.js');
 const compute = new Compute();
-
+const _servernameArray = getServers();
 
 /*
                 brasil,
@@ -33,7 +35,14 @@ const SELECTVM = {
 
 
 
-function turnOnServer(_servername) {
+function turnOnServer(message, _servername) {
+
+
+    if(!_servernameArray.includes(_servername)) 
+    {
+        message.channel.send(`Server is not recognized by the bot available servers: \nAvailable Options ``${_servernameArray}```);
+        return;
+    }
 
     const vm = SELECTVM[_servername] || DEFAULTVM;
     vm.start(function (err, operation, apiResponse) {
@@ -45,6 +54,12 @@ function turnOnServer(_servername) {
 
 function turnOffServer(_servername) {
 
+    if(!_servernameArray.includes(_servername)) 
+    {
+        message.channel.send(`Server is not recognized by the bot available servers: \nAvailable Options ``${_servernameArray}```);
+        return;
+    }
+    
     const vm = SELECTVM[_servername] || DEFAULTVM;
     vm.stop(function (err, operation, apiResponse) {
         console.log(err);

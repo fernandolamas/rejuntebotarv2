@@ -37,7 +37,7 @@ const handleMessage = (msg) => {
     if (aliases.removeCommands.includes(command)) {
         try {
             leaveToQueue(msg)
-            
+
         }
         catch (e) {
             console.log(e)
@@ -45,67 +45,47 @@ const handleMessage = (msg) => {
         return;
     }
 
-    if(aliases.bansCommands.includes(command))
-    {
-        try
-        {
+    if (aliases.bansCommands.includes(command)) {
+        try {
             banPlayerFromQueue(msg, args)
         }
-        catch(e)
-        {
+        catch (e) {
             console.log(e)
         }
         return;
     }
 
-    if(aliases.unbansCommands.includes(command))
-    {
-        try
-        {
+    if (aliases.unbansCommands.includes(command)) {
+        try {
             unbanPlayerFromQueue(msg, args)
         }
-        catch(e)
-        {
+        catch (e) {
             console.log(e)
         }
         return;
     }
-    if(aliases.downloadDemoCommands.includes(command))
-    {
-        //up server function(args)
+    if (aliases.downloadDemoCommands.includes(command)) {
         try {
             getDemos(msg);
         } catch (error) {
             console.log(error)
         }
-  
+
         return;
     }
     if (aliases.serverUp.includes(command)) {
-        try {
-            const _servernameArray = ['brasil','uscentral','useast']
-            
-            if(!_servernameArray.includes(args)){
-                msg.channel.send("Server is not recognized by the bot available servers:", _servernameArray.forEach(server => server.valueOf));
-            }else{
-                turnOnServer(args);
-            }
 
+        try {
+            turnOnServer(msg, args[0]);
         } catch (e) {
             console.log(e)
         }
+        return;
     }
 
     if (aliases.serverDown.includes(command)) {
         try {
-            const _servernameArray = ['brasil','uscentral','useast']
-            
-            if(!_servernameArray.includes(args)){
-                msg.channel.send("Server is not recognized by the bot available servers:", _servernameArray.forEach(server => server.toString));
-            }else{
-                turnOffServer(args);
-            }
-
+            turnOffServer(msg, args[0]);
         } catch (e) {
             console.log(e)
         }
@@ -113,4 +93,4 @@ const handleMessage = (msg) => {
     }
 }
 
-module.exports = {handleMessage}
+module.exports = { handleMessage }

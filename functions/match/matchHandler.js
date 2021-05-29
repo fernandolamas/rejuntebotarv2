@@ -3,7 +3,7 @@ const path = './functions/match/matchTemplate.json';
 const pathMatchs = './functions/match/matchlog';
 const pathMap = './functions/match/maps/mapsData.json';
 const pathMapBan = './functions/match/maps/mapsBan.json';
-const pathServer = './functions/match/servers/serversData.json';
+const pathServer = './functions/server/serversData.json';
 const pathServerBan = './functions/match/servers/serversInUse.json';
 const config = require('../../config/config.json');
 
