@@ -1,9 +1,9 @@
 const fs = require('fs');
 const Compute = require("@google-cloud/compute");
-const { getServers } = require('../match/matchHandler');
+const { getAllServers } = require('../match/matchHandler');
 const { Message } = require('discord.js');
 const compute = new Compute();
-const _servernameArray = getServers();
+const _servernameArray = getAllServers();
 
 /*
                 brasil,
@@ -37,10 +37,11 @@ const SELECTVM = {
 
 function turnOnServer(message, _servername) {
 
+	console.log('el server name es: ',_servername,' el server name array es: ', _servernameArray)
 
     if(!_servernameArray.includes(_servername)) 
     {
-        message.channel.send(`Server is not recognized by the bot available servers: \nAvailable Options ``${_servernameArray}```);
+        message.channel.send('Server is not recognized by the bot available servers: ');
         return;
     }
 
@@ -50,13 +51,14 @@ function turnOnServer(message, _servername) {
         console.log(apiResponse);
         console.log(operation);
     });
+	message.channel.send('Server going up')
 }
 
-function turnOffServer(_servername) {
+function turnOffServer(message, _servername) {
 
     if(!_servernameArray.includes(_servername)) 
     {
-        message.channel.send(`Server is not recognized by the bot available servers: \nAvailable Options ``${_servernameArray}```);
+        message.channel.send('Server is not recognized by the bot available servers: ');
         return;
     }
     
@@ -66,6 +68,7 @@ function turnOffServer(_servername) {
         console.log(apiResponse);
         console.log(operation);
     });
+	message.channel.send('Server going down')
 }
 
 module.exports = { turnOnServer, turnOffServer };

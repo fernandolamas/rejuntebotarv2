@@ -7,16 +7,10 @@ const pathServer = './functions/server/serversData.json';
 const pathServerBan = './functions/match/servers/serversInUse.json';
 const config = require('../../config/config.json');
 
-function getServers(){
+function getAllServers(){
   var file = fs.readFileSync(pathServer)
   let servers = JSON.parse(file);
-  file = fs.readFileSync(pathServerBan);
-  let serversBans = JSON.parse(file);
-  var serversAvailable = [];
-  servers.forEach(s => {
-    if(!serversBans.includes(s)) serversAvailable.push(s);
-  });
-  return serversAvailable;
+  return servers;
 }
 
 function setServerUnban(server){
@@ -135,4 +129,4 @@ function getUsersInMatchsIncomplete(){
   return playersInMatch;
 }
 
-module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete,setMapBan, setServerBan, getServers }
+module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete,setMapBan, setServerBan, getAllServers }
