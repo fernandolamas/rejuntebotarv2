@@ -1,6 +1,9 @@
 {
     "addCommands": ["+", "add"],
-    "removeCommands": ["-", "leave", "l"],
+    "removeCommands": ["-", "leave", "l", "remove"],
+  
+    "serverUp": ["svup", "serverup"],
+    "serverDown": ["svdown", "serverdown"],
 
     "bansCommands": ["ban"],
     "unbansCommands": ["unban"],
