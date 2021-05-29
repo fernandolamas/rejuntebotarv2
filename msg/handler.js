@@ -4,8 +4,6 @@ const aliases = require('../config/commands.json');
 const { turnOnServer, turnOffServer } = require('../functions/server/serverFunctions')
 const { getDemos } = require('../functions/demos/demosFunctions');
 
-
-const { addToQueue, leaveToQueue } = require('../functions/queue/queueFunctions');
 const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue } = require('../functions/queue/queueFunctions');
 
 
