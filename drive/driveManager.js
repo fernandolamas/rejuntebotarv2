@@ -3,10 +3,10 @@ const fs = require('fs');
 const { file } = require('googleapis/build/src/apis/file');
 
 
-const TOKEN_PATH = "credentials.json"
+const TOKEN_PATH = "./drive/credentials.json"
 
 //make the authentication and run the needed
-function uploadDemos(filename, mimetype, filePath) {
+function uploadDemos(filename, mimetype, filePath, msg) {
   fs.readFile(TOKEN_PATH, (err, content) => {
     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Drive API.
@@ -40,7 +40,9 @@ function uploadDemos(filename, mimetype, filePath) {
     
 
     //should upload demos on this call 
-    uploadFile(drive, filename, mimetype, filePath);
+    uploadFile(drive, filename, mimetype, filePath, msg);
+
+
 
     //save the date when the last upload has been done
 
@@ -53,8 +55,8 @@ function uploadDemos(filename, mimetype, filePath) {
     } catch (error) {
       console.log(error);
     }
-
   })
+
 }
 
 
@@ -75,7 +77,7 @@ async function listFiles(drive) {
 }
 */
 
-async function uploadFile(drive, filename, mimetype, filePath) {
+async function uploadFile(drive, filename, mimetype, filePath, msg) {
   try {
 
     const response = await drive.files.create({
@@ -90,6 +92,8 @@ async function uploadFile(drive, filename, mimetype, filePath) {
     })
 
     console.log(response.data);
+    console.log( "FILE ID: " , response.data.id)
+    generatePublicURL(drive, response.data.id, msg);
 
   } catch (error) {
     console.log(error.message)
@@ -114,13 +118,11 @@ async function deleteFile(drive){
 deleteFile();
 
 */
-/*
 
-async function generatePublicURL(drive) {
+
+async function generatePublicURL(drive, fileId,msg) {
 
   try {
-
-    const fileId = '1wpVqhXyiiJ5z_p4PAQaXjWnW_z2YNIX2';
     await drive.permissions.create({
       fileId: fileId,
       requestBody: {
@@ -136,13 +138,13 @@ async function generatePublicURL(drive) {
 
     console.log(result.data);
 
+    msg.channel.send(result.data.webViewLink);
 
   } catch (error) {
     console.log(error.message)
   }
-}*/
+}
 
 
-//generatePublicURL();
 
 module.exports = { uploadDemos }

@@ -1,7 +1,12 @@
 const { prefix } = require('../config/config.json');
 const aliases = require('../config/commands.json');
-const { addToQueue, leaveToQueue } = require('../functions/queue/queueFunctions');
+
 const { turnOnServer, turnOffServer } = require('../functions/server/serverFunctions')
+const { getDemos } = require('../functions/demos/demosFunctions');
+
+
+const { addToQueue, leaveToQueue } = require('../functions/queue/queueFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue } = require('../functions/queue/queueFunctions');
 
 
 const handleMessage = (msg) => {
@@ -24,7 +29,6 @@ const handleMessage = (msg) => {
     if (aliases.addCommands.includes(command)) {
         try {
             addToQueue(msg)
-            return;
         }
         catch (e) {
             console.log(e)
@@ -35,11 +39,49 @@ const handleMessage = (msg) => {
     if (aliases.removeCommands.includes(command)) {
         try {
             leaveToQueue(msg)
-            return;
+            
         }
         catch (e) {
             console.log(e)
         }
+        return;
+    }
+
+    if(aliases.bansCommands.includes(command))
+    {
+        try
+        {
+            banPlayerFromQueue(msg, args)
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+        return;
+    }
+
+    if(aliases.unbansCommands.includes(command))
+    {
+        try
+        {
+            unbanPlayerFromQueue(msg, args)
+        }
+        catch(e)
+        {
+            console.log(e)
+        }
+        return;
+    }
+    if(aliases.downloadDemoCommands.includes(command))
+    {
+        //up server function(args)
+        try {
+            getDemos(msg);
+        } catch (error) {
+            console.log(error)
+        }
+  
+        return;
     }
     if (aliases.serverUp.includes(command)) {
         try {
@@ -81,4 +123,4 @@ const handleMessage = (msg) => {
     }
 }
 
-module.exports = { handleMessage }
+module.exports = {handleMessage}

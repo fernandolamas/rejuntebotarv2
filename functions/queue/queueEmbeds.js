@@ -10,7 +10,7 @@ function queueEmbed(message, queue)
 	.setColor('#0099ff')
 	.setTitle(`Queue ${queue.length}/${config.matchsize}`)
     .setDescription(players)
-	.setFooter('venny pls, i have hungry');
+	.setFooter('venny pls, i am hungry');
 
     message.channel.send(queueEmbed);
 }

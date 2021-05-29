@@ -17,14 +17,19 @@ const filePath = path.join(__dirname, filename)
 //this is the time for the setTimeout first promise
 const timeToFinish = 5000
 
-const myPromise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-        resolve(zipper.createDemos(filename, demofolder));
-    }, timeToFinish);
-});
+function getDemos(msg) {
 
-myPromise
-    .then(driveApi.uploadDemos(filename, mimetype, filePath))
-    .catch(console.log("Demo zipper uploading the demos expected time to finish: ", timeToFinish))
+    const myPromise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve(zipper.createDemos(filename, demofolder));
+        }, timeToFinish);
+    });
 
-console.log("end");
+    myPromise
+        .then(driveApi.uploadDemos(filename, mimetype, filePath, msg))
+        .catch(console.log("Demo zipper uploading the demos expected time to finish: ", timeToFinish))
+
+}
+console.log("end getting demos");
+
+module.exports = {getDemos}
