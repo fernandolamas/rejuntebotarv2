@@ -85,14 +85,10 @@ const handleMessage = (msg) => {
     }
     if (aliases.serverUp.includes(command)) {
         try {
-            const _servername = {
-                brasil,
-                uscentral,
-                useast                
-            }
+            const _servernameArray = ['brasil','uscentral','useast']
             
-            if(!args === _servername){
-                msg.channel.send("Server is not recognized by the bot");
+            if(!_servernameArray.includes(args)){
+                msg.channel.send("Server is not recognized by the bot available servers:", _servernameArray.forEach(server => server.valueOf));
             }else{
                 turnOnServer(args);
             }
@@ -104,14 +100,10 @@ const handleMessage = (msg) => {
 
     if (aliases.serverDown.includes(command)) {
         try {
-            const _servername = {
-                brasil,
-                uscentral,
-                useast                
-            }
+            const _servernameArray = ['brasil','uscentral','useast']
             
-            if(!args === _servername){
-                msg.channel.send("Server is not recognized by the bot");
+            if(!_servernameArray.includes(args)){
+                msg.channel.send("Server is not recognized by the bot available servers:", _servernameArray.forEach(server => server.toString));
             }else{
                 turnOffServer(args);
             }

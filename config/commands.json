@@ -3,9 +3,10 @@
     "removeCommands": ["-", "leave", "l", "remove"],
   
     "serverUp": ["svup", "serverup"],
-    "serverDown": ["svdown", "serverdown"]
+    "serverDown": ["svdown", "serverdown"],
 
     "bansCommands": ["ban"],
     "unbansCommands": ["unban"],
 
     "downloadDemoCommands": ["demos"]
+}
