@@ -1,6 +1,6 @@
 {
     "prefix": ["!", "+", "-"],
-    "matchsize": 4,
+    "matchsize": 2,
     "matchTimeout": 1500000,
     "mapTimeout": 21600000
 }

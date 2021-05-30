@@ -4,7 +4,7 @@ const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, de
 const { createMatch} = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
-const { getUsersInMatchsIncomplete } = require('../match/matchHandler');
+const { getUsersInMatchsIncomplete, getAvailableServers } = require('../match/matchHandler');
 
 function checkInMatchIncomplete(message){
     var usersInMatch = getUsersInMatchsIncomplete();
@@ -72,6 +72,11 @@ function addToQueue(message){
     if(queue.length === config.matchsize)
     {
         message.channel.send("Queue full")
+        return;
+    }
+
+    if(getAvailableServers().length === 0){
+        message.channel.send("No available servers to play.")
         return;
     }
 

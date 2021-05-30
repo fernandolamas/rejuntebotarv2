@@ -2,12 +2,12 @@
 const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
 const config = require("../../config/config.json");
-const { setMatch, getMaps, setMapBan, getServers, setServerBan } = require("./matchHandler");
+const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan } = require("./matchHandler");
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
 function voteServer(message) {
-    var servers = getServers();
+    var servers = getAvailableServers();
     message.channel.send({ embed: serverEmbed(message, emojisServer, servers) }).then(embedMessage => {
        
         for (let index = 0; index < servers.length; index++) {
@@ -17,7 +17,7 @@ function voteServer(message) {
         var vote1 = 0, vote2 = 0, vote3 = 0;
 
         const filter = (reaction, user) => {
-            return emojisServer.includes(reaction.emoji.name) && user.id !== embedMessage.author.id;
+            return emojisServer.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id);
         };
 
         const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 60000, errors: ['time'] });
@@ -72,7 +72,7 @@ function voteMap(message,server) {
         var vote1 = 0, vote2 = 0, vote3 = 0, vote4 = 0, vote5 = 0;
         
         const filter = (reaction, user) => {
-            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id;
+            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id);
         };
 
         const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 60000, errors: ['time'] });
