@@ -152,9 +152,15 @@ function createMatch(message) {
 
 function showMatchIncompletes(message){
     var incompleteMatchs = getMatchIncomplete();
-    incompleteMatchs.forEach(m=> {
-        matchEmbedIncomplete(message, m.team1, m.team2, m.server, m.map, m.id, m.date);
-    })
+    if(incompleteMatchs.length === 0) {
+        message.channel.send("No game(s) in progress")
+    }
+    else {
+        incompleteMatchs.forEach(m=> {
+            matchEmbedIncomplete(message, m.team1, m.team2, m.server, m.map, m.id, m.date);
+        })
+    }
+    
 }
 
 function cancelMatch(message, id){
