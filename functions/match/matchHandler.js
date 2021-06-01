@@ -60,6 +60,19 @@ function setMapBan(map, server){
   setTimeout(function(){ setMapUnban(map,server)},config.mapTimeout)
 }
 
+function getMatchIncomplete(){
+  var matchsIncomplete = [];
+  var matchs = fs.readdirSync(pathMatchs);
+  matchs.forEach(m => {
+    var file = fs.readFileSync(`${pathMatchs}/${m}`);
+    let match = JSON.parse(file);
+    if(match.state === 'incomplete'){
+      matchsIncomplete.push(match);
+    }
+  })
+  return matchsIncomplete;
+}
+
 function setMatchComplete(idmatch){
   var file = fs.readFileSync(`${pathMatchs}/match_${idmatch}.json`);
   let match = JSON.parse(file);
@@ -140,4 +153,4 @@ function getUsersInMatchsIncomplete(){
   return playersInMatch;
 }
 
-module.exports = { setMatch, getMaps, getUsersInMatchsIncomplete, setMatchComplete,setMapBan, setServerBan, getAllServers, getAvailableServers }
+module.exports = { setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchComplete,setMapBan, setServerBan, getAllServers, getAvailableServers }

@@ -1,8 +1,8 @@
 
 const { getQueue, deleteQueue } = require("../queue/queueHandler");
-const { matchEmbed, serverEmbed, mapEmbed } = require("./matchEmbed");
+const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
-const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan } = require("./matchHandler");
+const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchComplete } = require("./matchHandler");
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
@@ -138,8 +138,8 @@ function showMatch(message, server, map) {
         if (team1.length < config.matchsize / 2) team1.push(id);
         else team2.push(id);
     });
+
     matchEmbed(message, team1, team2, server, map)
-    
     setMatch(team1, team2, server, map);
     setMapBan(map,server);
     setServerBan(server);
@@ -150,4 +150,16 @@ function createMatch(message) {
     voteServer(message)
 }
 
-module.exports = { createMatch }
+function showMatchIncompletes(message){
+    var incompleteMatchs = getMatchIncomplete();
+    incompleteMatchs.forEach(m=> {
+        matchEmbedIncomplete(message, m.team1, m.team2, m.server, m.map, m.id, m.date);
+    })
+}
+
+function cancelMatch(message, id){
+    setMatchComplete(id);
+    message.channel.send(`Pickup ${id} has been canceled`)
+}
+
+module.exports = { createMatch, showMatchIncompletes, cancelMatch }

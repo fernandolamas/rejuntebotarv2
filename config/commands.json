@@ -8,5 +8,8 @@
     "bansCommands": ["ban"],
     "unbansCommands": ["unban"],
 
-    "downloadDemoCommands": ["demos"]
+    "downloadDemoCommands": ["demos"],
+
+    "matchViewCommands": ["matchs"],
+    "matchAbortCommands": ["cancel"]
 }

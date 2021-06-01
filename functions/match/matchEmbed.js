@@ -31,6 +31,26 @@ function serverEmbed(message, emojis, servers) {
 	return serverEmbed;
 }
 
+function matchEmbedIncomplete(message, team1, team2, server, map, id, date){
+    var team1 = convertIDtoString(message, team1);
+    var team2 = convertIDtoString(message, team2);
+    
+    const matchEmbed = new Discord.MessageEmbed()
+	.setColor('#fca903')
+	.setTitle('Pickup ready!')
+	.addFields(
+		{ name: '**ID**', value: id},
+		{ name: '**Server**', value: server},
+		{ name: '**Map**', value: map},
+		{ name: '**🔴 Red Team**                 -', value: team1, inline: true },
+		{ name: '**🔵 Blue Team**', value: team2, inline: true },
+		{ name: '**Started at:**', value: new Date(date).toLocaleString()},
+	)
+	.setFooter(footer)
+    message.channel.send(matchEmbed)
+
+}
+
 function matchEmbed(message, team1, team2, server, map) {
     var team1 = convertIDtoString(message, team1);
     var team2 = convertIDtoString(message, team2);
@@ -50,4 +70,4 @@ function matchEmbed(message, team1, team2, server, map) {
 }
 
 
-module.exports = { matchEmbed, serverEmbed, mapEmbed }
+module.exports = { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete }

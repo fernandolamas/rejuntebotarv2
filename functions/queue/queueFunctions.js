@@ -4,7 +4,7 @@ const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, de
 const { createMatch} = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
-const { getUsersInMatchsIncomplete, getAvailableServers } = require('../match/matchHandler');
+const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete } = require('../match/matchHandler');
 
 function checkInMatchIncomplete(message){
     var usersInMatch = getUsersInMatchsIncomplete();
@@ -58,6 +58,10 @@ function addToQueue(message){
     if(checkInMatchIncomplete(message))
     {
         return;
+    }
+
+    if(getMatchIncomplete().length > 0){
+        message.channel.send("Are already matchs in current, checkout them with **!matchs**")
     }
     
     var bans = getBansID();
