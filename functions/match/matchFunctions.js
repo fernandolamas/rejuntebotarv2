@@ -158,8 +158,18 @@ function showMatchIncompletes(message){
 }
 
 function cancelMatch(message, id){
-    setMatchComplete(id);
-    message.channel.send(`Pickup ${id} has been canceled`)
+    if(isNaN(id) || id === undefined){
+        message.channel.send("Valid id required, !cancel <id>")
+        return;
+    }
+
+    try{
+        setMatchComplete(id);
+        message.channel.send(`Pickup ${id} has been canceled`)
+    }catch{
+        message.channel.send(`There is no incomplete game with the id ${id}`)
+    }
+    
 }
 
 module.exports = { createMatch, showMatchIncompletes, cancelMatch }
