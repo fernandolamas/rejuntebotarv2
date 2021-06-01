@@ -1,4 +1,4 @@
-const { staffRoleID,prefix } = require('../config/config.json');
+const { staffRoleID, prefix } = require('../config/config.json');
 const aliases = require('../config/commands.json');
 
 const { turnOnServer, turnOffServer } = require('../functions/server/serverFunctions')
@@ -8,7 +8,7 @@ const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue } = r
 const { showMatchIncompletes, cancelMatch } = require('../functions/match/matchFunctions');
 
 
-function checkHasStaffRole(message){
+function checkHasStaffRole(message) {
     return message.member.roles.cache.some(role => role.id == staffRoleID);
 }
 
@@ -29,104 +29,63 @@ const handleMessage = (msg) => {
     // command = "maxsize"
     // args = ["2"]
 
-    if (aliases.addCommands.includes(command)) {
-        try {
+    try {
+
+        if (aliases.addCommands.includes(command)) {
+
             addToQueue(msg)
+            return;
         }
-        catch (e) {
-            console.log(e)
-        }
-        return;
-    }
 
-    if (aliases.removeCommands.includes(command)) {
-        try {
+        if (aliases.removeCommands.includes(command)) {
             leaveToQueue(msg)
-
+            return;
         }
-        catch (e) {
-            console.log(e)
-        }
-        return;
-    }
 
-    if (aliases.downloadDemoCommands.includes(command)) {
-        try {
+        if (aliases.downloadDemoCommands.includes(command)) {
             getDemos(msg);
-        } catch (error) {
-            console.log(error)
+            return;
         }
 
-        return;
-    }
-    
-    if(aliases.matchViewCommands.includes(command)){
-
-        try{
+        if (aliases.matchViewCommands.includes(command)) {
             showMatchIncompletes(msg);
-        }catch(e){
-            console.log(e)
+            return;
         }
-        return;
-    }
 
-    if(checkHasStaffRole(msg)){
-        if (aliases.bansCommands.includes(command) ) {
-            try {
+        if (checkHasStaffRole(msg)) {
+            if (aliases.bansCommands.includes(command)) {
                 banPlayerFromQueue(msg, args)
+                return;
             }
-            catch (e) {
-                console.log(e)
-            }
-            return;
-        }
 
-        if (aliases.unbansCommands.includes(command)) {
-            try {
+            if (aliases.unbansCommands.includes(command)) {
                 unbanPlayerFromQueue(msg, args)
+                return;
             }
-            catch (e) {
-                console.log(e)
-            }
-            return;
-        }
 
-        if (aliases.serverUp.includes(command)) {
-
-            try {
+            if (aliases.serverUp.includes(command)) {
                 turnOnServer(msg, args[0]);
-            } catch (e) {
-                console.log(e)
+                return;
             }
-            return;
-        }
 
-        if (aliases.serverDown.includes(command)) {
-            try {
+            if (aliases.serverDown.includes(command)) {
                 turnOffServer(msg, args[0]);
-            } catch (e) {
-                console.log(e)
+                return;
             }
-            return;
-        }
 
-        if(aliases.matchAbortCommands.includes(command)){
-            try{
+            if (aliases.matchAbortCommands.includes(command)) {
                 cancelMatch(msg, args[0])
-            }catch(e){
-                console.log(e)
+                return;
             }
-            return;
+        } else {
+            msg.channel.send(`<@!${msg.author.id}> you dont have permissions for this`)
         }
-    }else{
-        msg.channel.send(`<@!${msg.author.id}> you dont have permissions for this`)
+
+    } catch (e) {
+        console.log("ERROR ON COMMAND: ", command)
+        console.log(e)
     }
-    
 
-    
-    
-
-    
 }
 
 module.exports = { handleMessage }
