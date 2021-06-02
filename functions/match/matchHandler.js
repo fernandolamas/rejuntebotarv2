@@ -47,6 +47,7 @@ function setMapUnban(map, server) {
   var file = fs.readFileSync(pathMapBan);
   let mapsBans = JSON.parse(file);
   var serverMaps = mapsBans[server]
+  console.log(serverMaps);
   serverMaps = serverMaps.filter(m => m != map);
   mapsBans[server] = serverMaps;
   let data = JSON.stringify(mapsBans);
@@ -73,6 +74,27 @@ function getMatchIncomplete() {
     }
   })
   return matchsIncomplete;
+}
+
+function setMatchCancelled(idmatch) {
+  console.log(idmatch);
+  var file = fs.readFileSync(`${pathMatchs}/match_${idmatch}.json`);
+  let match = JSON.parse(file);
+  let jsonMatch = {};
+  if (match.state === 'incomplete') {
+    jsonMatch = {
+      ...match,
+      ["state"]: "complete"
+    }
+  }else{
+    throw new exception();
+  }
+  setServerUnban(match.server);
+  setMapUnban(match.map, match.server);
+  let data = JSON.stringify(jsonMatch);
+  fs.writeFileSync(`${pathMatchs}/match_${idmatch}.json`, data);
+
+
 }
 
 function setMatchComplete(idmatch) {
@@ -161,4 +183,4 @@ function getUsersInMatchsIncomplete() {
   return playersInMatch;
 }
 
-module.exports = { setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers }
+module.exports = { setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchCancelled,setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers }

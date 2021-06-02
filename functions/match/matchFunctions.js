@@ -2,7 +2,7 @@
 const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
-const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchComplete } = require("./matchHandler");
+const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled } = require("./matchHandler");
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
@@ -170,7 +170,7 @@ function cancelMatch(message, id){
     }
 
     try{
-        setMatchComplete(id);
+        setMatchCancelled(id);
         message.channel.send(`Pickup ${id} has been canceled`)
     }catch{
         message.channel.send(`There is no incomplete game with the id ${id}`)
