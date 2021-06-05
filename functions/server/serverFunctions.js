@@ -77,9 +77,9 @@ function turnOnServerWithTimer(message, _servername) {
 
     
     let timerUntilShutdown = {
-        brshutdown : brasil,
-        eastshutdown: useast,
-        centralshutdown: uscentral
+        'brasil': brasil,
+        'useast': useast,
+        'uscentral': uscentral
     };
     
     clearTimeout(timerUntilShutdown[_servername]);
