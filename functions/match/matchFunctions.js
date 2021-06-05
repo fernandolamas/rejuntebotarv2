@@ -32,7 +32,7 @@ function voteServer(message) {
             return emojisServer.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id);
         };
 
-        const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 60000, errors: ['time'] });
+        const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: 60000, errors: ['time'] });
 
         collector.on('collect', (reaction, user) => {
             if(!usersStored.includes(user.id))
