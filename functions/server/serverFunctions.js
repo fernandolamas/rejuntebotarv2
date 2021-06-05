@@ -77,16 +77,25 @@ function turnOnServerWithTimer(message, _servername) {
 
     
     let timerUntilShutdown = {
-        'brasil': brasil,
-        'useast': useast,
-        'uscentral': uscentral
+        brasil: {
+            name: 'brasil',
+            timeout: 300000
+        },
+        useast: {
+            name: 'useast',
+            timeout: 300000
+        },
+        uscentral: {
+            name: 'uscentral',
+            timeout: 300000
+        }
     };
     
-    clearTimeout(timerUntilShutdown[_servername]);
+    clearTimeout(timerUntilShutdown[_servername]['timeout']);
     console.log(`Shutdown of the server ${_servername} programmed for 1h 30m`);
     //default 4680000
     //testing with 300000 (5 minutes)
-    timerUntilShutdown[_servername] = setTimeout(turnOffServer, 200000, message, _servername);
+    timerUntilShutdown[_servername]['timeout'] = setTimeout(turnOffServer, 200000, message, _servername);
 
 }
 
