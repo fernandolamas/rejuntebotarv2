@@ -79,15 +79,15 @@ function turnOnServerWithTimer(message, _servername) {
     let timerUntilShutdown = {
         brasil: {
             name: 'brasil',
-            timeout: 300000
+            timeout: 4680000
         },
         useast: {
             name: 'useast',
-            timeout: 300000
+            timeout: 4680000
         },
         uscentral: {
             name: 'uscentral',
-            timeout: 300000
+            timeout: 4680000
         }
     };
     
