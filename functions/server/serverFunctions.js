@@ -67,7 +67,7 @@ function turnOffServer(message, _servername) {
         console.log(apiResponse);
         console.log(operation);
     });
-	message.channel.send('Server going down')
+	message.channel.send(`Server ${_servername} going down`)
 }
 
 
@@ -76,10 +76,10 @@ function turnOnServerWithTimer(message, _servername) {
     turnOnServer(message,_servername)
     
     clearTimeout(timerUntilShutdown);
-    console.log("Shutdown of the server programmed for 1h 30m");
+    console.log(`Shutdown of the server ${_servername} programmed for 1h 30m`);
     //default 4680000
     //testing with 300000 (5 minutes)
-    timerUntilShutdown = setTimeout(turnOffServer, 4680000);
+    timerUntilShutdown = setTimeout(turnOffServer, 300000);
 
 }
 
