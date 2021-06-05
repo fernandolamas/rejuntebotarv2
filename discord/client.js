@@ -1,8 +1,7 @@
 let { Client } = require('discord.js');
 let { handleMessage } = require('../msg/handler.js');
 let { token } = require('../config/token.json');
-let { prefix} = require('../config/config.json');
-let aliases = require('../config/commands.json');
+const { setMatchAllComplete } = require('../functions/match/matchHandler.js');
 //should be env variable
 
 let client = null;
@@ -21,6 +20,7 @@ const init = () => {
 
     client.on("ready", () => {
         console.log("Startup complete");
+        setMatchAllComplete();
     }),
 
         client.on('message', msg => {

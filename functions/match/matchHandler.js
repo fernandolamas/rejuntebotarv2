@@ -76,8 +76,14 @@ function getMatchIncomplete() {
   return matchsIncomplete;
 }
 
+function setMatchAllComplete(){
+  var matchsIncomplete = getMatchIncomplete();
+  matchsIncomplete.forEach(m => {
+    setMatchCancelled(m.id);
+  })
+}
+
 function setMatchCancelled(idmatch) {
-  console.log(idmatch);
   var file = fs.readFileSync(`${pathMatchs}/match_${idmatch}.json`);
   let match = JSON.parse(file);
   let jsonMatch = {};
@@ -93,8 +99,6 @@ function setMatchCancelled(idmatch) {
   setMapUnban(match.map, match.server);
   let data = JSON.stringify(jsonMatch);
   fs.writeFileSync(`${pathMatchs}/match_${idmatch}.json`, data);
-
-
 }
 
 function setMatchComplete(idmatch) {
@@ -183,4 +187,4 @@ function getUsersInMatchsIncomplete() {
   return playersInMatch;
 }
 
-module.exports = { setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchCancelled,setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers }
+module.exports = { setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchCancelled,setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers, setMatchAllComplete }
