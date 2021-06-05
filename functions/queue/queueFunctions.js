@@ -5,6 +5,8 @@ const { createMatch} = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
 const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete } = require('../match/matchHandler');
+var timeOutQueue ;
+
 
 function checkInMatchIncomplete(message){
     var usersInMatch = getUsersInMatchsIncomplete();
@@ -110,7 +112,7 @@ function addToQueue(message){
         return;
     }
 
-    setTimeout(function(){
+    timeOutQueue = setTimeout(function(){
         deleteQueue()
         message.channel.send("Clearing Queue");
     }, config.matchTimeout)
