@@ -9,9 +9,7 @@ function queueEmbed(message, queue)
     const queueEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
 	.setTitle(`Queue ${queue.length}/${config.matchsize}`)
-    .setDescription(players)
-	.setFooter('venny pls, i am hungry');
-
+    .setDescription(players);
     message.channel.send(queueEmbed);
 }
 

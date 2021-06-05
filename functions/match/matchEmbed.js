@@ -54,6 +54,21 @@ function matchEmbedIncomplete(message, team1, team2, server, map, id, date){
 function matchEmbed(message, team1, team2, server, map) {
     var team1 = convertIDtoString(message, team1);
     var team2 = convertIDtoString(message, team2);
+
+	const currentServer = { 
+		brasil: {
+			name: 'Brasil',
+			ip: '34.95.232.99:27015'
+		},
+		uscentral: {
+			name: 'US Central',
+			ip: '34.136.53.33:27015'
+		},
+		useast: {
+			name: 'US East',
+			ip: '34.86.237.46:27015'
+		}
+	}
     
     const matchEmbed = new Discord.MessageEmbed()
 	.setColor('#fca903')
@@ -64,7 +79,8 @@ function matchEmbed(message, team1, team2, server, map) {
 		{ name: '**🔴 Red Team**                 -', value: team1, inline: true },
 		{ name: '**🔵 Blue Team**', value: team2, inline: true },
 	)
-	.setFooter(footer)
+	// steam://connect/34.95.232.99:27015/rjt `steam://connect/${currentServer[server]['ip']}/rjt`
+	.setDescription(`${currentServer[server]['name']} Server Connect Here -> steam://connect/${currentServer[server]['ip']}/rjt`)
     message.channel.send(matchEmbed)
 
 }
