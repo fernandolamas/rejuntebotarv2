@@ -3,7 +3,7 @@ const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled } = require("./matchHandler");
-const { turnOnServer } = require('../functions/server/serverFunctions')
+const { turnOnServerWithTimer } = require('../server/serverFunctions')
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
