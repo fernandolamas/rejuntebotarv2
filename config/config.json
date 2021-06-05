@@ -1,0 +1,7 @@
+{
+    "prefix": ["!", "+", "-"],
+    "matchsize": 2,
+    "matchTimeout": 1500000,
+    "mapTimeout": 21600000,
+    "staffRoleID": 718708366725087263
+}

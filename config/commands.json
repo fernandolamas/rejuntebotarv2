@@ -1,3 +1,16 @@
 {
-    
+    "addCommands": ["+", "add"],
+    "removeCommands": ["-", "leave", "l", "remove"],
+  
+    "serverUp": ["svup", "serverup"],
+    "serverDown": ["svdown", "serverdown"],
+
+    "bansCommands": ["ban"],
+    "unbansCommands": ["unban"],
+    "kickCommands": ["kick"],
+
+    "downloadDemoCommands": ["demos"],
+
+    "matchViewCommands": ["matches"],
+    "matchAbortCommands": ["cancel"]
 }
