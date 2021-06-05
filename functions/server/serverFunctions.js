@@ -46,9 +46,11 @@ function turnOnServer(message, _servername) {
 
     const vm = SELECTVM[_servername] || DEFAULTVM;
     vm.start(function (err, operation, apiResponse) {
+		/*
         console.log(err);
         console.log(apiResponse);
         console.log(operation);
+		*/
     });
 	message.channel.send(`${_servername} Server going up`)
 }
@@ -63,9 +65,11 @@ function turnOffServer(message, _servername) {
     
     const vm = SELECTVM[_servername] || DEFAULTVM;
     vm.stop(function (err, operation, apiResponse) {
+		/*
         console.log(err);
         console.log(apiResponse);
         console.log(operation);
+		*/
     });
 	message.channel.send(`Server ${_servername} going down`)
 }
