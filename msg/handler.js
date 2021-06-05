@@ -4,7 +4,7 @@ const aliases = require('../config/commands.json');
 const { turnOnServer, turnOffServer } = require('../functions/server/serverFunctions')
 const { getDemos } = require('../functions/demos/demosFunctions');
 
-const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue } = require('../functions/queue/queueFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue } = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch } = require('../functions/match/matchFunctions');
 
 
@@ -53,6 +53,11 @@ const handleMessage = (msg) => {
         }
 
         if (checkHasStaffRole(msg)) {
+            if (aliases.kickCommands.includes(command)) {
+                kickFromQueue(msg, args)
+                return;
+            }
+            
             if (aliases.bansCommands.includes(command)) {
                 banPlayerFromQueue(msg, args)
                 return;

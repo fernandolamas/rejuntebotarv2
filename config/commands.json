@@ -7,9 +7,10 @@
 
     "bansCommands": ["ban"],
     "unbansCommands": ["unban"],
+    "kickCommands": ["kick"],
 
     "downloadDemoCommands": ["demos"],
 
-    "matchViewCommands": ["matchs"],
+    "matchViewCommands": ["matches"],
     "matchAbortCommands": ["cancel"]
 }

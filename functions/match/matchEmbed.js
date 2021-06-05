@@ -41,8 +41,8 @@ function matchEmbedIncomplete(message, team1, team2, server, map, id, date){
 	.addFields(
 		{ name: '**ID**', value: id},
 		{ name: '**Server**', value: server},
-		{ name: '**Map**', value: map},
-		{ name: '**🔴 Red Team**                 -', value: team1, inline: true },
+		{ name: '**Map**', value: map, inline: true },
+		{ name: '**🔴 Red Team**                 -', value: team1},
 		{ name: '**🔵 Blue Team**', value: team2, inline: true },
 		{ name: '**Started at:**', value: new Date(date).toLocaleString()},
 	)

@@ -6,7 +6,17 @@ const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatc
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
+function hasEnoughPlayers(message){
+    if(getQueue().length < config.matchsize){
+        message.channel.send("No enough of players needed, canceling the vote")
+        return false;
+    } 
+    return true;
+}
+
 function voteServer(message) {
+    if(!hasEnoughPlayers(message)) return;
+
     var servers = getAvailableServers();
     message.channel.send({ embed: serverEmbed(message, emojisServer, servers) }).then(embedMessage => {
        
@@ -60,9 +70,10 @@ function voteServer(message) {
 }
 
 function voteMap(message,server) {
+    if(!hasEnoughPlayers(message)) return;
     var maps = getMaps(server)
     message.channel.send({ embed: mapEmbed(message, emojisMap, maps, server) }).then(embedMessage => {
-
+        
         embedMessage.react(emojisMap[0]);
         embedMessage.react(emojisMap[1]);
         embedMessage.react(emojisMap[2]);
@@ -75,7 +86,7 @@ function voteMap(message,server) {
             return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id);
         };
 
-        const collector = embedMessage.createReactionCollector(filter, { max: (config.matchsize / 2), time: 60000, errors: ['time'] });
+        const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: 60000, errors: ['time'] });
 
         collector.on('collect', (reaction, user) => {
             console.log(`Collected ${reaction.emoji.name} from ${user.tag}`);
@@ -129,7 +140,7 @@ function voteMap(message,server) {
 }
 
 function showMatch(message, server, map) {
-    
+    if(!hasEnoughPlayers(message)) return;
     var queue = getQueue()
     const shuffledArray = queue.sort((a, b) => 0.5 - Math.random());
     var team1 = [];

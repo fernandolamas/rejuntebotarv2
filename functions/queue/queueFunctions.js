@@ -34,6 +34,11 @@ function banPlayerFromQueue(message, args){
     var bansid = getBansID();
     var userid = getUserFromMention(args[0]);
     var timeout = args[1];
+    /*var reason = "";
+    args.forEach(a => {
+        reason += `${a} `;
+    });
+    console.log(reason);*/
     if(!bansid.includes(userid)) 
     {
         addToBans(userid, timeout);
@@ -53,6 +58,16 @@ function banPlayerFromQueue(message, args){
     }
 }
 
+function kickFromQueue(message, args){
+    var userid = getUserFromMention(args[0]);
+    var queue = getQueue()
+    if(queue.includes(userid))
+    {
+        updateQueue(queue,userid,"r")
+        queueEmbed(message, getQueue());
+    }
+}
+
 function addToQueue(message){
 
     if(checkInMatchIncomplete(message))
@@ -61,7 +76,7 @@ function addToQueue(message){
     }
 
     if(getMatchIncomplete().length > 0){
-        message.channel.send("Are already matchs in current, checkout them with **!matchs**")
+        message.channel.send("There already is a match in progress!  Please check the status of it with !matches")
     }
     
     var bans = getBansID();
@@ -125,4 +140,4 @@ function leaveToQueue(message){
     }
 }
 
-module.exports = {addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue}
+module.exports = {addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue}
