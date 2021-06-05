@@ -74,6 +74,8 @@ function turnOffServer(message, _servername) {
 function turnOnServerWithTimer(message, _servername) {
 
     turnOnServer(message,_servername)
+
+    let timerUntilShutdown;
     
     clearTimeout(timerUntilShutdown);
     console.log(`Shutdown of the server ${_servername} programmed for 1h 30m`);
