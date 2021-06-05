@@ -37,10 +37,9 @@ const SELECTVM = {
 
 function turnOnServer(message, _servername) {
 
-	console.log('el server name es: ',_servername,' el server name array es: ', _servernameArray)
-
     if(!_servernameArray.includes(_servername)) 
     {
+        //TODO: return a list of available servers
         message.channel.send('Server is not recognized by the bot available servers: ');
         return;
     }
@@ -51,7 +50,7 @@ function turnOnServer(message, _servername) {
         console.log(apiResponse);
         console.log(operation);
     });
-	message.channel.send('Server going up')
+	message.channel.send(`${_servername} Server going up`)
 }
 
 function turnOffServer(message, _servername) {
@@ -71,4 +70,17 @@ function turnOffServer(message, _servername) {
 	message.channel.send('Server going down')
 }
 
-module.exports = { turnOnServer, turnOffServer };
+
+function turnOnServerWithTimer(message, _servername) {
+
+    turnOnServer(message,_servername)
+    
+    clearTimeout(timerUntilShutdown);
+    console.log("Shutdown of the server programmed for 1h 30m");
+    //default 4680000
+    //testing with 300000 (5 minutes)
+    timerUntilShutdown = setTimeout(turnOffServer, 4680000);
+
+}
+
+module.exports = { turnOnServer, turnOffServer, turnOnServerWithTimer};

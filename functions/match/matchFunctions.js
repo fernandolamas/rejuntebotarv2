@@ -3,6 +3,7 @@ const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled } = require("./matchHandler");
+const { turnOnServer } = require('../functions/server/serverFunctions')
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
@@ -38,7 +39,7 @@ function voteServer(message) {
 
         collector.on('end', collected => {
             server = "";
-            
+            //TODO: add the user who's voting to an array to check if has already voted
             if (vote1 >= config.matchsize / 2) {
                 server = servers[0]
             }
@@ -143,6 +144,7 @@ function showMatch(message, server, map) {
     setMatch(team1, team2, server, map);
     setMapBan(map,server);
     setServerBan(server);
+    turnOnServerWithTimer(message,server);
     deleteQueue();
 }
 
