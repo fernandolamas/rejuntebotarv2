@@ -29,7 +29,7 @@ function voteServer(message) {
         let usersStored = [];
 
         const filter = (reaction, user) => {
-            return emojisServer.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id);
+            return emojisServer.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id) && usersStored.includes(user.id);
         };
 
         const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: 60000, errors: ['time'] });
@@ -94,7 +94,7 @@ function voteMap(message, server) {
         var vote1 = 0, vote2 = 0, vote3 = 0, vote4 = 0, vote5 = 0;
 
         const filter = (reaction, user) => {
-            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id);
+            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id)  && usersStored.includes(user.id);
         };
 
         const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: 60000, errors: ['time'] });
