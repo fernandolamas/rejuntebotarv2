@@ -6,7 +6,7 @@ const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatc
 const { turnOnServerWithTimer } = require('../server/serverFunctions')
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
-const errorTime = 5000;
+const errorTime = 45000;
 const minvote = (config.matchsize/2)+1;
 
 function hasEnoughPlayers(message) {
