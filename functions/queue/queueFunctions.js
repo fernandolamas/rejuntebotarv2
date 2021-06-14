@@ -4,7 +4,7 @@ const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, de
 const { createMatch} = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
-const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete } = require('../match/matchHandler');
+const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete, setMatchCancelled } = require('../match/matchHandler');
 var timeOutQueue ;
 
 
@@ -52,12 +52,7 @@ function banPlayerFromQueue(message, args){
         return;
     }
 
-    var queue = getQueue()
-    if(queue.includes(userid))
-    {
-        updateQueue(queue,userid,"r")
-        queueEmbed(message, getQueue());
-    }
+    kickFromQueue(message,args)
 }
 
 function kickFromQueue(message, args){
@@ -67,7 +62,22 @@ function kickFromQueue(message, args){
     {
         updateQueue(queue,userid,"r")
         queueEmbed(message, getQueue());
+        return;
     }
+
+    var matchs = getMatchIncomplete();
+    var oldQueue = []
+    matchs.forEach(m =>{
+        if(m.team1.includes(userid) || m.team2.includes(userid))
+        {
+            oldQueue = m.team1.concat(m.team2);
+            updateQueue(oldQueue,userid,"r");
+            queueEmbed(message, getQueue());
+            setMatchCancelled(m.id);
+            message.channel.send(`User <@!${userid}> has been kicked from the queue, match has been cancelled, going to queue again...`)
+        }
+    })
+
 }
 
 function addToQueue(message){

@@ -6,6 +6,8 @@ const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatc
 const { turnOnServerWithTimer } = require('../server/serverFunctions')
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
+const errorTime = 5000;
+const minvote = (config.matchsize/2)+1;
 
 function hasEnoughPlayers(message) {
     if (getQueue().length < config.matchsize) {
@@ -32,7 +34,7 @@ function voteServer(message) {
             return emojisServer.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id) && usersStored.includes(user.id);
         };
 
-        const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: 60000, errors: ['time'] });
+        const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: errorTime, errors: ['time'] });
 
         collector.on('collect', (reaction, user) => {
             if(!usersStored.includes(user.id))
@@ -58,14 +60,14 @@ function voteServer(message) {
 
         collector.on('end', collected => {
             server = "";
-
-            if (vote1 > config.matchsize / 2) {
+            
+            if (vote1 > minvote) {
                 server = servers[0]
             }
-            if (vote2 > config.matchsize / 2) {
+            if (vote2 > minvote) {
                 server = servers[1]
             }
-            if (vote3 > config.matchsize / 2) {
+            if (vote3 > minvote) {
                 server = servers[2];
             }
 
@@ -97,7 +99,7 @@ function voteMap(message, server) {
             return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id)  && usersStored.includes(user.id);
         };
 
-        const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: 60000, errors: ['time'] });
+        const collector = embedMessage.createReactionCollector(filter, { max: config.matchsize, time: errorTime, errors: ['time'] });
 
         collector.on('collect', (reaction, user) => {
             if (!usersStored.includes(user.id)) {
@@ -126,19 +128,19 @@ function voteMap(message, server) {
 
         collector.on('end', collected => {
             var map = ""
-            if (vote1 > config.matchsize/2) {
+            if (vote1 > minvote) {
                 map = maps[0]
             }
-            if (vote2 > config.matchsize/2) {
+            if (vote2 > minvote) {
                 map = maps[1]
             }
-            if (vote3 > config.matchsize/2) {
+            if (vote3 > minvote) {
                 map = maps[2]
             }
-            if (vote4 > config.matchsize/2) {
+            if (vote4 > minvote) {
                 map = maps[3]
             }
-            if (vote5 > config.matchsize/2) {
+            if (vote5 > minvote) {
                 embedMessage.delete();
                 voteMap(message, server)
                 return;
