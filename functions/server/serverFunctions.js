@@ -4,6 +4,10 @@ const { getAllServers } = require('../match/matchHandler');
 const { Message } = require('discord.js');
 const compute = new Compute();
 const _servernameArray = getAllServers();
+const timeoutBR;
+const timeoutUSE;
+const timeoutUSC;
+
 
 /*
                 brasil,
@@ -78,8 +82,18 @@ function turnOffServer(message, _servername) {
 function turnOnServerWithTimer(message, _servername) {
 
     turnOnServer(message,_servername)
-
-    
+    switch(_servername){
+        case 'brasil':
+            timeoutBR = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
+            break;
+        case 'useast':
+            timeoutUSE = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
+            break;
+        case 'uscentral':
+            timeoutUSC = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
+            break;
+    }
+    /*lo digo una vez mas, te re complicas fer
     let timerUntilShutdown = {
         brasil: {
             name: 'brasil',
@@ -95,12 +109,13 @@ function turnOnServerWithTimer(message, _servername) {
         }
     };
     
+
     clearTimeout(timerUntilShutdown[_servername]['timeout']);
     console.log(`Shutdown of the server ${_servername} programmed for 1h 30m`);
     //default 4680000
     //testing with 300000 (5 minutes)
     timerUntilShutdown[_servername]['timeout'] = setTimeout(turnOffServer, 200000, message, _servername);
-
+    */
 }
 
 module.exports = { turnOnServer, turnOffServer, turnOnServerWithTimer};
