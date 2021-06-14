@@ -12,5 +12,7 @@
     "downloadDemoCommands": ["demos"],
 
     "matchViewCommands": ["matches"],
-    "matchAbortCommands": ["cancel"]
+    "matchAbortCommands": ["cancel"],
+
+    "matchShuffleCommands": ["shuffle"]
 }

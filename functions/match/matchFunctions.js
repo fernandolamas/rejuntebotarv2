@@ -2,7 +2,7 @@
 const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
-const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled } = require("./matchHandler");
+const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled, getMatchByID, modifyMatch } = require("./matchHandler");
 const { turnOnServerWithTimer } = require('../server/serverFunctions')
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
@@ -155,9 +155,7 @@ function voteMap(message, server) {
     })
 }
 
-function showMatch(message, server, map) {
-    if (!hasEnoughPlayers(message)) return;
-    var queue = getQueue()
+function shuffleFunction(queue){
     const shuffledArray = queue.sort((a, b) => 0.5 - Math.random());
     var team1 = [];
     var team2 = [];
@@ -165,7 +163,13 @@ function showMatch(message, server, map) {
         if (team1.length < config.matchsize / 2) team1.push(id);
         else team2.push(id);
     });
+    return {team1,team2}
+}
 
+function showMatch(message, server, map) {
+    if (!hasEnoughPlayers(message)) return;
+    var queue = getQueue()
+    var {team1,team2} = shuffleFunction(queue)
     matchEmbed(message, team1, team2, server, map)
     setMatch(team1, team2, server, map);
     setMapBan(map, server);
@@ -176,6 +180,17 @@ function showMatch(message, server, map) {
 
 function createMatch(message) {
     voteServer(message)
+}
+
+function shuffleTeams(message, matchid){
+    var match = getMatchByID(matchid);
+    var queue = match.team1.concat(match.team2)
+    var {team1,team2} = shuffleFunction(queue)
+    match.team1 = team1;
+    match.team2 = team2;
+    message.channel.send("Shuffle teams!")
+    matchEmbed(message, team1, team2, match.server, match.map)
+    modifyMatch(match);
 }
 
 function showMatchIncompletes(message) {
@@ -206,4 +221,4 @@ function cancelMatch(message, id) {
 
 }
 
-module.exports = { createMatch, showMatchIncompletes, cancelMatch }
+module.exports = { shuffleTeams,createMatch, showMatchIncompletes, cancelMatch }

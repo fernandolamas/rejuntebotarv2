@@ -1,3 +1,4 @@
+const { match } = require('assert');
 const { exception } = require('console');
 const { Message } = require('discord.js');
 const fs = require('fs')
@@ -83,9 +84,13 @@ function setMatchAllComplete(){
   })
 }
 
-function setMatchCancelled(idmatch) {
+function getMatchByID(idmatch){
   var file = fs.readFileSync(`${pathMatchs}/match_${idmatch}.json`);
-  let match = JSON.parse(file);
+  return JSON.parse(file);
+}
+
+function setMatchCancelled(idmatch) {
+  var match = getMatchByID(idmatch);
   let jsonMatch = {};
   if (match.state === 'incomplete') {
     jsonMatch = {
@@ -103,8 +108,7 @@ function setMatchCancelled(idmatch) {
 
 function setMatchComplete(idmatch) {
 
-  var file = fs.readFileSync(`${pathMatchs}/match_${idmatch}.json`);
-  let match = JSON.parse(file);
+  var match = getMatchByID(idmatch);
   let jsonMatch = {};
   if (match.state === 'incomplete') {
     jsonMatch = {
@@ -169,6 +173,11 @@ function setMatch(team1, team2, server, map) {
   setTimeout(function () { setMatchComplete(matchJson.id) }, config.matchTimeout)
 }
 
+function modifyMatch(matchJson){
+  let data = JSON.stringify(matchJson);
+  fs.writeFileSync(`./functions/match/matchlog/match_${matchJson.id}.json`, data);
+}
+
 function getUsersInMatchsIncomplete() {
   var playersInMatch = [];
   var matchFiles = fs.readdirSync(pathMatchs);
@@ -187,4 +196,4 @@ function getUsersInMatchsIncomplete() {
   return playersInMatch;
 }
 
-module.exports = { setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchCancelled,setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers, setMatchAllComplete }
+module.exports = { modifyMatch,setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchCancelled,setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers, setMatchAllComplete, getMatchByID }
