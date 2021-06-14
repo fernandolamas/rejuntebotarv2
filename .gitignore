@@ -1,6 +1,6 @@
 
 .env
-match/matchlog/
+functions/match/matchlog/
 node_modules/@discordjs/collection/dist/index.d.ts
 node_modules/@discordjs/collection/dist/index.js
 node_modules/@discordjs/collection/LICENSE
