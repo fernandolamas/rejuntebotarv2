@@ -4,7 +4,7 @@ const aliases = require('../config/commands.json');
 const { turnOnServer, turnOffServer } = require('../functions/server/serverFunctions')
 const { getDemos } = require('../functions/demos/demosFunctions');
 
-const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue } = require('../functions/queue/queueFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue } = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch, shuffleTeams } = require('../functions/match/matchFunctions');
 
 
@@ -52,6 +52,11 @@ const handleMessage = (msg) => {
             return;
         }
 
+        if(aliases.queueCommands.includes(command)){
+            showQueue(msg);
+            return
+        }
+
         if (checkHasStaffRole(msg)) {
             if (args.length > 0) {
                 if (aliases.kickCommands.includes(command)) {
@@ -92,7 +97,7 @@ const handleMessage = (msg) => {
                 msg.channel.send(`<@!${msg.author.id}> arguments is needed`)
             }
         } else {
-            msg.channel.send(`<@!${msg.author.id}> you dont have permissions for this`)
+            return;
         }
 
     } catch (e) {

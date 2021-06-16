@@ -14,5 +14,7 @@
     "matchViewCommands": ["matches"],
     "matchAbortCommands": ["cancel"],
 
-    "matchShuffleCommands": ["shuffle"]
+    "matchShuffleCommands": ["shuffle"],
+    
+    "queueCommands": ["rejunte", "q", "queue"]
 }

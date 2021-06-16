@@ -80,6 +80,10 @@ function kickFromQueue(message, args){
 
 }
 
+function showQueue(message){
+    queueEmbed(message, getQueue())
+}
+
 function addToQueue(message){
 
     if(checkInMatchIncomplete(message))
@@ -152,4 +156,4 @@ function leaveToQueue(message){
     }
 }
 
-module.exports = {addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue}
+module.exports = {showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue}
