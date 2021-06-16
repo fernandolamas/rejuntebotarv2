@@ -1,12 +1,11 @@
 const fs = require('fs');
 const Compute = require("@google-cloud/compute");
 const { getAllServers } = require('../match/matchHandler');
-const { Message } = require('discord.js');
 const compute = new Compute();
 const _servernameArray = getAllServers();
-const timeoutBR;
-const timeoutUSE;
-const timeoutUSC;
+var timeoutBR;
+var timeoutUSE;
+var timeoutUSC;
 
 
 /*
