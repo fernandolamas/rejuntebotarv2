@@ -50,11 +50,11 @@ function voteServer(message) {
                         vote3++;
                         break;
                 }
-            }else
-            {
                 usersStored.push(user.id);
+
+            }else{
+                reaction.delete();
             }
-            
             
         });
 
@@ -120,9 +120,9 @@ function voteMap(message, server) {
                         vote5++;
                         break;
                 }
-            }else
-            {
                 usersStored.push(user.id);
+            }else{
+                reaction.delete();
             }
         });
 
