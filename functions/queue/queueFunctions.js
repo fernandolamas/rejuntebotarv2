@@ -126,11 +126,12 @@ function addToQueue(message){
         return;
     }
 
+    clearTimeout(timeOutQueue);
     timeOutQueue = setTimeout(function(){
         deleteQueue()
         message.channel.send("Clearing Queue");
     }, config.matchTimeout)
-
+    
     if(queue.length === config.matchsize){
         createMatch(message);
     }

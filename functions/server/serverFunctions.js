@@ -83,12 +83,15 @@ function turnOnServerWithTimer(message, _servername) {
     turnOnServer(message,_servername)
     switch(_servername){
         case 'brasil':
+            clearTimeout(timeoutBR)
             timeoutBR = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
             break;
         case 'useast':
+            clearTimeout(timeoutUSE)
             timeoutUSE = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
             break;
         case 'uscentral':
+            clearTimeout(timeoutUSC)
             timeoutUSC = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
             break;
     }
