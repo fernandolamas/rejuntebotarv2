@@ -16,5 +16,7 @@
 
     "matchShuffleCommands": ["shuffle"],
     
-    "queueCommands": ["rejunte", "q", "queue"]
+    "queueCommands": ["rejunte", "q", "queue"],
+
+    "rconCommands": ["rcon"]
 }
