@@ -6,6 +6,7 @@ const { getDemos } = require('../functions/demos/demosFunctions');
 
 const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue } = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch, shuffleTeams } = require('../functions/match/matchFunctions');
+const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 
 
 function checkHasStaffRole(message) {
@@ -20,7 +21,7 @@ const handleMessage = (msg) => {
         if (msg.content.startsWith(prefix[index])) havePrefix = true;
     }
 
-    if (!havePrefix || msg.author.bot || msg.channel.type === 'dm') return;
+    if (!havePrefix || msg.channel.type === 'dm') return;
 
     //input= !maxsize 2
     const args = msg.content.slice(1).trim().split(' ');
@@ -54,7 +55,13 @@ const handleMessage = (msg) => {
 
         if(aliases.queueCommands.includes(command)){
             showQueue(msg);
-            return
+            return;
+        }
+
+        if(aliases.rconCommands.includes(command)){
+            //command:rcon  args:brasil teams which the server is [0] in the array brasil
+            sendRconResponse(msg, args)
+            return;
         }
 
         if (checkHasStaffRole(msg)) {

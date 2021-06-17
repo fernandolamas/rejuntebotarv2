@@ -3,11 +3,16 @@ const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled, getMatchByID, modifyMatch } = require("./matchHandler");
-const { turnOnServerWithTimer } = require('../server/serverFunctions')
+const { turnOnServerWithTimer } = require('../server/serverFunctions');
+const { turnOnRconConnection } = require('../server/rcon/rconFunctions');
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 const errorTime = 45000;
 const minvote = (config.matchsize/2)+1;
+
+//server rcon connection
+let conn = require('../server/rcon/rconFunctions');
+
 
 function hasEnoughPlayers(message) {
     if (getQueue().length < config.matchsize) {
@@ -183,6 +188,7 @@ function showMatch(message, server, map) {
     setMapBan(map, server);
     setServerBan(server);
     turnOnServerWithTimer(message,server);
+    setTimeout(function() {conn = turnOnRconConnection(message,server) },60000);
     deleteQueue();
 }
 
