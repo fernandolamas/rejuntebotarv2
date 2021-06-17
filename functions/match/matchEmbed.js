@@ -1,5 +1,5 @@
 const {convertIDtoString} = require("../generalFunctions")
-const footer = "Pickup System";
+const footer = "45s to vote";
 const Discord = require("discord.js");
 
 function mapEmbed(message, emojis, maps) {
@@ -46,7 +46,6 @@ function matchEmbedIncomplete(message, team1, team2, server, map, id, date){
 		{ name: '**🔵 Blue Team**', value: team2, inline: true },
 		{ name: '**Started at:**', value: new Date(date).toLocaleString()},
 	)
-	.setFooter(footer)
     message.channel.send(matchEmbed)
 
 }
@@ -69,7 +68,7 @@ function matchEmbed(message, team1, team2, server, map) {
 			ip: '34.86.237.46:27015'
 		}
 	}
-    
+    console.log(server);
     const matchEmbed = new Discord.MessageEmbed()
 	.setColor('#fca903')
 	.setTitle('Pickup ready!')

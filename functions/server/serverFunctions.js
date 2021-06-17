@@ -7,6 +7,22 @@ var timeoutBR;
 var timeoutUSE;
 var timeoutUSC;
 
+let timerUntilShutdown = {
+    brasil:{
+        name: 'brasil',
+        timeout: undefined
+    },
+    useast: {
+        name: 'useast',
+        timeout: undefined
+    },
+    uscentral: {
+        name: 'uscentral',
+        timeout: undefined
+    }
+};
+
+
 
 /*
                 brasil,
@@ -81,7 +97,7 @@ function turnOffServer(message, _servername) {
 function turnOnServerWithTimer(message, _servername) {
 
     turnOnServer(message,_servername)
-    switch(_servername){
+    /*switch(_servername){
         case 'brasil':
             clearTimeout(timeoutBR)
             timeoutBR = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
@@ -94,30 +110,14 @@ function turnOnServerWithTimer(message, _servername) {
             clearTimeout(timeoutUSC)
             timeoutUSC = setTimeout(function(){ turnOffServer(message, _servername) },4680000)
             break;
-    }
+    }*/
     /*lo digo una vez mas, te re complicas fer
-    let timerUntilShutdown = {
-        brasil: {
-            name: 'brasil',
-            timeout: 4680000
-        },
-        useast: {
-            name: 'useast',
-            timeout: 4680000
-        },
-        uscentral: {
-            name: 'uscentral',
-            timeout: 4680000
-        }
-    };
-    
-
-    clearTimeout(timerUntilShutdown[_servername]['timeout']);
     console.log(`Shutdown of the server ${_servername} programmed for 1h 30m`);
     //default 4680000
-    //testing with 300000 (5 minutes)
-    timerUntilShutdown[_servername]['timeout'] = setTimeout(turnOffServer, 200000, message, _servername);
-    */
+    //testing with 300000 (5 minutes)*/
+    clearTimeout(timerUntilShutdown[_servername].timeout);
+    timerUntilShutdown[_servername].timeout = setTimeout(turnOffServer, 4680000, message, _servername);
+    
 }
 
 module.exports = { turnOnServer, turnOffServer, turnOnServerWithTimer};
