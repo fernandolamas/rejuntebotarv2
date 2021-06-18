@@ -61,7 +61,7 @@ function sendRconResponse(message, args) {
         }
     })
 
-    //si pregunta por equipos pasarle los equipos
+    //if is asking for the teams, share the teams
 
     switch (args[1]) {
         case 'teams':
@@ -78,14 +78,14 @@ function sendRconResponse(message, args) {
                 team2 += message.client.users.cache.get(uid).username + " ";
             })
 
-            conn[currentMatch.server].connection.send("say Equipo rojo");
+            conn[currentMatch.server].connection.send("say Red Team");
             conn[currentMatch.server].connection.send("say " + team1);
-            conn[currentMatch.server].connection.send("say Equipo azul");
+            conn[currentMatch.server].connection.send("say Blue Team");
             conn[currentMatch.server].connection.send("say " + team2);
 
             break;
     }
-    message.channel.send("Enviando la informacion de los equipos")
+    message.channel.send("Sending teams info to the server");
 
 
 }
