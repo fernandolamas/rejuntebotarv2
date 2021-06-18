@@ -79,11 +79,12 @@ function sendRconResponse(message, args) {
                 let user = await message.client.users.fetch(uid);
                 team2 += user.username + " ";
             })
-
-            conn[currentMatch.server].connection.send("say Red Team");
-            conn[currentMatch.server].connection.send("say " + team1);
-            conn[currentMatch.server].connection.send("say Blue Team");
-            conn[currentMatch.server].connection.send("say " + team2);
+            setTimeout(() => {
+                conn[currentMatch.server].connection.send("say Red Team");
+                conn[currentMatch.server].connection.send("say " + team1);
+                conn[currentMatch.server].connection.send("say Blue Team");
+                conn[currentMatch.server].connection.send("say " + team2);
+            }, 2000);
 
             break;
     }
