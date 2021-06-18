@@ -70,13 +70,13 @@ function sendRconResponse(message, args) {
 
 
             var team1 = "";
-            currentMatch.team1.forEach(uid => {
-                let user = message.client.users.fetch(uid);
+            currentMatch.team1.forEach(async uid => {
+                let user = await message.client.users.fetch(uid);
                 team1 += user.username + " ";
             })
             var team2 = "";
-            currentMatch.team2.forEach(uid => {
-                let user = message.client.users.fetch(uid);
+            currentMatch.team2.forEach(async uid => {
+                let user = await message.client.users.fetch(uid);
                 team2 += user.username + " ";
             })
 
