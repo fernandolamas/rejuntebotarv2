@@ -71,11 +71,13 @@ function sendRconResponse(message, args) {
 
             var team1 = "";
             currentMatch.team1.forEach(uid => {
-                team1 += message.client.users.cache.get(uid).username + " ";
+                let user = message.client.users.fetch(uid);
+                team1 += user.username + " ";
             })
             var team2 = "";
             currentMatch.team2.forEach(uid => {
-                team2 += message.client.users.cache.get(uid).username + " ";
+                let user = message.client.users.fetch(uid);
+                team2 += user.username + " ";
             })
 
             conn[currentMatch.server].connection.send("say Red Team");
