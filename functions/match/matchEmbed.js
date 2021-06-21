@@ -11,7 +11,7 @@ function mapEmbed(message, emojis, maps) {
 	
 	const mapEmbed = new Discord.MessageEmbed()
 	.setColor('#04c779')
-	.setTitle('Vote Server')
+	.setTitle('Vote Map')
 	.setDescription(maplist)
 	.setFooter(footer)
 	return mapEmbed;
