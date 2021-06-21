@@ -70,18 +70,21 @@ function sendRconResponse(message, args) {
 
 
             var team1 = "";
-            currentMatch.team1.forEach(uid => {
-                team1 += message.client.users.cache.get(uid).username + " ";
+            currentMatch.team1.forEach(async uid => {
+                let user = await message.client.users.fetch(uid);
+                team1 += user.username + " ";
             })
             var team2 = "";
-            currentMatch.team2.forEach(uid => {
-                team2 += message.client.users.cache.get(uid).username + " ";
+            currentMatch.team2.forEach(async uid => {
+                let user = await message.client.users.fetch(uid);
+                team2 += user.username + " ";
             })
-
-            conn[currentMatch.server].connection.send("say Red Team");
-            conn[currentMatch.server].connection.send("say " + team1);
-            conn[currentMatch.server].connection.send("say Blue Team");
-            conn[currentMatch.server].connection.send("say " + team2);
+            setTimeout(() => {
+                conn[currentMatch.server].connection.send("say Red Team");
+                conn[currentMatch.server].connection.send("say " + team1);
+                conn[currentMatch.server].connection.send("say Blue Team");
+                conn[currentMatch.server].connection.send("say " + team2);
+            }, 6000);
 
             break;
     }
