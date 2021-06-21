@@ -131,14 +131,14 @@ function getMapsBannedServer(server) {
 }
 
 function getMaps(server) {
-  var maps = []
+  var maps = [];
   var file = fs.readFileSync(pathMap);
   let allMaps = JSON.parse(file);
   var bannedMaps = getMapsBannedServer(server);
 
   while (maps.length < 4) {
     var random = Math.floor(Math.random() * allMaps.length);
-    if (!maps.includes(allMaps[random]) || !bannedMaps.includes(allMaps[random])) maps.push(allMaps[random]);
+    if (!maps.includes(allMaps[random]) && !bannedMaps.includes(allMaps[random])) maps.push(allMaps[random]);
   }
 
   return maps;
