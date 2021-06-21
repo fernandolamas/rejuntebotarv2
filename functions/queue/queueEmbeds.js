@@ -15,7 +15,7 @@ function queueEmbed(message, queue)
 	.setColor('#0099ff')
 	.setTitle(`Queue ${queue.length}/${config.matchsize}`)
     .setDescription(players)
-    .setFooter(`Next Match ID: ${matchJson.id}`)
+    .setFooter(`LATAM ${new Date(Date.now()).toDateString()} - Match ID: ${matchJson.id}`)
     message.channel.send(queueEmbed);
 }
 
