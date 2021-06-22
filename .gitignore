@@ -4071,3 +4071,14 @@ node_modules/rcon/node-rcon.js
 node_modules/rcon/.npmignore
 node_modules/rcon/LICENSE
 functions/server/rcon/credentials/RconCredentials.json
+functions/server/rcon/credentials/RconCredentials.json
+node_modules/rcon/.npmignore
+node_modules/rcon/LICENSE
+node_modules/rcon/node-rcon.js
+node_modules/rcon/package.json
+node_modules/rcon/README.md
+node_modules/rcon/.npmignore
+node_modules/rcon/LICENSE
+node_modules/rcon/node-rcon.js
+node_modules/rcon/package.json
+node_modules/rcon/README.md
