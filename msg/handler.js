@@ -4,7 +4,8 @@ const aliases = require('../config/commands.json');
 const { turnOnServer, turnOffServer } = require('../functions/server/serverFunctions')
 const { getDemos } = require('../functions/demos/demosFunctions');
 
-const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue } = require('../functions/queue/queueFunctions');
+const { voteFor } = require('../functions/generalFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue} = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch, shuffleTeams } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 
@@ -33,7 +34,6 @@ const handleMessage = (msg) => {
     try {
 
         if (aliases.addCommands.includes(command)) {
-
             addToQueue(msg)
             return;
         }
@@ -63,9 +63,22 @@ const handleMessage = (msg) => {
             sendRconResponse(msg, args)
             return;
         }
+        
+        if (aliases.voteForCommand.includes(command)){
+            voteFor(msg,args);
+        }
 
         if (checkHasStaffRole(msg)) {
             if (args.length > 0) {
+                if (aliases.insertCommands.includes(command)) {
+                    insertPlayerIntoQueue(msg,args)
+                }
+
+                if (aliases.swapCommands.includes(command)) {
+                    swapPlayerFromQueue(msg,args);
+                    return;
+                }
+
                 if (aliases.kickCommands.includes(command)) {
                     kickFromQueue(msg, args)
                     return;

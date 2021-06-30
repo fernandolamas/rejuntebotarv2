@@ -18,5 +18,11 @@
     
     "queueCommands": ["rejunte", "q", "queue"],
 
-    "rconCommands": ["rcon"]
+    "rconCommands": ["rcon"],
+
+    "swapCommands": ["swap"],
+    
+    "insertCommands": ["insert"],
+
+    "voteForCommand": ["vote"]
 }

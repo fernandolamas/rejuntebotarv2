@@ -4082,3 +4082,6 @@ node_modules/rcon/LICENSE
 node_modules/rcon/node-rcon.js
 node_modules/rcon/package.json
 node_modules/rcon/README.md
+package.json
+package-lock.json
+node_modules/.package-lock.json

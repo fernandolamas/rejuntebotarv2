@@ -22,4 +22,14 @@ function getUserFromMention(mention) {
 	}
 }
 
-module.exports = {convertIDtoString, getUserFromMention}
+function voteFor(message,args)
+{
+	argsSplited = args.join(' ')
+	message.channel.send(`Vote for ${argsSplited}`)
+	.then(m => {
+		m.react("👍")
+		m.react("👎")
+	})
+}
+
+module.exports = {convertIDtoString, getUserFromMention, voteFor}
