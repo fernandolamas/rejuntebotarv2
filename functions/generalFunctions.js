@@ -25,7 +25,7 @@ function getUserFromMention(mention) {
 function voteFor(message,args)
 {
 	argsSplited = args.join(' ')
-	message.channel.send(`Vote for ${argsSplited}`)
+	message.channel.send(`${argsSplited}`)
 	.then(m => {
 		m.react("👍")
 		m.react("👎")
