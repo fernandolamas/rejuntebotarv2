@@ -210,5 +210,10 @@ function insertPlayerIntoQueue(message, args) {
         createMatch(message);
     }
 }
+function noticeCurrentPickup(message)
+{
+    var queue = getQueue();
+    message.channel.send(`@here ${queue.length}/${config.matchsize} !ADD`)
+}
 
-module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue }
+module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup }

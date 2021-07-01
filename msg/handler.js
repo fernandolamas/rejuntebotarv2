@@ -1,11 +1,11 @@
 const { staffRoleID, prefix } = require('../config/config.json');
 const aliases = require('../config/commands.json');
 
-const { turnOnServer, turnOffServer } = require('../functions/server/serverFunctions')
+const { turnOnServer, turnOffServer, sendServerInfo } = require('../functions/server/serverFunctions')
 const { getDemos } = require('../functions/demos/demosFunctions');
 
 const { voteFor } = require('../functions/generalFunctions');
-const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue} = require('../functions/queue/queueFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup} = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch, shuffleTeams } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 
@@ -66,12 +66,22 @@ const handleMessage = (msg) => {
         
         if (aliases.voteForCommand.includes(command)){
             voteFor(msg,args);
+            return;
+        }
+        if (aliases.serverInfoCommands.includes(command)){
+            sendServerInfo(msg,args[0])
+            return;
         }
 
         if (checkHasStaffRole(msg)) {
+            if (aliases.noticePickup.includes(command)){
+                noticeCurrentPickup(msg)
+                return;
+            }
             if (args.length > 0) {
                 if (aliases.insertCommands.includes(command)) {
                     insertPlayerIntoQueue(msg,args)
+                    return;
                 }
 
                 if (aliases.swapCommands.includes(command)) {
@@ -114,7 +124,7 @@ const handleMessage = (msg) => {
                     return;
                 }
             } else {
-                msg.channel.send(`<@!${msg.author.id}> arguments is needed`)
+                msg.channel.send(`<@!${msg.author.id}> arguments are needed`)
             }
         } else {
             return;

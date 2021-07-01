@@ -1,24 +1,27 @@
 const fs = require('fs');
 const Compute = require("@google-cloud/compute");
-const { getAllServers } = require('../match/matchHandler');
+const { getAllServers, getAvailableServers } = require('../match/matchHandler');
 const compute = new Compute();
 const _servernameArray = getAllServers();
 var timeoutBR;
 var timeoutUSE;
 var timeoutUSC;
 
-let timerUntilShutdown = {
+let availableServers = {
     brasil:{
         name: 'brasil',
-        timeout: undefined
+        timeout: undefined,
+        info: 'Brasil Server Connect Here -> steam://connect/34.95.232.99:27015/rjt'
     },
     useast: {
         name: 'useast',
-        timeout: undefined
+        timeout: undefined,
+        info: 'US East Connect Here -> steam://connect/34.86.237.46:27015/rjt'
     },
     uscentral: {
         name: 'uscentral',
-        timeout: undefined
+        timeout: undefined,
+        info: 'US Central Connect Here -> steam://connect/34.136.53.33:27015/rjt'
     }
 };
 
@@ -115,9 +118,33 @@ function turnOnServerWithTimer(message, _servername) {
     console.log(`Shutdown of the server ${_servername} programmed for 1h 30m`);
     //default 4680000
     //testing with 300000 (5 minutes)*/
-    clearTimeout(timerUntilShutdown[_servername].timeout);
-    timerUntilShutdown[_servername].timeout = setTimeout(turnOffServer, 4680000, message, _servername);
+    clearTimeout(availableServers[_servername].timeout);
+    availableServers[_servername].timeout = setTimeout(turnOffServer, 4680000, message, _servername);
     
 }
 
-module.exports = { turnOnServer, turnOffServer, turnOnServerWithTimer};
+function sendServerInfo(message, _servername)
+{
+    if(_servername === 'all')
+    {
+        message.channel.send(`Brasil Server Connect Here -> steam://connect/34.95.232.99:27015/rjt
+        US Central Connect Here -> steam://connect/34.136.53.33:27015/rjt
+        US East Connect Here -> steam://connect/34.86.237.46:27015/rjt`)
+        return;
+    }
+    if(!_servernameArray.includes(_servername)) 
+    {
+        //TODO: return a list of available servers
+        let serversInMatch = getAvailableServers().join(', ')
+        if(serversInMatch){
+            message.channel.send('Available servers: ' + serversInMatch )
+        }
+        
+        message.channel.send('Connection info with !serverinfo brasil, useast, uscentral');
+        return;
+    }
+
+    message.channel.send(availableServers[_servername].info)
+}
+
+module.exports = { turnOnServer, turnOffServer, turnOnServerWithTimer, sendServerInfo};

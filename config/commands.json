@@ -24,5 +24,9 @@
     
     "insertCommands": ["insert"],
 
-    "voteForCommand": ["vote"]
+    "voteForCommand": ["vote"],
+
+    "noticePickup": ["notice"],
+
+    "serverInfoCommands": ["serverinfo"]
 }
