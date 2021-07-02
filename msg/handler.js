@@ -8,6 +8,8 @@ const { voteFor } = require('../functions/generalFunctions');
 const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup} = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch, shuffleTeams } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
+const { checkStatus } = require('../functions/status/statusFunctions');
+
 
 
 function checkHasStaffRole(message) {
@@ -79,6 +81,10 @@ const handleMessage = (msg) => {
                 return;
             }
             if (args.length > 0) {
+                if(aliases.checkStatus.includes(command)) {
+                    checkStatus(msg,args)
+                    return;
+                }
                 if (aliases.insertCommands.includes(command)) {
                     insertPlayerIntoQueue(msg,args)
                     return;

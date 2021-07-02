@@ -28,5 +28,7 @@
 
     "noticePickup": ["notice"],
 
-    "serverInfoCommands": ["serverinfo"]
+    "serverInfoCommands": ["serverinfo"],
+    
+    "checkStatus": "status"
 }
