@@ -1,6 +1,6 @@
 const config = require('../../config/config.json')
 const {convertIDtoString} = require('../generalFunctions')
-const {EmbedBuilder} = require("discord.js");
+const Discord = require("discord.js");
 const path = './functions/match/matchTemplate.json';
 const fs = require('fs')
 
@@ -11,16 +11,13 @@ function queueEmbed(message, queue)
 
     var players = convertIDtoString(message, queue);
 
-    const queueEmbed = new EmbedBuilder()
+    const queueEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
 	.setTitle(`Queue ${queue.length}/${config.matchsize}`)
-    .setDescription(`Players: ${players}`)
-    .setFooter({ text: `Match ID: ${matchJson.id}` });
-
-    message.channel.send({embeds: [queueEmbed]});
-    return matchJson.id;
+    .setDescription(players)
+    .setFooter(`Match ID: ${matchJson.id}`)
+    message.channel.send(queueEmbed);
 }
 
 
-module.exports = { queueEmbed }
-
+module.exports = { queueEmbed}

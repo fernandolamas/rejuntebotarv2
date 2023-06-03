@@ -1,8 +1,6 @@
 const {convertIDtoString} = require("../generalFunctions")
-const {queueEmbed} = require("../queue/queueEmbeds")
 const footer = "45s to vote";
-const {EmbedBuilder} = require("discord.js");
-
+const Discord = require("discord.js");
 
 function mapEmbed(message, emojis, maps) {
 	var maplist = "";
@@ -11,11 +9,11 @@ function mapEmbed(message, emojis, maps) {
 	}
 	maplist += `${emojis[4]} Re roll maps`;
 	
-	const mapEmbed = new EmbedBuilder()
+	const mapEmbed = new Discord.MessageEmbed()
 	.setColor('#04c779')
 	.setTitle('Vote Map')
-	.setDescription(`Maps:\n${maplist}`)
-	.setFooter({ text: '45s to vote'})
+	.setDescription(maplist)
+	.setFooter(footer)
 	return mapEmbed;
 }
 
@@ -24,80 +22,67 @@ function serverEmbed(message, emojis, servers) {
 	for (let index = 0; index < servers.length; index++) {
 		serverlist +=`${emojis[index]} ${servers[index]}\n`
 	}
-	const serverEmbed = new EmbedBuilder()
+	const serverEmbed = new Discord.MessageEmbed()
 	.setColor('#04c779')
 	.setTitle('Vote Server')
-	.setDescription(`Server:\n${serverlist}`)
-	.setFooter({ text: '45s to vote'})
+	.setDescription(serverlist)
+	.setFooter(footer)
 	
 	return serverEmbed;
 }
 
 function matchEmbedIncomplete(message, team1, team2, server, map, id, date){
-    var cTeam1 = convertIDtoString(message, team1);
-    var cTeam2 = convertIDtoString(message, team2);
+    var team1 = convertIDtoString(message, team1);
+    var team2 = convertIDtoString(message, team2);
     
-	const fields = [
-		{ name: '**Server**', value: "45.235.98.42:27029" || 'Unknown Server' },
-		{ name: '**Map**', value: map || 'Unknown Map' },
-		{ name: '**🔴 Red Team**', value: cTeam1 || 'Unknown Red Team', inline: true },
-		{ name: '**🔵 Blue Team**', value: cTeam2 || 'Unknown Blue Team', inline: true }
-	  ];
-
-
-    const matchEmbed = new EmbedBuilder()
+    const matchEmbed = new Discord.MessageEmbed()
 	.setColor('#fca903')
 	.setTitle('Pickup ready!')
-	.addFields(fields)
-    message.channel.send({embed: matchEmbed})
+	.addFields(
+		{ name: '**ID**', value: id},
+		{ name: '**Server**', value: server},
+		{ name: '**Map**', value: map, inline: true },
+		{ name: '**🔴 Red Team**                 -', value: team1},
+		{ name: '**🔵 Blue Team**', value: team2, inline: true },
+		{ name: '**Started at:**', value: new Date(date).toLocaleString()},
+	)
+    message.channel.send(matchEmbed)
 
 }
 
-function matchEmbed(message, team1, team2, server, map, id) {
-	var cTeam1 = convertIDtoString(message, team1);
-	var cTeam2 = convertIDtoString(message, team2);
-  
-	const currentServer = {
-	  brasil: {
-		name: 'Brasil',
-		ip: '34.95.232.99:27015'
-	  },
-	  uscentral: {
-		name: 'US Central',
-		ip: '34.136.53.33:27015'
-	  },
-	  useast: {
-		name: 'US East',
-		ip: '34.86.237.46:27015'
-	  }
-	};
-  
-	// Verifica los valores de los campos
-	console.log('id', id);
-	console.log('team1:', team1);
-	console.log('team2:', team2);
-	console.log('server:', server);
-	console.log('map:', map);
-	
-	
+function matchEmbed(message, team1, team2, server, map) {
+    var team1 = convertIDtoString(message, team1);
+    var team2 = convertIDtoString(message, team2);
 
-	const fields = [
-	  //{ name: '**ID**', value: id},
-	  { name: '**Server**', value: "45.235.98.42:27029" || 'Unknown Server' },
-	  { name: '**Map**', value: map || 'Unknown Map' },
-	  { name: '**🔴 Red Team**', value: cTeam1 || 'Unknown Red Team', inline: true },
-	  { name: '**🔵 Blue Team**', value: cTeam2 || 'Unknown Blue Team', inline: true }
-	];
-  
-	const matchEmbed = new EmbedBuilder()
-	  .setColor('#fca903')
-	  .setTitle('Pickup ready!')
-	  .addFields(fields)
-	  .setDescription('steam://connect/45.235.98.42:27029/pickup');
-  
-	message.channel.send({ embeds: [matchEmbed] });
-  }
-  
-  
-  module.exports = { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete };
-  
+	const currentServer = { 
+		brasil: {
+			name: 'Brasil',
+			ip: '34.95.232.99:27015'
+		},
+		uscentral: {
+			name: 'US Central',
+			ip: '34.136.53.33:27015'
+		},
+		useast: {
+			name: 'US East',
+			ip: '34.86.237.46:27015'
+		}
+	}
+    console.log(server);
+    const matchEmbed = new Discord.MessageEmbed()
+	.setColor('#fca903')
+	.setTitle('Pickup ready!')
+	.addFields(
+		{ name: '**Server**', value: server},
+		{ name: '**Map**', value: map},
+		{ name: '**🔴 Red Team**                 -', value: team1, inline: true },
+		{ name: '**🔵 Blue Team**', value: team2, inline: true },
+	)
+	// steam://connect/34.95.232.99:27015/rjt `steam://connect/${currentServer[server]['ip']}/rjt`
+	.setDescription(`${currentServer[server]['name']} Server Connect Here -> steam://connect/${currentServer[server]['ip']}/rjt`)
+    message.channel.send(matchEmbed)
+
+}
+
+
+module.exports = { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete }
