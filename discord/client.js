@@ -1,4 +1,4 @@
-let { Client } = require('discord.js');
+let { GatewayIntentBits, Client, EmbedBuilder } = require('discord.js');
 let { handleMessage } = require('../msg/handler.js');
 let { token } = require('../config/token.json');
 const { setMatchAllComplete } = require('../functions/match/matchHandler.js');
@@ -9,7 +9,15 @@ let discordToken = null;
 
 const init = () => {
 
-    client = new Client()
+    client = new Client({
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMessageReactions,
+        ],
+    })
     discordToken = token;
     if (!discordToken) {
         throw new Error('Missing variable token');
@@ -21,9 +29,11 @@ const init = () => {
     client.on("ready", () => {
         console.log("Startup complete");
         setMatchAllComplete();
+        //const canal = client.channels.cache.get("1112438054175641610")
+        //canal.send('sale mix?')
     }),
 
-        client.on('message', msg => {
+        client.on('messageCreate', async msg => {
             handleMessage(msg);
         }),
 
