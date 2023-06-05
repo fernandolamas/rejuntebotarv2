@@ -154,7 +154,9 @@ function showMatch(message, server, map, id) {
 }
 
 function createMatch(message) {
-    voteServer(message)
+    //voteServer(message)
+    //no servers to choose, for now it will be only Brasil
+    voteMap(message, "brasil");
 }
 
 function shuffleTeams(message, matchid){
