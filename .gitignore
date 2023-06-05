@@ -7,3 +7,9 @@ package-lock.json
 package.json
 drive/demosfolder/
 drive/lastuploaddemodate.txt
+functions/queue/queueData.json
+package-lock.json
+functions/match/maps/mapsBan.json
+functions/match/matchTemplate.json
+functions/queue/queueData.json
+functions/server/serversInUse.json
