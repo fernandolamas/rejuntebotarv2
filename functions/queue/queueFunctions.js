@@ -4,6 +4,7 @@ const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, de
 const { createMatch } = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
+const {getLastGameLogs} = require('../logs/logsFunctions.js');
 const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete, setMatchCancelled } = require('../match/matchHandler');
 var timeOutQueue;
 
@@ -112,6 +113,11 @@ function addToQueue(message) {
     }
     else {
         message.channel.send("You are already in the Queue");
+        getLastGameLogs().then(() => {
+            console.log('Finalizado');
+          }).catch((error) => {
+            console.error('Ocurrió un error:', error);
+          });
         return;
     }
 
