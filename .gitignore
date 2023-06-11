@@ -4,7 +4,6 @@ config/token.json
 functions/match/matchlog/
 functions/status/dbCredentials.json
 package-lock.json
-package.json
 drive/demosfolder/
 drive/lastuploaddemodate.txt
 functions/queue/queueData.json
