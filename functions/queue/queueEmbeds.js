@@ -10,11 +10,14 @@ function queueEmbed(message, queue)
     let matchJson = JSON.parse(file);
 
     var players = convertIDtoString(message, queue);
+    var playersList = Array.isArray(players) ? players.join('\n') : players;
+    playersList = playersList.replace(/, /g, '\n'); // Agrega saltos de línea después de cada coma y espacio
+    //console.log(playersList);
 
     const queueEmbed = new EmbedBuilder()
 	.setColor('#0099ff')
 	.setTitle(`Queue ${queue.length}/${config.matchsize}`)
-    .setDescription(`Players: ${players}`)
+    .setDescription(`Players:\n${playersList}`)
     .setFooter({ text: `Match ID: ${matchJson.id}` });
 
     message.channel.send({embeds: [queueEmbed]});
