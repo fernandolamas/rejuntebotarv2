@@ -78,7 +78,7 @@ function matchEmbed(message, team1, team2, server, map, id) {
 	console.log('team2:', team2);
 	console.log('server:', server);
 	console.log('map:', map);
-  
+	
 	var cTeam1List = Array.isArray(cTeam1) ? cTeam1.join('\n') : cTeam1;
 	cTeam1List = cTeam1List.replace(/, /g, '\n'); // Agrega saltos de línea después de cada coma y espacio
   
@@ -92,13 +92,13 @@ function matchEmbed(message, team1, team2, server, map, id) {
 	  { name: '**🔴 Red Team**', value: cTeam1List || 'Unknown Red Team', inline: true },
 	  { name: '**🔵 Blue Team**', value: cTeam2List || 'Unknown Blue Team', inline: true }
 	];
-  
+	
 	const matchEmbed = new EmbedBuilder()
 	  .setColor('#fca903')
 	  .setTitle('Pickup ready!')
 	  .addFields(fields)
 	  .setDescription('steam://connect/45.235.98.42:27029/pickup');
-  
+	
 	message.channel.send({ embeds: [matchEmbed] });
   }
   

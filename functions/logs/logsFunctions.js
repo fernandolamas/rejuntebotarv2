@@ -1,159 +1,162 @@
+const path = require('path');
+const ClientFtp = require('ssh2-sftp-client');
+const FormData = require('form-data');
+const axios = require('axios');
 const fs = require('fs');
-const { Client } = require('ssh2');
-const { usuario, password, server, port } = require('./ftpData.json');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+let { usuario, password, server, port } = require("./ftpData.json");
+const {Client, GatewayIntentBits} = require('discord.js');
+const { token } = require('../../config/token.json');
+const { url } = require('inspector');
 
-async function getLastGameLogs() {
-  const SFTP_USER = usuario;
-  const SFTP_PASSWD = password;
-  const SFTP_SERVER = server;
-  const SFTP_PORT = port;
 
-  let prevlog = [];
-  if (fs.existsSync('./prevlog.json')) {
-    prevlog = JSON.parse(fs.readFileSync('./prevlog.json', 'utf8'));
-  }
 
-  let firstLog;
-  let secondLog;
+// Configuración de la conexión SFTP
+const config = {
+    host: server,
+    port: port,
+    username: usuario,
+    password: password,
+  };
 
-  const conn = new Client();
+const filepath = path.join(__dirname)
 
-  conn.on('error', (err) => {
-    console.error('An error occurred:', err);
-  });
 
-  conn.connect({
-    host: SFTP_SERVER,
-    port: SFTP_PORT,
-    username: SFTP_USER,
-    password: SFTP_PASSWD,
-  });
-
-  conn.on('ready', async () => {    
-    conn.sftp(async (err, sftp) => {
-      if (err) {
-        console.error('Error establishing SFTP connection:', err);
-        conn.end();
-        return;
-      }
-
-      try {
-        const logFiles = await new Promise((resolve, reject) => {
-          sftp.readdir('/45.235.98.42_27029/logs/', (err, files) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(files);
-            }
-          });
-        });
-        
-
-        const logPromises = logFiles
-          .filter((logFile) => logFile.type === 'f' && logFile.name.endsWith('.log'))
-          .map(async (logFile) => {
-            if (prevlog.logFiles && prevlog.logFiles.includes(logFile.name)) {
-              console.log('already parsed the latest log');
-              return;
-            }
-
-            try {
-              const fileInfo = await new Promise((resolve, reject) => {
-                sftp.stat(logFile.name, (err, stats) => {
-                  if (err) {
-                    reject(err);
-                  } else {
-                    resolve(stats);
-                  }
-                });
-              });
-
-              if (fileInfo.size > 100000) {
-                const logModified = fileInfo.mtimeMs;
-                const logModifiedDate = new Date(logModified);
-                
-
-                if (!firstLog) {
-                  firstLog = { name: logFile.name, modified: logModifiedDate };
-                  //console.log(firstLog);
-                } else if ((firstLog.modified - logModifiedDate) / 1000 < 3600) {
-                  secondLog = { name: logFile.name, modified: logModifiedDate };
-                  //console.log(secondLog);
-                }
-              }
-            } catch (error) {
-              console.error('Error getting file info:', error);
-            }
-          });
-
-        await Promise.all(logPromises);
-        
-        
-
-        if (!firstLog || !secondLog) {
-          conn.end();
-          return;
-        }
-
-        try {
-          await new Promise((resolve, reject) => {
-            sftp.fastGet(
-              '/45.235.98.42_27029/logs/' + firstLog.name,
-              'logs/' + firstLog.name,
-              (err) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  resolve();
-                }
-              }
-            );
-          });
-
-          await new Promise((resolve, reject) => {
-            sftp.fastGet(
-              '/45.235.98.42_27029/logs/' + secondLog.name,
-              'logs/' + secondLog.name,
-              (err) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  resolve();
-                }
-              }
-            );
-          });
-
-          const hampalyze = `curl -X POST -F logs[]=@logs/${secondLog.name} -F logs[]=@logs/${firstLog.name} http://app.hampalyzer.com/api/parseGame`;
-          const { stdout, stderr } = await exec(hampalyze);
-          console.log(stdout);
-
-          const status = JSON.parse(stdout);
-          if (status.success) {
-            const site = 'http://app.hampalyzer.com' + status.success.path;
-            console.log('Parsed logs available: ' + site);
-
-            prevlog = {
-              site: site,
-              logFiles: [firstLog.name, secondLog.name],
-            };
-            fs.writeFileSync('prevlog.json', JSON.stringify(prevlog));
-          } else {
-            console.log('error parsing logs: ' + stdout);
-          }
-        } catch (error) {
-          console.error('Error downloading or parsing logs:', error);
-        }
-
-        conn.end();
-      } catch (error) {
-        console.error('Error reading directory:', error);
-        conn.end();
-      }
-    });
-  });
+// Función para ordenar los archivos por fecha de modificación (los más nuevos primero)
+function sortByModifiedDate(files) {
+  return files.sort((a, b) => b.modifyTime - a.modifyTime);
 }
 
-module.exports = { getLastGameLogs };
+// Función para imprimir los nombres de los archivos en la consola
+function printFileNames(files) {
+  const fileList = []
+  
+  files.forEach(file => {
+    console.log(`Archivo: ${file.name}`);
+    fileList.push(file.name)
+  });
+  return fileList
+}
+
+async function connectAndUploadFiles() {
+  downloadFiles()
+}
+
+async function logExist(listLogFileName){
+  const file = fs.readFileSync(filepath+"/prevlog.json");
+  const dataJson = JSON.parse(file);
+  const boolFiles = []
+  dataJson.logFiles.every(logName=>{
+   if (listLogFileName.includes(logName)){
+    console.log("El archivo "+ logName + " ya existe")
+    boolFiles.push(true)
+   }
+  })
+  if(boolFiles[0]){
+    return false
+  }
+  return true
+}
+
+async function downloadFiles(){
+  const sftp = new ClientFtp();
+
+  try {
+    await sftp.connect(config);
+    console.log('Conectado al servidor SFTP');
+
+    // Obtener la lista de archivos en el directorio
+    const files = await sftp.list('/45.235.98.42_27029/logs/');
+
+    // Filtrar los archivos .log con tamaño mayor a 100 KB
+    const filteredFiles = files.filter(file => file.name.endsWith('.log') && file.size > 100000);
+
+    // Ordenar los archivos por fecha de modificación
+    const sortedFiles = sortByModifiedDate(filteredFiles);
+
+    // Obtener los nombres de los últimos 2 archivos
+    const lastTwoFiles = sortedFiles.slice(0, 2);
+
+    // Imprimir los nombres de los archivos en la consola
+    const listFiles= printFileNames(lastTwoFiles);
+    
+    const download = await logExist(listFiles)
+    if( download ){
+
+      if (lastTwoFiles.length > 0) {
+        const form = new FormData();
+  
+        for (const file of lastTwoFiles) {
+          const localFilePath = path.join(__dirname+"/logSubido/", file.name);
+  
+          // Descargar el archivo localmente       
+          await sftp.get(`/45.235.98.42_27029/logs/${file.name}`, localFilePath);        
+  
+          // Leer el contenido del archivo
+          const fileContent = fs.createReadStream(localFilePath); 
+  
+          // Agregar el archivo al formulario
+          form.append('logs[]', fileContent, { filename: file.name });
+        }
+        
+  
+        // Realizar la solicitud POST al hampalyzer
+        const response = await axios.post('http://app.hampalyzer.com/api/parseGame', form, {
+          headers: form.getHeaders()
+        });
+        
+  
+        console.log('Respuesta del hampalyzer:', response.data);
+        const url = "http://app.hampalyzer.com"+ response.data.success.path;
+        console.log(url);
+        
+  
+        const data = {
+          site: url,
+          logFiles : printFileNames(lastTwoFiles)
+        }
+        
+        fs.writeFileSync(filepath+"/prevlog.json",JSON.stringify(data))
+        
+      } else {
+        console.log('No se encontraron archivos de registro que cumplan con los criterios.');
+      }
+      //mensaje con la url de los archivos subidos
+      const client = new Client({
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMessageReactions,
+        ],
+    });
+        await client.login(token);
+        const channel = await client.channels.fetch('1112716589083676712');
+        await channel.send(`STATS: ${url}`);
+      
+    } else { 
+      //aca si los archivos ya fueron subidos
+      const client = new Client({
+        intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMessageReactions,
+        ],
+    });
+        await client.login(token);
+        const statsChannel = await client.channels.fetch('1114925352087715871');
+        await statsChannel.send('Los stats fueron subidos al canal #logs');     
+    }
+    
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+  } finally {
+    sftp.end();
+    console.log('Desconectado del servidor SFTP');
+  }
+}
+
+// Llamar a la función principal al iniciar la aplicación
+module.exports = { connectAndUploadFiles }

@@ -113,11 +113,6 @@ function addToQueue(message) {
     }
     else {
         message.channel.send("You are already in the Queue");
-        getLastGameLogs().then(() => {
-            console.log('Finalizado');
-          }).catch((error) => {
-            console.error('Ocurrió un error:', error);
-          });
         return;
     }
 

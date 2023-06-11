@@ -120,7 +120,6 @@ function setMatchComplete(idmatch) {
   }
   let data = JSON.stringify(jsonMatch);
   fs.writeFileSync(`${pathMatchs}/match_${idmatch}.json`, data);
-  getLastGameLogs();
 
 
 }
