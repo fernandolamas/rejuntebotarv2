@@ -4,6 +4,7 @@ const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, de
 const { createMatch } = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
+const {getLastGameLogs} = require('../logs/logsFunctions.js');
 const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete, setMatchCancelled } = require('../match/matchHandler');
 var timeOutQueue;
 

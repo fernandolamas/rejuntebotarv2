@@ -98,7 +98,7 @@ function setMatchCancelled(idmatch) {
       ["state"]: "complete"
     }
   }else{
-    throw new exception();
+    throw exception();
   }
   setServerUnban(match.server);
   setMapUnban(match.map, match.server);
@@ -116,7 +116,7 @@ function setMatchComplete(idmatch) {
       ["state"]: "complete"
     }
   }else{
-    throw new exception();
+    throw exception();
   }
   let data = JSON.stringify(jsonMatch);
   fs.writeFileSync(`${pathMatchs}/match_${idmatch}.json`, data);

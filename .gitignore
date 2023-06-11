@@ -13,3 +13,6 @@ functions/match/maps/mapsBan.json
 functions/match/matchTemplate.json
 functions/queue/queueData.json
 functions/server/serversInUse.json
+functions/server/rcon/credentials
+functions/logs/ftpData.json
+functions/logs/logSubido

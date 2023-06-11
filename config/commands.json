@@ -28,6 +28,8 @@
 
     "noticePickup": ["notice"],
 
+    "stats": ["stats"],
+
     "serverInfoCommands": ["serverinfo"],
     
     "checkStatus": "status"

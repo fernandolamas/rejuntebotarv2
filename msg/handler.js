@@ -9,6 +9,7 @@ const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kick
 const { showMatchIncompletes, cancelMatch, shuffleTeams } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 const { checkStatus } = require('../functions/status/statusFunctions');
+const { connectAndUploadFiles } = require('../functions/logs/logsFunctions.js')
 
 
 
@@ -80,6 +81,12 @@ const handleMessage = (msg) => {
                 noticeCurrentPickup(msg)
                 return;
             }
+
+            if (aliases.stats.includes(command)) {
+                connectAndUploadFiles()
+                return;
+            }
+
             if (args.length > 0) {
                 if(aliases.checkStatus.includes(command)) {
                     checkStatus(msg,args)
