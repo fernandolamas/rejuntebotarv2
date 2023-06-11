@@ -149,7 +149,12 @@ function showMatch(message, server, map, id) {
     setMapBan(map, server);
     setServerBan(server);
     //turnOnServerWithTimer(message,server);
-    //setTimeout(function() {conn = turnOnRconConnection(message,server) },60000);
+    //no servers to choose, for now it will be only Brasil
+    try{
+        setTimeout(function() {conn = turnOnRconConnection(message,"brasil") },60000);
+    }catch(e){
+        console.log(`The system was unable to establish rcon connection ${e}`);
+    }
     deleteQueue();
 }
 

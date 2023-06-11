@@ -55,20 +55,20 @@ function sendRconResponse(message, args) {
 
     let currentMatches = getMatchIncomplete();
     let currentMatch;
+    args[0] = "brasil";
+    args[1] = "teams";
     currentMatches.forEach(m => {
         if (m.server === args[0]) {
             currentMatch = m;
         }
     })
-
     //if is asking for the teams, share the teams
-
     switch (args[1]) {
         case 'teams':
             console.log("Current match: ", currentMatch);
+            
 
-
-
+            
             var team1 = "";
             currentMatch.team1.forEach(async uid => {
                 let user = await message.client.users.fetch(uid);
@@ -89,8 +89,6 @@ function sendRconResponse(message, args) {
             break;
     }
     message.channel.send("Sending teams info to the server");
-
-
 }
 
 module.exports = { turnOnRconConnection, sendRconResponse };
