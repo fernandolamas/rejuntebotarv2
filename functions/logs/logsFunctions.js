@@ -115,9 +115,6 @@ async function downloadFiles() {
         }
 
         fs.writeFileSync(filepath + "/prevlog.json", JSON.stringify(data))
-
-        //mensaje con la url de los archivos subidos
-        setTimeout(async () => {
         const client = new Client({
           intents: [
             GatewayIntentBits.Guilds,
@@ -127,11 +124,32 @@ async function downloadFiles() {
             GatewayIntentBits.GuildMessageReactions,
           ],
         });
-        await client.login(token);
-        const channel = await client.channels.fetch('1112716589083676712');
-        await channel.send(`STATS: ${url}`);
-      }, 5000);
 
+        const carpeta = path.join(__dirname, "../match/matchlog/");
+
+        // Obtener la lista de archivos en la carpeta
+        const archivos = fs.readdirSync(carpeta)
+          .filter((archivo) => archivo.endsWith('.json') && archivo.startsWith('match_'));
+
+        // Ordenar los archivos por orden alfabético inverso
+        archivos.sort((a, b) => b.localeCompare(a));
+
+        // Verificar si hay archivos en la carpeta
+        if (archivos.length > 0) {
+          // Leer el archivo más reciente
+          const archivoReciente = archivos[0];
+          const rutaArchivoReciente = path.join(carpeta, archivoReciente);
+
+          const contenido = fs.readFileSync(rutaArchivoReciente, 'utf8');
+          const datosJSON = JSON.parse(contenido);
+
+          // Extraer el valor de "map"
+          const map = datosJSON.map;
+
+          await client.login(token);
+          const channel = await client.channels.fetch('1112716589083676712');
+          await channel.send(`STATS: ${url} - ${map}`);         
+        } 
       } else {
         console.log('No se encontraron archivos de registro que cumplan con los criterios.');
       }
@@ -166,11 +184,9 @@ async function downloadFiles() {
         }
       });
 
-
       await client.login(token);
       const statsChannel = await client.channels.fetch('1114925352087715871');
       await statsChannel.send('Los stats fueron subidos al canal #logs');
-      console.log(data.site)
     }
 
   } catch (err) {
