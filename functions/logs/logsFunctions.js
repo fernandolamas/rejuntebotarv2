@@ -4,7 +4,7 @@ const FormData = require('form-data');
 const axios = require('axios');
 const fs = require('fs');
 let { usuario, password, server, port } = require("./ftpData.json");
-const {Client, GatewayIntentBits} = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 const { token } = require('../../config/token.json');
 const { url } = require('inspector');
 
@@ -12,11 +12,11 @@ const { url } = require('inspector');
 
 // Configuración de la conexión SFTP
 const config = {
-    host: server,
-    port: port,
-    username: usuario,
-    password: password,
-  };
+  host: server,
+  port: port,
+  username: usuario,
+  password: password,
+};
 
 const filepath = path.join(__dirname)
 
@@ -29,7 +29,7 @@ function sortByModifiedDate(files) {
 // Función para imprimir los nombres de los archivos en la consola
 function printFileNames(files) {
   const fileList = []
-  
+
   files.forEach(file => {
     console.log(`Archivo: ${file.name}`);
     fileList.push(file.name)
@@ -41,23 +41,23 @@ async function connectAndUploadFiles() {
   downloadFiles()
 }
 
-async function logExist(listLogFileName){
-  const file = fs.readFileSync(filepath+"/prevlog.json");
+async function logExist(listLogFileName) {
+  const file = fs.readFileSync(filepath + "/prevlog.json");
   const dataJson = JSON.parse(file);
   const boolFiles = []
-  dataJson.logFiles.every(logName=>{
-   if (listLogFileName.includes(logName)){
-    console.log("El archivo "+ logName + " ya existe")
-    boolFiles.push(true)
-   }
+  dataJson.logFiles.every(logName => {
+    if (listLogFileName.includes(logName)) {
+      console.log("El archivo " + logName + " ya existe")
+      boolFiles.push(true)
+    }
   })
-  if(boolFiles[0]){
+  if (boolFiles[0]) {
     return false
   }
   return true
 }
 
-async function downloadFiles(){
+async function downloadFiles() {
   const sftp = new ClientFtp();
 
   try {
@@ -77,79 +77,118 @@ async function downloadFiles(){
     const lastTwoFiles = sortedFiles.slice(0, 2);
 
     // Imprimir los nombres de los archivos en la consola
-    const listFiles= printFileNames(lastTwoFiles);
-    
-    const download = await logExist(listFiles)
-    if( download ){
+    const listFiles = printFileNames(lastTwoFiles);
 
+    const download = await logExist(listFiles)
+    if (download) {
       if (lastTwoFiles.length > 0) {
         const form = new FormData();
-  
+
         for (const file of lastTwoFiles) {
-          const localFilePath = path.join(__dirname+"/logSubido/", file.name);
-  
+          const localFilePath = path.join(__dirname + "/logSubido/", file.name);
+
           // Descargar el archivo localmente       
-          await sftp.get(`/45.235.98.42_27029/logs/${file.name}`, localFilePath);        
-  
+          await sftp.get(`/45.235.98.42_27029/logs/${file.name}`, localFilePath);
+
           // Leer el contenido del archivo
-          const fileContent = fs.createReadStream(localFilePath); 
-  
+          const fileContent = fs.createReadStream(localFilePath);
+
           // Agregar el archivo al formulario
           form.append('logs[]', fileContent, { filename: file.name });
         }
-        
-  
+
+
         // Realizar la solicitud POST al hampalyzer
         const response = await axios.post('http://app.hampalyzer.com/api/parseGame', form, {
           headers: form.getHeaders()
         });
-        
-  
+
+
         console.log('Respuesta del hampalyzer:', response.data);
-        const url = "http://app.hampalyzer.com"+ response.data.success.path;
+        const url = "http://app.hampalyzer.com" + response.data.success.path;
         console.log(url);
-        
-  
+
+
         const data = {
           site: url,
-          logFiles : printFileNames(lastTwoFiles)
+          logFiles: printFileNames(lastTwoFiles)
         }
-        
-        fs.writeFileSync(filepath+"/prevlog.json",JSON.stringify(data))
-        
+
+        fs.writeFileSync(filepath + "/prevlog.json", JSON.stringify(data))
+        const client = new Client({
+          intents: [
+            GatewayIntentBits.Guilds,
+            GatewayIntentBits.GuildMembers,
+            GatewayIntentBits.GuildMessages,
+            GatewayIntentBits.MessageContent,
+            GatewayIntentBits.GuildMessageReactions,
+          ],
+        });
+
+        const carpeta = path.join(__dirname, "../match/matchlog/");
+
+        // Obtener la lista de archivos en la carpeta
+        const archivos = fs.readdirSync(carpeta)
+          .filter((archivo) => archivo.endsWith('.json') && archivo.startsWith('match_'));
+
+        // Ordenar los archivos por orden alfabético inverso
+        archivos.sort((a, b) => b.localeCompare(a));
+
+        // Verificar si hay archivos en la carpeta
+        if (archivos.length > 0) {
+          // Leer el archivo más reciente
+          const archivoReciente = archivos[0];
+          const rutaArchivoReciente = path.join(carpeta, archivoReciente);
+
+          const contenido = fs.readFileSync(rutaArchivoReciente, 'utf8');
+          const datosJSON = JSON.parse(contenido);
+
+          // Extraer el valor de "map"
+          const map = datosJSON.map;
+
+          await client.login(token);
+          const channel = await client.channels.fetch('1112716589083676712');
+          await channel.send(`STATS: ${url} - ${map}`);         
+        } 
       } else {
         console.log('No se encontraron archivos de registro que cumplan con los criterios.');
       }
-      //mensaje con la url de los archivos subidos
-      const client = new Client({
-        intents: [
-            GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMembers,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.MessageContent,
-            GatewayIntentBits.GuildMessageReactions,
-        ],
-    });
-        await client.login(token);
-        const channel = await client.channels.fetch('1112716589083676712');
-        await channel.send(`STATS: ${url}`);
-      
-    } else { 
+
+    } else {
       //aca si los archivos ya fueron subidos
       const client = new Client({
         intents: [
-            GatewayIntentBits.Guilds,
-            GatewayIntentBits.GuildMembers,
-            GatewayIntentBits.GuildMessages,
-            GatewayIntentBits.MessageContent,
-            GatewayIntentBits.GuildMessageReactions,
+          GatewayIntentBits.Guilds,
+          GatewayIntentBits.GuildMembers,
+          GatewayIntentBits.GuildMessages,
+          GatewayIntentBits.MessageContent,
+          GatewayIntentBits.GuildMessageReactions,
         ],
-    });
-        await client.login(token);
-        const statsChannel = await client.channels.fetch('1114925352087715871');
-        await statsChannel.send('Los stats fueron subidos al canal #logs');     
+      });
+
+      //Leemos la url del ultimo log
+       fs.readFile(filepath + "/prevlog.json", 'utf8', (err, data) => {
+        if (err) {
+          console.error('Error al leer el archivo JSON:', err);
+          return;
+        }
+
+        try {
+          // Parsear el contenido del archivo JSON
+          const url = JSON.parse(data);
+
+          // Imprimir el valor de "site"
+          console.log(url.site);
+        } catch (error) {
+          console.error('Error al parsear el contenido JSON:', error);
+        }
+      });
+
+      await client.login(token);
+      const statsChannel = await client.channels.fetch('1114925352087715871');
+      await statsChannel.send('Los stats fueron subidos al canal #logs');
     }
-    
+
   } catch (err) {
     console.error(`Error: ${err.message}`);
   } finally {
