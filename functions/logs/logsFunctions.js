@@ -78,10 +78,14 @@ async function downloadFiles() {
     if (download) {
       if (lastTwoFiles.length > 0) {
         const form = new FormData();
+        const logsFolderName = "logSubido";
+        const localFilePath = path.join(`${__dirname}/${logsFolderName}/${file.name}`);
+        const logsFolder = path.join(`${__dirname}/${logsFolderName}`);
 
+        if (!fs.existsSync(logsFolder)) {
+          fs.mkdirSync(logsFolder)
+        }
         for (const file of lastTwoFiles) {
-          const localFilePath = path.join(__dirname + "/logSubido/", file.name);
-
           // Descargar el archivo localmente       
           await sftp.get(`/45.235.98.42_27029/logs/${file.name}`, localFilePath);
 
@@ -143,8 +147,8 @@ async function downloadFiles() {
 
           await client.login(token);
           const channel = await client.channels.fetch('1113175589583585371');
-          await channel.send(`STATS: ${url} - ${map}`);         
-        } 
+          await channel.send(`STATS: ${url} - ${map}`);
+        }
       } else {
         console.log('No se encontraron archivos de registro que cumplan con los criterios.');
       }
@@ -152,7 +156,7 @@ async function downloadFiles() {
     } else {
 
       //Leemos la url del ultimo log
-       fs.readFile(filepath + "/prevlog.json", 'utf8', (err, data) => {
+      fs.readFile(filepath + "/prevlog.json", 'utf8', (err, data) => {
         if (err) {
           console.error('Error al leer el archivo JSON:', err);
           return;
