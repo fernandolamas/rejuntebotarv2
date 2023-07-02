@@ -8,8 +8,6 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const { token } = require('../../config/token.json');
 const { url } = require('inspector');
 
-
-
 // Configuración de la conexión SFTP
 const config = {
   host: server,

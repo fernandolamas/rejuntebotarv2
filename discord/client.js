@@ -2,12 +2,13 @@ let { GatewayIntentBits, Client, EmbedBuilder } = require('discord.js');
 let { handleMessage } = require('../msg/handler.js');
 let { token } = require('../config/token.json');
 const { setMatchAllComplete } = require('../functions/match/matchHandler.js');
+const { registerEndpoints } = require('../functions/endpoints/endpoints.js');
 //should be env variable
 
 let client = null;
 let discordToken = null;
 
-const init = () => {
+const init = (app, port) => {
 
     client = new Client({
         intents: [
@@ -37,7 +38,15 @@ const init = () => {
             handleMessage(msg);
         }),
 
-        client.login(discordToken);
+        client.login(discordToken)
+        .then(() => 
+        {
+            console.log("Bot connected to discord");
+            app.listen(port, () => {
+                console.log(`Listening to port ${port}`)
+            })
+            registerEndpoints(app);
+        }).catch(error => console.error("Error while connecting to discord", error))
 }
 
 
