@@ -79,13 +79,13 @@ async function downloadFiles() {
       if (lastTwoFiles.length > 0) {
         const form = new FormData();
         const logsFolderName = "logSubido";
-        const localFilePath = path.join(`${__dirname}/${logsFolderName}/${file.name}`);
         const logsFolder = path.join(`${__dirname}/${logsFolderName}`);
-
+        
         if (!fs.existsSync(logsFolder)) {
           fs.mkdirSync(logsFolder)
         }
         for (const file of lastTwoFiles) {
+          const localFilePath = path.join(`${__dirname}/${logsFolderName}/${file.name}`);
           // Descargar el archivo localmente       
           await sftp.get(`/45.235.98.42_27029/logs/${file.name}`, localFilePath);
 
