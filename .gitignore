@@ -15,3 +15,4 @@ functions/server/serversInUse.json
 functions/server/rcon/credentials
 functions/logs/ftpData.json
 functions/logs/logSubido
+functions/logs/prevlog.json
