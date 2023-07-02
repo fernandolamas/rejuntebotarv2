@@ -35,9 +35,6 @@ function printFileNames(files) {
   return fileList
 }
 
-async function connectAndUploadFiles() {
-  downloadFiles()
-}
 
 async function logExist(listLogFileName) {
   const file = fs.readFileSync(filepath + "/prevlog.json");
@@ -145,7 +142,7 @@ async function downloadFiles() {
           const map = datosJSON.map;
 
           await client.login(token);
-          const channel = await client.channels.fetch('1112716589083676712');
+          const channel = await client.channels.fetch('1113175589583585371');
           await channel.send(`STATS: ${url} - ${map}`);         
         } 
       } else {
@@ -153,16 +150,6 @@ async function downloadFiles() {
       }
 
     } else {
-      //aca si los archivos ya fueron subidos
-      const client = new Client({
-        intents: [
-          GatewayIntentBits.Guilds,
-          GatewayIntentBits.GuildMembers,
-          GatewayIntentBits.GuildMessages,
-          GatewayIntentBits.MessageContent,
-          GatewayIntentBits.GuildMessageReactions,
-        ],
-      });
 
       //Leemos la url del ultimo log
        fs.readFile(filepath + "/prevlog.json", 'utf8', (err, data) => {
@@ -181,10 +168,6 @@ async function downloadFiles() {
           console.error('Error al parsear el contenido JSON:', error);
         }
       });
-
-      await client.login(token);
-      const statsChannel = await client.channels.fetch('1114925352087715871');
-      await statsChannel.send('Los stats fueron subidos al canal #logs');
     }
 
   } catch (err) {
@@ -196,4 +179,4 @@ async function downloadFiles() {
 }
 
 // Llamar a la función principal al iniciar la aplicación
-module.exports = { connectAndUploadFiles }
+module.exports = { downloadFiles }
