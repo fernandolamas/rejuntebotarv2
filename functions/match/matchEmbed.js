@@ -33,7 +33,7 @@ function serverEmbed(message, emojis, servers) {
 	return serverEmbed;
 }
 
-function matchEmbedIncomplete(message, team1, team2, server, map, id, date){
+function matchEmbedIncomplete(message, team1, team2, map){
     var cTeam1 = convertIDtoString(message, team1);
     var cTeam2 = convertIDtoString(message, team2);
     
@@ -46,31 +46,17 @@ function matchEmbedIncomplete(message, team1, team2, server, map, id, date){
 
 
     const matchEmbed = new EmbedBuilder()
-	.setColor('#fca903')
-	.setTitle('Pickup ready!')
-	.addFields(fields)
-    message.channel.send({embed: matchEmbed})
+		.setColor('#fca903')
+		.setTitle('Pickup ready!')
+		.addFields(fields)
+		.setDescription('steam://connect/45.235.98.42:27029/pickup');
+	message.channel.send({ embeds: [matchEmbed] });
 
 }
 
 function matchEmbed(message, team1, team2, server, map, id) {
 	var cTeam1 = convertIDtoString(message, team1);
 	var cTeam2 = convertIDtoString(message, team2);
-  
-	const currentServer = {
-	  brasil: {
-		name: 'Brasil',
-		ip: '34.95.232.99:27015'
-	  },
-	  uscentral: {
-		name: 'US Central',
-		ip: '34.136.53.33:27015'
-	  },
-	  useast: {
-		name: 'US East',
-		ip: '34.86.237.46:27015'
-	  }
-	};
   
 	// Verifica los valores de los campos
 	console.log('id', id);

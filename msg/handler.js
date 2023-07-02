@@ -89,7 +89,8 @@ const handleMessage = (msg) => {
 
             if (args.length > 0) {
                 if(aliases.checkStatus.includes(command)) {
-                    checkStatus(msg,args)
+                    //checkStatus(msg,args)
+                    console.log("Obsolete function !status")
                     return;
                 }
                 if (aliases.insertCommands.includes(command)) {

@@ -182,7 +182,7 @@ function showMatchIncompletes(message) {
     }
     else {
         incompleteMatchs.forEach(m => {
-            matchEmbedIncomplete(message, m.team1, m.team2, m.server, m.map, m.id, m.date);
+            matchEmbedIncomplete(message, m.team1, m.team2, m.map);
         })
     }
 
