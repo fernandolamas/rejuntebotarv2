@@ -131,7 +131,11 @@ async function downloadFiles() {
           .filter((archivo) => archivo.endsWith('.json') && archivo.startsWith('match_'));
 
         // Ordenar los archivos por orden alfabético inverso
-        archivos.sort((a, b) => b.localeCompare(a));
+        archivos.sort((a, b) => {
+          const numeroA = parseInt(a.match(/\d+/)[0]);
+          const numeroB = parseInt(b.match(/\d+/)[0]);
+          return numeroB - numeroA;
+        });
 
         // Verificar si hay archivos en la carpeta
         if (archivos.length > 0) {
