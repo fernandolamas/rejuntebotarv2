@@ -49,7 +49,7 @@ function matchEmbedIncomplete(message, team1, team2, map){
 		.setColor('#fca903')
 		.setTitle('Pickup ready!')
 		.addFields(fields)
-		.setDescription('steam://connect/45.235.98.42:27029/pickup');
+		.setDescription('https://tinyurl.com/tfclatam');
 	message.channel.send({ embeds: [matchEmbed] });
 
 }
@@ -83,7 +83,7 @@ function matchEmbed(message, team1, team2, server, map, id) {
 	  .setColor('#fca903')
 	  .setTitle('Pickup ready!')
 	  .addFields(fields)
-	  .setDescription('steam://connect/45.235.98.42:27029/pickup');
+	  .setDescription('https://tinyurl.com/tfclatam');
 	
 	message.channel.send({ embeds: [matchEmbed] });
   }
