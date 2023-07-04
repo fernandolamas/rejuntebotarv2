@@ -214,7 +214,7 @@ function insertPlayerIntoQueue(message, args) {
 function noticeCurrentPickup(message)
 {
     var queue = getQueue();
-    message.channel.send(`@here ${queue.length}/${config.matchsize} !ADD`)
+    message.channel.send(`@tfc.player ${queue.length}/${config.matchsize} !ADD`)
 }
 
 module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup }
