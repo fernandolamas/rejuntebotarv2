@@ -66,6 +66,9 @@ function setMapBan(map, server) {
 
 function getMatchIncomplete() {
   var matchsIncomplete = [];
+  if (!fs.existsSync(pathMatchs)) {
+    fs.mkdirSync(pathMatchs)
+  }
   var matchs = fs.readdirSync(pathMatchs);
   matchs.forEach(m => {
     var file = fs.readFileSync(`${pathMatchs}/${m}`);
