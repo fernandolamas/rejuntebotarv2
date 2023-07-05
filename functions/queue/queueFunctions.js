@@ -7,7 +7,7 @@ const { getUserFromMention } = require('../generalFunctions');
 const {getLastGameLogs} = require('../logs/logsFunctions.js');
 const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete, setMatchCancelled } = require('../match/matchHandler');
 var timeOutQueue;
-
+var queueShouldExpire = true;
 
 function checkInMatchIncomplete(message) {
     var usersInMatch = getUsersInMatchsIncomplete();
@@ -115,12 +115,18 @@ function addToQueue(message) {
         message.channel.send("You are already in the Queue");
         return;
     }
-
-    clearTimeout(timeOutQueue);
-    timeOutQueue = setTimeout(function () {
-        deleteQueue()
-        message.channel.send("Clearing Queue");
-    }, config.matchTimeout)
+    
+    
+    if(queueShouldExpire)
+    {
+        clearTimeout(timeOutQueue);
+        timeOutQueue = setTimeout(function () {
+            deleteQueue()
+            message.channel.send("Clearing Queue");
+        }, config.matchTimeout)
+    }else{
+        clearTimeout(timeOutQueue)
+    }
 
     if (queue.length === config.matchsize) {
         createMatch(message);
@@ -138,6 +144,10 @@ function leaveToQueue(message) {
         updateQueue(queue, message.author.id, "r")
         //message.channel.send("Leave from Queue")
         queueEmbed(message, getQueue());
+        if(queue.length === 1)
+        {
+            queueShouldExpire = true;
+        }
     }
     else {
         message.channel.send("You are not in the Queue");
@@ -217,4 +227,10 @@ function noticeCurrentPickup(message)
     message.channel.send(`<@&1125413526429765682> ${queue.length}/${config.matchsize} !ADD`)
 }
 
-module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup }
+function removeTimeoutFromCurrentQueue()
+{
+    queueShouldExpire = false;
+    return;
+}
+
+module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue }
