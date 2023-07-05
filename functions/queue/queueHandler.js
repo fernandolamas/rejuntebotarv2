@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = './functions/queue/queueData.json';
 const pathBan = './functions/queue/queuePlayerBan.json'
 
-function getBansID(){
+function getBansID() {
     var file = fs.readFileSync(pathBan);
     let bans = JSON.parse(file);
     var bansid = []
@@ -12,30 +12,30 @@ function getBansID(){
     return bansid;
 }
 
-function getBans(){
+function getBans() {
     var file = fs.readFileSync(pathBan);
     let bans = JSON.parse(file);
     return bans;
 }
 
-function updateBans(userid){
+function updateBans(userid) {
     var bans = getBans();
     bans = bans.filter(ban => ban.userid != userid);
     let data = JSON.stringify(bans);
     fs.writeFileSync(pathBan, data);
 }
 
-function timeoutBans(userid){
+function timeoutBans(userid) {
     var bans = getBansID()
     var indexBanned = bans.indexOf(userid);
     bans = getBans();
     var user = bans[indexBanned];
-    setTimeout(function(){updateBans(userid)}, user.timeout*60*1000);
+    setTimeout(function () { updateBans(userid) }, user.timeout * 60 * 1000);
 }
 
-function addToBans(user, timeout){
+function addToBans(user, timeout) {
     var bans = getBans()
-    if(!timeout || isNaN(timeout)) timeout = 30;
+    if (!timeout || isNaN(timeout)) timeout = 30;
     bans.push({
         "userid": user,
         "timeout": timeout
@@ -44,14 +44,16 @@ function addToBans(user, timeout){
     fs.writeFileSync(pathBan, data);
 }
 
-function getQueue(){
+function getQueue() {
+    if (!fs.existsSync(path)) return []
+
     var file = fs.readFileSync(path);
     let queue = JSON.parse(file);
     return queue;
 }
 
-function updateQueue(queue, userid, option){
-    switch(option){
+function updateQueue(queue, userid, option) {
+    switch (option) {
         case "a":
             queue.push(userid)
             break;
@@ -63,9 +65,9 @@ function updateQueue(queue, userid, option){
     fs.writeFileSync(path, data);
 }
 
-function deleteQueue(){
+function deleteQueue() {
     let data = JSON.stringify([]);
-    fs.writeFileSync(path,data);
+    fs.writeFileSync(path, data);
 }
 
-module.exports = {getQueue, updateQueue, deleteQueue, addToBans, getBans, getBansID, updateBans, timeoutBans}
+module.exports = { getQueue, updateQueue, deleteQueue, addToBans, getBans, getBansID, updateBans, timeoutBans }
