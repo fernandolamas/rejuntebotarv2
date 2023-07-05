@@ -81,12 +81,12 @@ const handleMessage = (msg) => {
             removeTimeoutFromCurrentQueue()
             return;
         }
+        if (aliases.noticePickup.includes(command)){
+            noticeCurrentPickup(msg)
+            return;
+        }
 
         if (checkHasStaffRole(msg)) {
-            if (aliases.noticePickup.includes(command)){
-                noticeCurrentPickup(msg)
-                return;
-            }
 
             if (aliases.stats.includes(command)) {
                 downloadFiles()
