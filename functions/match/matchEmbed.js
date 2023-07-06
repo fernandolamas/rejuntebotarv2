@@ -38,7 +38,7 @@ function matchEmbedIncomplete(message, team1, team2, map){
     var cTeam2 = convertIDtoString(message, team2);
     
 	const fields = [
-		{ name: '**Server**', value: "45.235.98.42:27029" || 'Unknown Server' },
+		{ name: '**Server**', value: "TFC Argieland" || 'Unknown Server' },
 		{ name: '**Map**', value: map || 'Unknown Map' },
 		{ name: '**🔴 Red Team**', value: cTeam1 || 'Unknown Red Team', inline: true },
 		{ name: '**🔵 Blue Team**', value: cTeam2 || 'Unknown Blue Team', inline: true }
@@ -49,7 +49,7 @@ function matchEmbedIncomplete(message, team1, team2, map){
 		.setColor('#fca903')
 		.setTitle('Pickup ready!')
 		.addFields(fields)
-		.setDescription('https://tinyurl.com/tfclatam');
+		.setDescription('https://tinyurl.com/tfclatam2');
 	message.channel.send({ embeds: [matchEmbed] });
 
 }
@@ -73,7 +73,7 @@ function matchEmbed(message, team1, team2, server, map, id) {
   
 	const fields = [
 	  //{ name: '**ID**', value: id},
-	  { name: '**Server**', value: "45.235.98.42:27029" || 'Unknown Server' },
+	  { name: '**Server**', value: "TFC Argieland" || 'Unknown Server' },
 	  { name: '**Map**', value: map || 'Unknown Map' },
 	  { name: '**🔴 Red Team**', value: cTeam1List || 'Unknown Red Team', inline: true },
 	  { name: '**🔵 Blue Team**', value: cTeam2List || 'Unknown Blue Team', inline: true }
@@ -83,7 +83,7 @@ function matchEmbed(message, team1, team2, server, map, id) {
 	  .setColor('#fca903')
 	  .setTitle('Pickup ready!')
 	  .addFields(fields)
-	  .setDescription('https://tinyurl.com/tfclatam');
+	  .setDescription('https://tinyurl.com/tfclatam2');
 	
 	message.channel.send({ embeds: [matchEmbed] });
   }
