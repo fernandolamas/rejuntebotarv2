@@ -67,7 +67,10 @@ function sendRconResponse(message, args) {
         case 'teams':
             console.log("Current match: ", currentMatch);
             
-
+            if(!currentMatch)
+            {
+                return;
+            }
             
             var team1 = "";
             currentMatch.team1.forEach(async uid => {
