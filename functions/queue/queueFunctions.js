@@ -6,7 +6,6 @@ const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
 const {getLastGameLogs} = require('../logs/logsFunctions.js');
 const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete, setMatchCancelled } = require('../match/matchHandler');
-var timeOutQueue;
 var queueShouldExpire = true;
 
 function checkInMatchIncomplete(message) {
@@ -116,18 +115,6 @@ function addToQueue(message) {
         return;
     }
     
-    
-    if(queueShouldExpire)
-    {
-        clearTimeout(timeOutQueue);
-        timeOutQueue = setTimeout(function () {
-            deleteQueue()
-            message.channel.send("Clearing Queue");
-        }, config.matchTimeout)
-    }else{
-        clearTimeout(timeOutQueue)
-    }
-
     if (queue.length === config.matchsize) {
         createMatch(message);
     }
@@ -210,12 +197,6 @@ function insertPlayerIntoQueue(message, args) {
         message.channel.send("You are already in the Queue");
         return;
     }
-
-    clearTimeout(timeOutQueue);
-    timeOutQueue = setTimeout(function () {
-        deleteQueue()
-        message.channel.send("Clearing Queue");
-    }, config.matchTimeout)
 
     if (queue.length === config.matchsize) {
         createMatch(message);
