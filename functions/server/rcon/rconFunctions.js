@@ -80,10 +80,8 @@ function sendRconResponse(message, args) {
                 team2 += user.username + " ";
             })
             setTimeout(() => {
-                conn[currentMatch.server].connection.send("say Red Team");
-                conn[currentMatch.server].connection.send("say " + team1);
-                conn[currentMatch.server].connection.send("say Blue Team");
-                conn[currentMatch.server].connection.send("say " + team2);
+                conn[currentMatch.server].connection.send("say Red Team " + team1);
+                conn[currentMatch.server].connection.send("say Blue Team " + team2);
             }, 6000);
 
             break;
