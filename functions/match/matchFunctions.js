@@ -203,4 +203,63 @@ function cancelMatch(message, id) {
 
 }
 
-module.exports = { shuffleTeams,createMatch, showMatchIncompletes, cancelMatch }
+function reRollMaps(message){
+    let server = "brasil";
+    var maps = getMaps(server);
+    message.channel.send({ embeds: [mapEmbed(message, emojisMap, maps)] }).then(embedMessage => {
+
+        embedMessage.react(emojisMap[0]);
+        embedMessage.react(emojisMap[1]);
+        embedMessage.react(emojisMap[2]);
+        embedMessage.react(emojisMap[3]);
+        embedMessage.react(emojisMap[4]);
+        let usersStored = [];
+
+        var votes = [0, 0, 0, 0, 0];
+
+        const filter = (reaction, user) => {
+            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id) && !usersStored.includes(user.id);
+        };
+
+        const collector = embedMessage.createReactionCollector({ filter, max: config.matchsize, time: errorTime, errors: ['time'] });
+
+        collector.on('collect', (reaction, user) => {
+            switch (reaction.emoji.name) {
+                case `${emojisMap[0]}`:
+                    votes[0]++;
+                    break;
+                case `${emojisMap[1]}`:
+                    votes[1]++;
+                    break;
+                case `${emojisMap[2]}`:
+                    votes[2]++;
+                    break;
+                case `${emojisMap[3]}`:
+                    votes[3]++;
+                    break;
+                case `${emojisMap[4]}`:
+                    votes[4]++;
+                    break;
+            }
+            usersStored.push(user.id);
+        });
+
+        collector.on('end', collected => {
+            var map = "";
+
+            let i = votes.indexOf(Math.max(...votes));
+            if (i === 4) {
+                embedMessage.delete();
+                voteMap(message, server);
+                return;
+            } else {
+                map = maps[i];
+                embedMessage.delete();
+            }
+            message.channel.send(`The map ${map} has won during re-roll`);
+        });
+
+    });
+}
+
+module.exports = { shuffleTeams,createMatch, showMatchIncompletes, cancelMatch, reRollMaps }

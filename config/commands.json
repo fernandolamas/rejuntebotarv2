@@ -33,6 +33,7 @@
 
     "serverInfoCommands": ["serverinfo"],
     
-    "checkStatus": ["status"]
+    "checkStatus": ["status"],
 
+    "reRollMaps": ["reroll"]
 }

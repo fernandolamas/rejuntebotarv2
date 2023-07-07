@@ -6,7 +6,7 @@ const { getDemos } = require('../functions/demos/demosFunctions');
 
 const { voteFor } = require('../functions/generalFunctions');
 const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue } = require('../functions/queue/queueFunctions');
-const { showMatchIncompletes, cancelMatch, shuffleTeams } = require('../functions/match/matchFunctions');
+const { showMatchIncompletes, cancelMatch, shuffleTeams, reRollMaps } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 const { checkStatus } = require('../functions/status/statusFunctions');
 const { downloadFiles } = require('../functions/logs/logsFunctions.js')
@@ -93,6 +93,12 @@ const handleMessage = (msg) => {
                 return;
             }
 
+            if (aliases.reRollMaps.includes(command))
+            {
+                reRollMaps(msg);
+                return;
+            }
+
             if (args.length > 0) {
                 if(aliases.checkStatus.includes(command)) {
                     //checkStatus(msg,args)
@@ -143,6 +149,7 @@ const handleMessage = (msg) => {
                     shuffleTeams(msg, args[0])
                     return;
                 }
+
             } else {
                 msg.channel.send(`<@!${msg.author.id}> arguments are needed`)
             }
