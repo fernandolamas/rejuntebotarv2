@@ -250,7 +250,7 @@ function reRollMaps(message){
             let i = votes.indexOf(Math.max(...votes));
             if (i === 4) {
                 embedMessage.delete();
-                voteMap(message, server);
+                reRollMaps(message, server);
                 return;
             } else {
                 map = maps[i];
