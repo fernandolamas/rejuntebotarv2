@@ -9,9 +9,9 @@ A small community from Team Fortress Classic Argentina were playing competitive 
 
 With this system, they wouldn't have to waste more time choosing players, maps, or server to be played.
 
-This bot makes a queue from people who !adds on the discord channel, and once it filled to the maximum number then it chooses random players on each team (Team red, and team blue)
+This bot makes a queue from people who !adds on the discord channel, and once it filled to the maximum number, it chooses random players on each team (Team red, and team blue)
 
-Then it allows the players to vote for a list of random maps (which weren't played before)
+It allows the players to vote for a list of random maps (which weren't played before)
 
 Once finished voting, it provides a link to the current server where they will be playing.
 </p>
