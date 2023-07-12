@@ -1,17 +1,32 @@
 const { retrieveConnection } = require('../database/database')
+const { EmbedBuilder, AuditLogEvent } = require('discord.js');
 
 async function showLadder(message) {
     let con = await retrieveConnection();
-    const playersQuery = "SELECT p.Nickname,r.Position from players p, ranking r WHERE p.SteamID = r.SteamID ORDER BY r.Position;"
+    const playersQuery = "SELECT p.Nickname,r.Position, r.Win, r.Lose, r.Tie from players p, ranking r WHERE p.SteamID = r.SteamID ORDER BY r.Position;"
     con.query(playersQuery, (err, result) => {
         if (err) {
             console.log(err)
             return;
-        }
-        message.channel.send(`result: ${JSON.stringify(result)}`);
+        }       
+
+        let playerList = '';
+        result.forEach(e => {
+            //playerList += `**Player:** ${e.Nickname || 'Unknown Player'}\n**Position:** ${e.Position.toString() || 'Unknown Position'}\n**Stats:** ( W ${e.Win.toString()} | L ${e.Lose.toString()} | T ${e.Tie.toString()}  )\n\n`;
+            playerList += `${e.Position.toString() || 'Unknown Position'} - ${e.Nickname || 'Unknown Player'} (${e.Win.toString()} | ${e.Lose.toString()} | ${e.Tie.toString()})\n`;
+        });
+
+        const ladderEmbed = new EmbedBuilder()
+            .setColor('#fca903')
+            .setTitle('Ranking TFC.latam')
+            .setDescription(playerList)
+            .setFooter({ text: 'Stats: (Win|Lose|Tie)'})
+        
+        message.channel.send({ embeds: [ladderEmbed] });
     });
-    //to-do embed
 }
+
+
 
 async function calculateLadder() {
     return new Promise(async (reject, resolve) => {

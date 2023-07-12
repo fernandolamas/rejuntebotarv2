@@ -57,14 +57,7 @@ function matchEmbedIncomplete(message, team1, team2, map){
 function matchEmbed(message, team1, team2, server, map, id) {
 	var cTeam1 = convertIDtoString(message, team1);
 	var cTeam2 = convertIDtoString(message, team2);
-  
-	// Verifica los valores de los campos
-	console.log('id', id);
-	console.log('team1:', team1);
-	console.log('team2:', team2);
-	console.log('server:', server);
-	console.log('map:', map);
-	
+  	
 	var cTeam1List = Array.isArray(cTeam1) ? cTeam1.join('\n') : cTeam1;
 	cTeam1List = cTeam1List.replace(/, /g, '\n'); // Agrega saltos de línea después de cada coma y espacio
   
