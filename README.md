@@ -24,7 +24,7 @@ The project was made using:
 - NPM packages 
 - Json files to save the execution data.
 
-As the program is made for fire and forget cases, there is no database used right now, just information inside json files which is writen and replaced on demand
+As the program is made for fire and forget cases, there is no database used right now, just information inside json files which are writen and replaced on demand
 
 
 **Pre-requisites**
@@ -35,7 +35,7 @@ Please make sure you have the pre-requisited steps before doing the installation
 
 2. Install NPM if you didn't during the Nodejs install
 
-3. Make sure you have node js and npm working in your system enviroment (IE: You can access to node command in your system terminal)
+3. Make sure you have Node JS and NPM working in your system enviroment (IE: You can access to Node, using "node" in your system terminal)
 
 
 **Installation**
@@ -47,7 +47,9 @@ In order to have the discord bot installed and working, follow these steps
 2. Open your system terminal inside the proyect, where package.json is located
 
 3. Type in your terminal "npm install"
+   
+4. Write a token for your discord bot in the file named token.json inside the config folder 
 
-4. Try to run the proyect using node .
+5. Try to run the proyect using node .
 
-5. If any json is missing, you can use the examples provided in the project to create your own files with the right credentials, ie: discord token credentials
+6. If any json is missing, you can use the examples provided in the project to create your own files with the right credentials, ie: discord token credentials
