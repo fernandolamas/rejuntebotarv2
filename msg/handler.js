@@ -9,7 +9,9 @@ const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kick
 const { showMatchIncompletes, cancelMatch, shuffleTeams, reRollMaps } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 const { checkStatus } = require('../functions/status/statusFunctions');
-const { downloadFiles } = require('../functions/logs/logsFunctions.js')
+const { downloadFiles } = require('../functions/logs/logsFunctions.js');
+const { registerPlayer } = require('../functions/database/dbFunctions/register');
+const { showLadder } = require('../functions/ranking/ladder');
 
 
 
@@ -17,7 +19,7 @@ function checkHasStaffRole(message) {
     return message.member.roles.cache.some(role => role.id == staffRoleID);
 }
 
-const handleMessage = (msg) => {
+const handleMessage = async (msg) => {
 
     var havePrefix = false;
 
@@ -86,6 +88,12 @@ const handleMessage = (msg) => {
             return;
         }
 
+        if (aliases.ranking.includes(command))
+        {
+            await showLadder(msg);
+            return;
+        }
+
         if (checkHasStaffRole(msg)) {
 
             if (aliases.stats.includes(command)) {
@@ -150,6 +158,10 @@ const handleMessage = (msg) => {
                     return;
                 }
 
+                if (aliases.registerPlayers.includes(command))
+                {
+                    registerPlayer(msg, args[0], args[1], args[2], args[3]);
+                }
             } else {
                 msg.channel.send(`<@!${msg.author.id}> arguments are needed`)
             }

@@ -35,5 +35,9 @@
     
     "checkStatus": ["status"],
 
-    "reRollMaps": ["reroll"]
+    "reRollMaps": ["reroll"],
+
+    "registerPlayers": ["register"],
+
+    "ranking": ["ranking"]
 }
