@@ -10,6 +10,11 @@ async function calculateWinners() {
     let scoreRound = []
     let steamIdArr = []
     let nickArr = []
+    const matchesResult = {
+      win: "Win",
+      lose: "Lose",
+      tie: "Tie"
+    }
     let queryRounds = `SELECT * FROM tfc.partidas WHERE Espectadores != 'Specs' AND Mapname = (SELECT Mapname FROM tfc.partidas WHERE Espectadores != 'Specs' ORDER BY Fecha DESC LIMIT 1) ORDER BY Fecha DESC LIMIT 2;`;
     const getResults = () => {
       return new Promise((resolve, reject) => {
@@ -34,42 +39,27 @@ async function calculateWinners() {
         console.log(`Error retrieving data from the database at rankings ${err}`)
       })
     if (scoreRound[0] > scoreRound[1]) {
-      console.log("Jugadores del round1 fueron ganadores")
-      await loadWinners(steamIdArr[0], nickArr[0])
-      await loadLossers(steamIdArr[1], nickArr[1])
+      await loadPlayersResults(steamIdArr[0], nickArr[0], matchesResult.win)
+      await loadPlayersResults(steamIdArr[1], nickArr[1], matchesResult.lose)
     }
     if (scoreRound[0] < scoreRound[1]) {
-      console.log("Jugadores del round2 fueron ganadores")
-      await loadWinners(steamIdArr[1], nickArr[1])
-      await loadLossers(steamIdArr[0], nickArr[0])
+      await loadPlayersResults(steamIdArr[1], nickArr[1], matchesResult.win)
+      await loadPlayersResults(steamIdArr[0], nickArr[0], matchesResult.lose)
     }
     if (scoreRound[0] == scoreRound[1]) {
-      await loadTiers(steamIdArr[1], nickArr[1])
-      await loadTiers(steamIdArr[0], nickArr[0])
+      await loadPlayersResults(steamIdArr[1], nickArr[1], matchesResult.tie)
+      await loadPlayersResults(steamIdArr[0], nickArr[0], matchesResult.tie)
     }
   } else {
     console.log("Database is not connected.");
   }
 }
 
-async function loadWinners(winners, nicks) {
-  winners.forEach(async (w, i) => {
-    await registerPlayerFromEndpoint(w, nicks[i]);
-    await countAsResultForPlayer(w, "Win");
-  });
-}
-
-async function loadLossers(lossers, nicks) {
-  lossers.forEach(async (l, i) => {
-    await registerPlayerFromEndpoint(l, nicks[i]);
-    await countAsResultForPlayer(l, "Lose");
-  });
-}
-
-async function loadTiers(tiers, nicks) {
-  tiers.forEach(async (t, i) => {
-    await registerPlayerFromEndpoint(t, nicks[i]);
-    await countAsResultForPlayer(t, "Tie");
+async function loadPlayersResults(steamIdArr,nickArr, result)
+{
+  steamIdArr.forEach(async (s, i) => {
+    await registerPlayerFromEndpoint(s, nickArr[i]);
+    await countAsResultForPlayer(s, result);
   })
 }
 
