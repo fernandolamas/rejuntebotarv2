@@ -39,5 +39,7 @@
 
     "registerPlayers": ["register"],
 
-    "ranking": ["ranking"]
+    "ranking": ["ranking"],
+    
+    "clearqueue": ["clear"]
 }

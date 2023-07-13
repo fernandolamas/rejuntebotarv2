@@ -1,5 +1,5 @@
 const { retrieveConnection } = require('../database/database')
-const { EmbedBuilder, AuditLogEvent } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 async function showLadder(message) {
     let con = await retrieveConnection();

@@ -162,6 +162,11 @@ function swapPlayerFromQueue(message, args) {
 
 }
 
+function clearQueue(message){
+    deleteQueue();
+    message.channel.send("Queue has been cleared");
+}
+
 function insertPlayerIntoQueue(message, args) {
     if(args[0] === undefined || args[0] === null || !/<@.?[0-9]*?>/.test(args[0])) {
         message.channel.send("Failed to find the discord user");
@@ -214,4 +219,4 @@ function removeTimeoutFromCurrentQueue()
     return;
 }
 
-module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue }
+module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue }
