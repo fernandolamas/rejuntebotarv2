@@ -1,22 +1,13 @@
 const path = require('path');
-const ClientFtp = require('ssh2-sftp-client');
 const FormData = require('form-data');
 const axios = require('axios');
 const fs = require('fs');
-let { usuario, password, server, port } = require("./ftpData.json");
 const { Client, GatewayIntentBits } = require('discord.js');
 const { token } = require('../../config/token.json');
-const { url } = require('inspector');
 const fsExtra = require('fs-extra');
 const { fullPath } = require('./logsConfig.json')
+const { calculateWinners } = require('../ranking/ranking')
 
-// Configuración de la conexión SFTP
-const config = {
-  host: server,
-  port: port,
-  username: usuario,
-  password: password,
-};
 
 const filepath = path.join(__dirname)
 
@@ -177,6 +168,8 @@ async function downloadFiles() {
 
         // Extraer el valor de "map"
         const map = datosJSON.map;
+
+        await calculateWinners()
 
         await client.login(token);
         const channel = await client.channels.fetch('1113175589583585371');
