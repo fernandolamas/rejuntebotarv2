@@ -106,6 +106,13 @@ async function downloadFiles() {
       if (!fs.existsSync(logsFolder)) {
         fs.mkdirSync(logsFolder)
       }
+      try{
+        await calculateWinners()
+      }catch(err)
+      {
+        console.log(`Error while calculating the winners ${err}`)
+      }
+
       for (const file of lastTwoFiles) {
         const localFilePath = path.join(`${fullPath}/${file.name}`);
 
@@ -169,7 +176,7 @@ async function downloadFiles() {
         // Extraer el valor de "map"
         const map = datosJSON.map;
 
-        await calculateWinners()
+
 
         await client.login(token);
         const channel = await client.channels.fetch('1113175589583585371');
