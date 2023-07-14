@@ -12,7 +12,6 @@ async function countAsResultForPlayer(steamID, matchResult) {
             console.log(`Error getting ${matchResult} for player ${steamID} error: ${err}`)
         }
         if (result) {
-            console.log(`result: ${JSON.stringify(result)}`)
             var theResult = result[0][matchResult];
             const insertQuery = `UPDATE ranking SET ${matchResult} = ${theResult + 1} where SteamID = '${steamID}';`;
             con.query(insertQuery, (err,result) => {

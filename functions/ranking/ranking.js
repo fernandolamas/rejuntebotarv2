@@ -38,25 +38,19 @@ async function calculateWinners() {
       .catch((err) => {
         console.log(`Error retrieving data from the database at rankings ${err}`)
       })
-    console.log("checking scoreround");
-    console.log("scoreround is ");
-    console.log(scoreRound);
     if (scoreRound.length < 2) {
       console.log("Not enought rounds to evaluate")
       return;
     }
     if (scoreRound[0] > scoreRound[1]) {
-      console.log("checking loadresult1");
       loadPlayersResults(steamIdArr[0], nickArr[0], matchesResult.win)
       loadPlayersResults(steamIdArr[1], nickArr[1], matchesResult.lose)
     }
     if (scoreRound[0] < scoreRound[1]) {
-      console.log("checking loadresult2");
       loadPlayersResults(steamIdArr[1], nickArr[1], matchesResult.win)
       loadPlayersResults(steamIdArr[0], nickArr[0], matchesResult.lose)
     }
     if (scoreRound[0] == scoreRound[1]) {
-      console.log("checking loadresult3");
       loadPlayersResults(steamIdArr[1], nickArr[1], matchesResult.tie)
       loadPlayersResults(steamIdArr[0], nickArr[0], matchesResult.tie)
     }

@@ -63,11 +63,11 @@ async function getDirectoryContentsWithSize(directoryPath) {
         });
 
         Promise.all(filePromises)
-        .then((results) => {
-          // Sort the results by modifiedTime in descending order
-          const sortedResults = results.sort((a, b) => b.modifiedTime - a.modifiedTime);
-          resolve(sortedResults);
-        })
+          .then((results) => {
+            // Sort the results by modifiedTime in descending order
+            const sortedResults = results.sort((a, b) => b.modifiedTime - a.modifiedTime);
+            resolve(sortedResults);
+          })
           .catch((error) => reject(error));
       }
     });
@@ -77,7 +77,7 @@ async function getDirectoryContentsWithSize(directoryPath) {
 async function downloadFiles() {
 
   console.log(fullPath);
-  if (!fs.existsSync(fullPath)){
+  if (!fs.existsSync(fullPath)) {
     let error = `Couldn't load logs config at ${fullPath}`
     console.log(error);
     throw error;
@@ -106,10 +106,9 @@ async function downloadFiles() {
       if (!fs.existsSync(logsFolder)) {
         fs.mkdirSync(logsFolder)
       }
-      try{
+      try {
         await calculateWinners()
-      }catch(err)
-      {
+      } catch (err) {
         console.log(`Error while calculating the winners ${err}`)
       }
 
@@ -125,13 +124,24 @@ async function downloadFiles() {
 
 
       // Realizar la solicitud POST al hampalyzer
-      const response = await axios.post('http://app.hampalyzer.com/api/parseGame', form, {
-        headers: form.getHeaders()
-      });
+      let response = null;
+      try {
+        response = await axios.post('http://app.hampalyzer.com/api/parseGame', form, {
+          headers: form.getHeaders(),
+        });
+      } catch (error) {
+        console.log("Error during post request");
+      }
 
 
-      console.log('Respuesta del hampalyzer:', response.data);
-      const url = "http://app.hampalyzer.com" + response.data.success.path;
+      let url = null;
+      if (response === null) {
+        url = "Hampalyzer is having trouble parsing the logs"
+      } else {
+        console.log('Respuesta del hampalyzer:', response.data);
+        url = "http://app.hampalyzer.com" + response.data.success.path;
+      }
+
       console.log(url);
 
 
