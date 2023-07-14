@@ -9,7 +9,7 @@ let d = new Date()
 let str = `${d.getDay()}-${d.getMonth()}-${d.getFullYear()}-${d.getHours()}-${d.getMinutes()}`;
 const logger = winston.createLogger({
   transports: [
-    new winston.transports.Console({ silent: process.env.NODE_ENV == "test" }),
+    new winston.transports.Console(),
     new winston.transports.File({ filename: `logs/Full-${str}.log` }),
   ],
 })

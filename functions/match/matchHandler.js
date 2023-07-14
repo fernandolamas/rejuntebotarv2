@@ -92,6 +92,13 @@ function getMatchByID(idmatch){
   return JSON.parse(file);
 }
 
+function getLastMatchId(){
+  let dir = fs.readdirSync(pathMatchs);
+  let lastFile = dir.pop()
+  let id = lastFile.replace(/\D+/g, '')
+  return id;
+}
+
 function setMatchCancelled(idmatch) {
   var match = getMatchByID(idmatch);
   let jsonMatch = {};
@@ -199,4 +206,4 @@ function getUsersInMatchsIncomplete() {
   return playersInMatch;
 }
 
-module.exports = { modifyMatch,setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchCancelled,setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers, setMatchAllComplete, getMatchByID }
+module.exports = { modifyMatch,setMatch, getMatchIncomplete, getMaps, getUsersInMatchsIncomplete, setMatchCancelled,setMatchComplete, setMapBan, setServerBan, getAllServers, getAvailableServers, setMatchAllComplete, getMatchByID, getLastMatchId }

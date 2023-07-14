@@ -1,7 +1,12 @@
+const { getQueue } = require("../queue/queueHandler");
 const {convertIDtoString} = require("../generalFunctions")
 const {queueEmbed} = require("../queue/queueEmbeds")
 const footer = "45s to vote";
 const {EmbedBuilder} = require("discord.js");
+const { getLastMatchId } = require('./matchHandler');
+const config = require("../../config/config.json");
+const emojisRoll = ["🔄"]
+const errorTime = 45000;
 
 
 function mapEmbed(message, emojis, maps) {
@@ -50,11 +55,11 @@ function matchEmbedIncomplete(message, team1, team2, map){
 		.setTitle('Pickup ready!')
 		.addFields(fields)
 		.setDescription('https://tinyurl.com/tfclatam2');
-	message.channel.send({ embeds: [matchEmbed] });
-
+	message.channel.send({ embeds: [matchEmbed] })
 }
 
-function matchEmbed(message, team1, team2, server, map, id) {
+function matchEmbed(message, team1, team2, server, map, id, shuffleteams) {
+	let bothTeams = team1.concat(team2);
 	var cTeam1 = convertIDtoString(message, team1);
 	var cTeam2 = convertIDtoString(message, team2);
   	
@@ -78,7 +83,33 @@ function matchEmbed(message, team1, team2, server, map, id) {
 	  .addFields(fields)
 	  .setDescription('https://tinyurl.com/tfclatam2');
 	
-	message.channel.send({ embeds: [matchEmbed] });
+	message.channel.send({ embeds: [matchEmbed] }).then(embedMessage => {
+		embedMessage.react(emojisRoll[0])
+
+		let usersStored = [];
+		let votes = [0];
+		const filter = (reaction, user) =>{
+			return emojisRoll.includes(reaction.emoji.name) && user.id !==embedMessage.author.id && bothTeams.includes(user.id) && !usersStored.includes(user.id);
+		};
+		const collector = embedMessage.createReactionCollector({ filter, max: config.matchSize, time: errorTime, errors: ['time'] });
+
+		collector.on('collect', (reaction, user) => {
+			if(reaction.emoji.name === `${emojisRoll[0]}`)
+			{
+				votes[0]++;
+			}
+			usersStored.push(user.id);
+		});
+		collector.on('end', collected => {
+			if(votes[0] >= (config.matchSize/2) ){
+				embedMessage.delete();
+				shuffleteams(message, id)
+				return;
+			}else{
+				embedMessage.reactions.removeAll();
+			}	
+		})
+	});
   }
   
   

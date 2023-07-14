@@ -2,6 +2,7 @@ const { getQueue, deleteQueue } = require("../queue/queueHandler");
 const { MessageEmbed } = require("discord.js");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
+const Path = require('path');
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled, getMatchByID, modifyMatch } = require("./matchHandler");
 const { turnOnServerWithTimer } = require('../server/serverFunctions');
 const { turnOnRconConnection } = require('../server/rcon/rconFunctions');
@@ -67,7 +68,7 @@ function voteServer(message) {
     });
 }
 
-function voteMap(message, server) {
+function voteMap(message, server, id) {
     if (!hasEnoughPlayers(message)) return;
     var maps = getMaps(server);
     message.channel.send({ embeds: [mapEmbed(message, emojisMap, maps, server)] }).then(embedMessage => {
@@ -140,11 +141,12 @@ function shuffleFunction(queue){
     return {team1,team2}
 }
 
-function showMatch(message, server, map, id) {
+function showMatch(message, server, map) {
     if (!hasEnoughPlayers(message)) return;
     var queue = getQueue()
     var {team1,team2} = shuffleFunction(queue)
-    matchEmbed(message, team1, team2, server, map, id)
+    let id = getMatchId();
+    matchEmbed(message, team1, team2, server, map, id, shuffleTeams)
     setMatch(team1, team2, server, map);
     setMapBan(map, server);
     setServerBan(server);
@@ -159,9 +161,16 @@ function showMatch(message, server, map, id) {
 }
 
 function createMatch(message) {
+
     //voteServer(message)
     //no servers to choose, for now it will be only Brasil
     voteMap(message, "brasil");
+}
+
+function getMatchId()
+{
+    let { id } = require(Path.join(__dirname, '/matchTemplate.json'));
+    return id
 }
 
 function shuffleTeams(message, matchid){
@@ -171,7 +180,7 @@ function shuffleTeams(message, matchid){
     match.team1 = team1;
     match.team2 = team2;
     message.channel.send("Shuffle teams!")
-    matchEmbed(message, team1, team2, match.server, match.map)
+    matchEmbed(message, team1, team2, match.server, match.map, matchid, shuffleTeams)
     modifyMatch(match);
 }
 
@@ -262,4 +271,4 @@ function reRollMaps(message){
     });
 }
 
-module.exports = { shuffleTeams,createMatch, showMatchIncompletes, cancelMatch, reRollMaps }
+module.exports = { shuffleTeams , createMatch, showMatchIncompletes, cancelMatch, reRollMaps }
