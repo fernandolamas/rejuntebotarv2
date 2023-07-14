@@ -18,3 +18,4 @@ functions/logs/logSubido
 functions/logs/prevlog.json
 functions/logs/logsConfig.json
 functions/database/credentialsSQL.json
+logs/
