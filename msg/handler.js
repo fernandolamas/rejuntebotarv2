@@ -103,7 +103,7 @@ const handleMessage = async (msg) => {
 
             if (aliases.reRollMaps.includes(command))
             {
-                reRollMaps(msg);
+                msg.channel.send("el reroll no anda... juga el mapa q salió o ponganse de acuerdo y elijan un mapa para jugar")
                 return;
             }
 

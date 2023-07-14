@@ -209,8 +209,10 @@ function insertPlayerIntoQueue(message, args) {
 }
 function noticeCurrentPickup(message)
 {
+    
     var queue = getQueue();
     message.channel.send(`<@&1125413526429765682> ${queue.length}/${config.matchsize} !ADD`)
+    setTimeout()
 }
 
 function removeTimeoutFromCurrentQueue()

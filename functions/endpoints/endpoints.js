@@ -16,7 +16,7 @@ const logsEndpoint = () => {
     })
 }
 
-const winnersEndpoint = () => {
+const winnersEndpoint = async () => {
     _app.get("/api/winner", (req, res) => {
         console.log("Server is listening to winners endpoint")
         try{

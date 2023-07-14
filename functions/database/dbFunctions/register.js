@@ -1,4 +1,5 @@
 const { retrieveConnection } = require('../database')
+const { countAsResultForPlayer } = require('../../ranking/counters')
 
 async function registerPlayer(message, steamID, nickname, discordID, discordName) {
     const con = await retrieveConnection();
@@ -22,7 +23,7 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
     }
     const search = `SELECT * FROM Players WHERE SteamID = '${steamID}';`;
 
-    con.query(search, (err,result) => {
+    con.query(search, (err, result) => {
         if (err) {
             message.channel.send(` error on search register query ${err}`)
             return;
@@ -32,7 +33,7 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
             con.query(updateQuery, (err))
             {
                 if (err) {
-                    showErrorAtDiscord(message,`error on update register query ${err}`)
+                    showErrorAtDiscord(message, `error on update register query ${err}`)
                     return;
                 }
                 message.channel.send('Player updated successfully.');
@@ -43,7 +44,7 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
             // Ejecutar la consulta de inserción
             con.query(insertQuery, (error) => {
                 if (error) {
-                    showErrorAtDiscord(message,'Error al insertar en la base de datos:' + error);
+                    showErrorAtDiscord(message, 'Error al insertar en la base de datos:' + error);
                     return;
                 }
 
@@ -53,17 +54,17 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
     })
 }
 
-async function registerPlayerFromEndpoint(steamID, nickname) {
+async function registerPlayerFromEndpoint(steamID, nickname, condition) {
+    //to-do separate queries and refactor error registering
     let con = await retrieveConnection();
     const search = `SELECT * FROM players WHERE SteamID = '${steamID}';`;
-    con.query(search, (err,result) => {
+    con.query(search, (err, result) => {
         if (err) {
-            console.log(` error on search register query ${err}`)
+            console.log(`error on search register query ${err}`)
             return;
         }
         if (result.length > 0) {
             console.log(`Player already exists ${steamID}`)
-            return;
         } else {
             const insertQuery = `INSERT INTO players (SteamID, Nickname, DiscordID, DiscordName) VALUES ('${steamID}', '${nickname}', '', '');`;
 
@@ -80,36 +81,38 @@ async function registerPlayerFromEndpoint(steamID, nickname) {
 
     const searchPlayersTable = `SELECT SteamID FROM ranking WHERE SteamID = '${steamID}';`;
     con.query(searchPlayersTable, (err, result) => {
-        if(err){
-            console.log(`Error registering player on ranking ${err}`)
+        if (err) {
+            showErrorOnConsole(`Error registering player on ranking ${err}`)
             return;
         }
-        if(result.length > 0)
-        {
+        if (result.length > 0) {
             console.log(`Player already exist on ranking table ${steamID}`)
+            countAsResultForPlayer(steamID,condition);
             return;
-        }else{
+        } else {
             const insertQuery = `INSERT INTO ranking (SteamID) VALUES ('${steamID}');`;
-            con.query(insertQuery, (error) => {
-                if(error) {
+            con.query(insertQuery, (error, result) => {
+                if (error) {
                     showErrorOnConsole(`Error at insert on ranking table ${error}`);
                     return;
                 }
-                console.log(`Player registered successfully at ranking table`);
+                if(result)
+                {
+                    console.log(`Player ${nickname} registered successfully at ranking table`);
+                    countAsResultForPlayer(steamID,condition);
+                    return;
+                }
             })
         }
-    })
-
-    return new Promise((resolve, reject) => {
-        resolve("done");
+        
     })
 }
 
 
-function showErrorOnConsole(error){
+function showErrorOnConsole(error) {
     console.log(error);
 }
-function showErrorAtDiscord(message, error){
+function showErrorAtDiscord(message, error) {
     message.channel.send(error)
 }
 
