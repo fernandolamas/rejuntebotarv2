@@ -12,6 +12,10 @@ async function showLadder(message) {
 
         let playerList = '';
         result.forEach(e => {
+            if(e.Position === null) 
+            {
+                return;
+            }
             //playerList += `**Player:** ${e.Nickname || 'Unknown Player'}\n**Position:** ${e.Position.toString() || 'Unknown Position'}\n**Stats:** ( W ${e.Win.toString()} | L ${e.Lose.toString()} | T ${e.Tie.toString()}  )\n\n`;
             playerList += `${e.Position.toString() || 'Unknown Position'} - ${e.Nickname || 'Unknown Player'} (${e.Win.toString()} | ${e.Lose.toString()} | ${e.Tie.toString()})\n`;
         });
