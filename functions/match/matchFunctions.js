@@ -227,7 +227,7 @@ function reRollMaps(message){
         var votes = [0, 0, 0, 0, 0];
 
         const filter = (reaction, user) => {
-            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id && getQueue().includes(user.id) && !usersStored.includes(user.id);
+            return emojisMap.includes(reaction.emoji.name) && user.id !== embedMessage.author.id  && !usersStored.includes(user.id);
         };
 
         const collector = embedMessage.createReactionCollector({ filter, max: config.matchsize, time: errorTime, errors: ['time'] });

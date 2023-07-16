@@ -97,13 +97,13 @@ const handleMessage = async (msg) => {
         if (checkHasStaffRole(msg)) {
 
             if (aliases.stats.includes(command)) {
-                downloadFiles()
+                //downloadFiles()
                 return;
             }
 
             if (aliases.reRollMaps.includes(command))
             {
-                msg.channel.send("el reroll no anda... juga el mapa q salió o ponganse de acuerdo y elijan un mapa para jugar")
+                reRollMaps(msg);
                 return;
             }
 
