@@ -92,4 +92,37 @@ function sendRconResponse(message, args) {
     message.channel.send("Sending teams info to the server");
 }
 
-module.exports = { turnOnRconConnection, sendRconResponse };
+function sendTeamsToTheServer(server = 'brasil') {
+
+    let currentMatches = getMatchIncomplete();
+    let currentMatch;
+    currentMatches.forEach(m => {
+        if (m.server === server) {
+            currentMatch = m;
+        }
+    })
+    //if is asking for the teams, share the teams
+    if(!currentMatch)
+    {
+        return;
+    }
+            
+    var team1 = "";
+    currentMatch.team1.forEach(async uid => {
+        let user = await message.client.users.fetch(uid);
+        team1 += user.username + " ";
+    })
+    var team2 = "";
+    currentMatch.team2.forEach(async uid => {
+        let user = await message.client.users.fetch(uid);
+        team2 += user.username + " ";
+    })
+    setTimeout(() => {
+        conn[currentMatch.server].connection.send("say Red Team " + team1);
+        conn[currentMatch.server].connection.send("say Blue Team " + team2);
+    }, 6000);
+
+}
+
+
+module.exports = { turnOnRconConnection, sendRconResponse, sendTeamsToTheServer };

@@ -1,6 +1,7 @@
 const { downloadFiles } = require('../logs/logsFunctions.js');
 const { calculateWinners } = require('../ranking/ranking.js');
 const { calculateLadder } = require('../ranking/ladder.js');
+const { sendTeamsToTheServer } = require('../server/rcon/rconFunctions')
 let _app;
 
 const logsEndpoint = () => {
@@ -41,6 +42,18 @@ const ladderEndpoint = () => {
         }
     })
 }
+const teamsEndpoint = () => {
+    _app.get("/api/teams", (req, res) => {
+        console.log("Server is listening to teams endpoint")
+        try{
+            sendTeamsToTheServer();
+        }catch(error){
+            console.log(error);
+        }finally{
+            res.send("teams endpoint replying to your request");
+        }
+    })
+}
 
 
 const registerEndpoints = (app) => {
@@ -48,6 +61,7 @@ const registerEndpoints = (app) => {
     logsEndpoint();
     winnersEndpoint();
     ladderEndpoint();
+    teamsEndpoint();
 }
 
 module.exports = { registerEndpoints }  
