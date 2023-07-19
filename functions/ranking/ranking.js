@@ -15,18 +15,6 @@ async function calculateWinners() {
     })
 }
 
-async function calculateHistoricalWinners() {
-  const queryRemove = `UPDATE ranking SET Win = 0, Lose = 0, Tie = 0, Position = 0;`;
-  await getResults(queryRemove)
-  .then(() =>{
-    let counted = [];
-    
-  })
-  .catch((err) => {
-    console.error(`Error removing players from rankings at rankings ${err}`)
-  })
-}
-
 const getResults = (query) => {
   return new Promise(async (resolve, reject) => {
     let con = await retrieveConnection();
@@ -53,10 +41,12 @@ function evaluateRounds(games) {
   let scoreRound = []
   let steamIdArr = []
   let nickArr = []
+  steamIdArr[0] = games[0].Equipo1_steamId.replace(/\s-\s?$/g, "").split(" - ");
+  nickArr[0] = games[0].Equipo1.replace(/\s-\s?$/g, "").split(" - ");
+  steamIdArr[1] = games[0].Equipo2_steamId.replace(/\s-\s?$/g, "").split(" - ");
+  nickArr[1] = games[0].Equipo2.replace(/\s-\s?$/g, "").split(" - ");
   games.forEach((e, i) => {
     scoreRound[i] = parseInt(e.CapturasAzul)
-    steamIdArr[i] = e.Equipo1_steamId.replace(/\s-\s?$/g, "").split(" - ");
-    nickArr[i] = e.Equipo1.replace(/\s-\s?$/g, "").split(" - ");
   });
   if (scoreRound.length < 2) {
     console.log("Not enought rounds to evaluate")
