@@ -49,8 +49,7 @@ function evaluateRounds(games) {
     scoreRound[i] = parseInt(e.CapturasAzul)
   });
   if (scoreRound.length < 2) {
-    console.log("Not enought rounds to evaluate")
-    return;
+    scoreRound[1] = 0;
   }
   if (scoreRound[0] > scoreRound[1]) {
     loadPlayersResults(steamIdArr[0], nickArr[0], matchesResult.win)
