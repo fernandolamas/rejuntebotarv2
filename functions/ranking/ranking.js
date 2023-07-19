@@ -33,6 +33,13 @@ const getResults = (query) => {
 }
 
 function evaluateRounds(games) {
+  let maps = require('../match/maps/mapsData.json');
+  let isRankedMap = maps.includes(games[0].Mapname);
+  if(!isRankedMap)
+  {
+    return 
+  }
+
   const matchesResult = {
     win: "Win",
     lose: "Lose",
