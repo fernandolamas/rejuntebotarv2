@@ -7,7 +7,7 @@ const { token } = require('../../config/token.json');
 const fsExtra = require('fs-extra');
 const { fullPath } = require('./logsConfig.json')
 const { calculateWinners } = require('../ranking/ranking')
-const { getLastDemoZipPath, getDemos } = require('./getdemos');
+const { getLastDemoZip, getDemos } = require('./getdemos');
 
 
 const filepath = path.join(__dirname)
@@ -219,8 +219,8 @@ async function downloadFiles() {
           let att = null;
           try {
             await getDemos();
-            let attachment = getLastDemoZipPath();
-            att = new AttachmentBuilder(attachment, { name: attachment })
+            let attachment = getLastDemoZip();
+            att = new AttachmentBuilder(attachment.path, { name: attachment.name })
           } catch (error) {
             console.error(`Error making attachment: ${error}`);
           }

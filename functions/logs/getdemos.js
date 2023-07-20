@@ -85,16 +85,19 @@ async function getDemos() {
         });
 }
 
-function getLastDemoZipPath()
+function getLastDemoZip()
 {
-    let demosZipFolder = demosZippedFullpath;
-    let files = fs.readdirSync(demosZipFolder)
+    let files = fs.readdirSync(demosZippedFullpath)
     if(!Array.isArray(files)){
         let error = "Error getting last demo zip path"
         throw error;
     }
-    let lastFilePath = Path.resolve(demosZipFolder + '/' + files.pop());
-    return lastFilePath;
+    let lastFileName = files.pop()
+    let lastFilePath = Path.resolve(demosZippedFullpath + '/' + lastFileName);
+    return {
+        name: lastFileName,
+        path: lastFilePath
+    };
 }
 
-module.exports = { getDemos, getLastDemoZipPath }
+module.exports = { getDemos, getLastDemoZip }

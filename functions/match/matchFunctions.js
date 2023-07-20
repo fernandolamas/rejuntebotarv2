@@ -130,7 +130,6 @@ function voteMap(message, server, id) {
     });
 }
 
-
 function shuffleFunction(queue){
     const shuffledArray = queue.sort((a, b) => 0.5 - Math.random());
     var team1 = [];
@@ -217,21 +216,12 @@ function getLastMatch()
 {
     let pickupsFolder = Path.resolve(__dirname + '/matchlog/');
     let lastPickupName = fs.readdirSync(pickupsFolder)
-    const filteredFiles = lastPickupName.filter((file) => /^file_\d+\.json$/.test(file));
     if(lastPickupName.length === 0)
     {
         throw "No pickups were played still"; 
     }
-    let lastID = 0;
-    let lastIDFileName = '';
-    filteredFiles.forEach((file) => {
-        const currentID = parseInt(file.match(/\d+/)[0], 10);
-        if (currentID > lastID) {
-          lastID = currentID;
-          lastIDFileName = file;
-        }
-      });
-    let lastPickup = require(Path.resolve(pickupsFolder + '/' + lastIDFileName))
+    let lastIDFileName = getMatchId();
+    let lastPickup = require(Path.resolve(pickupsFolder + '/' + `match_${lastIDFileName - 1}`))
     return lastPickup
 }
 
