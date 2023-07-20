@@ -2,11 +2,12 @@ const path = require('path');
 const FormData = require('form-data');
 const axios = require('axios');
 const fs = require('fs');
-const { Client, GatewayIntentBits } = require('discord.js');
+const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const { token } = require('../../config/token.json');
 const fsExtra = require('fs-extra');
 const { fullPath } = require('./logsConfig.json')
 const { calculateWinners } = require('../ranking/ranking')
+const { getLastDemoZipPath, getDemos } = require('./getdemos');
 
 
 const filepath = path.join(__dirname)
@@ -112,11 +113,15 @@ async function downloadFiles() {
         console.log(`Error while calculating the winners ${err}`)
       }
 
+      let files = []
+      let filenames = []
       for (const file of lastTwoFiles) {
         const localFilePath = path.join(`${fullPath}/${file.name}`);
 
         // Leer el contenido del archivo
         const fileContent = fs.createReadStream(localFilePath);
+        filenames.push(file.name);
+        files.push(fileContent);
 
         // Agregar el archivo al formulario
         form.append('logs[]', fileContent, { filename: file.name });
@@ -130,13 +135,37 @@ async function downloadFiles() {
           headers: form.getHeaders(),
         });
       } catch (error) {
-        console.log("Error during post request");
+        console.error("Error during post request");
       }
 
 
       let url = null;
+      let blargResponse = [];
       if (response === null) {
         url = "Hampalyzer is having trouble parsing the logs"
+
+        try {
+          files.forEach(async (f) => {
+            const { data } = await axios.post('http://blarghalyzer.com/Blarghalyzer.php', {
+              process: 'true',
+              inptImage: f,
+              language: 'en',
+              blarghalyze: 'Blarghalyze!'
+            }, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            })
+            if (data.includes("shit broke")) {
+              blargResponse.push("error during parse logs")
+            } else {
+              blargResponse.push(`Logs parsed at http://blarghalyzer.com/parsedlogs/${v}`)
+            }
+          })
+        }
+        catch (error) {
+          console.error(error);
+        }
       } else {
         console.log('Respuesta del hampalyzer:', response.data);
         url = "http://app.hampalyzer.com" + response.data.success.path;
@@ -185,12 +214,38 @@ async function downloadFiles() {
 
         // Extraer el valor de "map"
         const map = datosJSON.map;
-
-
-
-        await client.login(token);
-        const channel = await client.channels.fetch('1113175589583585371');
-        await channel.send(`STATS: ${url} - ${map}`);
+        try {
+          await client.login(token);
+          let att = null;
+          try {
+            await getDemos();
+            let attachment = getLastDemoZipPath();
+            att = new AttachmentBuilder(attachment, { name: attachment })
+          } catch (error) {
+            console.error(`Error making attachment: ${error}`);
+          }
+          //718271966800248844 testing channel
+          //1113175589583585371
+          const channel = await client.channels.fetch('1113175589583585371');
+          if (blargResponse.length !== 0) {
+            blargResponse.forEach(async (v) => {
+              channel.send(`STATS: ${blargUrl}${v} - ${map}`);
+              console.log(`STATS: ${blargUrl}${v} - ${map}`)
+            })
+            await channel.send({
+              files: [att],
+              content: `Demo`
+            });
+          } else {
+            await channel.send({
+              files: [att],
+              content: `STATS: ${url} - ${map}`
+            });
+          }
+        }catch(error)
+        {
+          console.error(`Error sending files through discord message: ${error}`)
+        }
       }
     } else {
       console.log('No se encontraron archivos de registro que cumplan con los criterios.');
