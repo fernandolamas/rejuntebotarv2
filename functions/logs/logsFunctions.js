@@ -84,6 +84,8 @@ async function downloadFiles() {
     throw error;
   }
 
+  renameLogFiles();
+
   let files = await getDirectoryContentsWithSize(fullPath)
   // Filtrar los archivos .log con tamaño mayor a 100 KB
   const filteredFiles = files.filter(file => file.name.endsWith('.log') && file.size > 40000);
@@ -279,6 +281,17 @@ async function downloadFiles() {
       }
     });
   }
+}
+
+function renameLogFiles(){
+  let dir = fs.readdirSync(fullPath)
+  dir.forEach((f) => {
+    if(f.startsWith("ren"))
+    {
+      return;
+    }
+    fs.renameSync(fullPath + '\\' + f,fullPath + '\\' + `ren_${f}`);
+  })
 }
 
 // Llamar a la función principal al iniciar la aplicación
