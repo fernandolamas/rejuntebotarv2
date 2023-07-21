@@ -152,14 +152,18 @@ async function downloadFiles() {
               language: 'en',
               blarghalyze: 'Blarghalyze!'
             }, {
+              timeout: 5000,
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
             })
-            if (data.includes("shit broke")) {
-              blargResponse.push("error during parse logs")
-            } else {
-              blargResponse.push(`Logs parsed at http://blarghalyzer.com/parsedlogs/${v}`)
+            if(data !== null)
+            {
+              if (data.includes("shit broke")) {
+                blargResponse.push("error during parse logs")
+              } else {
+                blargResponse.push(`Logs parsed at http://blarghalyzer.com/parsedlogs/${v}`)
+              }
             }
           })
         }
