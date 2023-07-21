@@ -108,7 +108,7 @@ async function downloadFiles() {
         fs.mkdirSync(logsFolder)
       }
       try {
-        //await calculateWinners()
+        await calculateWinners()
       } catch (err) {
         console.log(`Error while calculating the winners ${err}`)
       }
@@ -127,9 +127,44 @@ async function downloadFiles() {
         form.append('logs[]', fileContent, { filename: file.name });
       }
 
+      let url = null;
+      let blargResponse = [];
+      let response = null;
+      if (response === null) {
+        url = "Hampalyzer is having trouble parsing the logs"
+
+        files.forEach(async (f, i) => {
+          try {
+            let { data } = await axios.post('http://blarghalyzer.com/Blarghalyzer.php', {
+              process: 'true',
+              inptImage: f,
+              language: 'en',
+              blarghalyze: 'Blarghalyze!'
+            }, {
+              timeout: 13000,
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+            if (data !== null) {
+              if (data.includes("shit broke")) {
+                blargResponse.push("error during parse logs")
+              } else {
+                let logParsedName = filenames[i].replace(".log","");
+                blargResponse.push(`Logs parsed at http://blarghalyzer.com/parsedlogs/${logParsedName}/`)
+              }
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        })
+      } else {
+        console.log('Respuesta del hampalyzer:', response.data);
+        url = "http://app.hampalyzer.com" + response.data.success.path;
+      }
 
       // Realizar la solicitud POST al hampalyzer
-      let response = null;
+
       try {
         response = await axios.post('http://app.hampalyzer.com/api/parseGame', form, {
           headers: form.getHeaders(),
@@ -137,46 +172,6 @@ async function downloadFiles() {
       } catch (error) {
         console.error("Error during post request");
       }
-
-
-      let url = null;
-      let blargResponse = [];
-      if (response === null) {
-        url = "Hampalyzer is having trouble parsing the logs"
-
-        try {
-          files.forEach(async (f) => {
-            const { data } = await axios.post('http://blarghalyzer.com/Blarghalyzer.php', {
-              process: 'true',
-              inptImage: f,
-              language: 'en',
-              blarghalyze: 'Blarghalyze!'
-            }, {
-              timeout: 5000,
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            })
-            if(data !== null)
-            {
-              if (data.includes("shit broke")) {
-                blargResponse.push("error during parse logs")
-              } else {
-                blargResponse.push(`Logs parsed at http://blarghalyzer.com/parsedlogs/${v}`)
-              }
-            }
-          })
-        }
-        catch (error) {
-          console.error(error);
-        }
-      } else {
-        console.log('Respuesta del hampalyzer:', response.data);
-        url = "http://app.hampalyzer.com" + response.data.success.path;
-      }
-
-      console.log(url);
-
 
       const data = {
         site: url,
@@ -230,29 +225,38 @@ async function downloadFiles() {
           }
           //718271966800248844 testing channel
           //1113175589583585371
-          const channel = await client.channels.fetch('1113175589583585371');
+          //1132076066232602685 test2channel
+          const channel = await client.channels.fetch('1132076066232602685');
           if (blargResponse.length !== 0) {
             blargResponse.forEach(async (v) => {
-              channel.send(`STATS: ${blargUrl}${v} - ${map}`);
-              console.log(`STATS: ${blargUrl}${v} - ${map}`)
+              channel.send(`STATS: ${v} - ${map}`);
+              console.log(`STATS: ${v} - ${map}`)
             })
+            if(att === null)
+            {
+              return;
+            }
             await channel.send({
               files: [att],
               content: `Demo`
             });
           } else {
+            if(att === null)
+            {
+              return;
+            }
             await channel.send({
               files: [att],
               content: `STATS: ${url} - ${map}`
             });
           }
-        }catch(error)
-        {
+
+        } catch (error) {
           console.error(`Error sending files through discord message: ${error}`)
         }
       }
     } else {
-      console.log('No se encontraron archivos de registro que cumplan con los criterios.');
+      console.log('No files were found matching the criteria.');
     }
 
   } else {
