@@ -86,7 +86,7 @@ async function downloadFiles() {
 
   let files = await getDirectoryContentsWithSize(fullPath)
   // Filtrar los archivos .log con tamaño mayor a 100 KB
-  const filteredFiles = files.filter(file => file.name.endsWith('.log') && file.size > 100000);
+  const filteredFiles = files.filter(file => file.name.endsWith('.log') && file.size > 40000);
 
   // Ordenar los archivos por fecha de modificación
   const sortedFiles = sortByModifiedDate(filteredFiles);
@@ -108,7 +108,7 @@ async function downloadFiles() {
         fs.mkdirSync(logsFolder)
       }
       try {
-        await calculateWinners()
+        //await calculateWinners()
       } catch (err) {
         console.log(`Error while calculating the winners ${err}`)
       }
