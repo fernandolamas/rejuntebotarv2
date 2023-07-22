@@ -102,7 +102,7 @@ async function downloadFiles() {
 
   const download = await logExist(listFiles)
   if (download) {
-    if (lastTwoFiles.length > 0) {
+    if (lastTwoFiles.length === 2) {
       const form = new FormData();
       const logsFolderName = "logSubido";
       const logsFolder = path.join(`${__dirname}/${logsFolderName}`);
