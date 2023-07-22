@@ -58,7 +58,7 @@ async function getDirectoryContentsWithSize(directoryPath) {
             return {
               name: file,
               size: stats.size,
-              modifiedTime: stats.mtimeMs  // Add the modifiedTime property
+              modifiedTime: stats.birthtimeMs  // Add the modifiedTime property
             };
           });
         });
@@ -122,6 +122,7 @@ async function downloadFiles() {
 
         // Leer el contenido del archivo
         const fileContent = fs.createReadStream(localFilePath);
+        console.log(file.name)
         filenames.push(file.name);
         files.push(fileContent);
 
@@ -152,7 +153,7 @@ async function downloadFiles() {
               if (data.includes("shit broke")) {
                 blargResponse.push("error during parse logs")
               } else {
-                let logParsedName = filenames[i].replace(".log","");
+                let logParsedName = filenames[i].replace(".log","").toLowerCase();
                 blargResponse.push(`Logs parsed at http://blarghalyzer.com/parsedlogs/${logParsedName}/`)
               }
             }
@@ -284,14 +285,21 @@ async function downloadFiles() {
 }
 
 function renameLogFiles(){
-  let dir = fs.readdirSync(fullPath)
-  dir.forEach((f) => {
-    if(f.startsWith("ren"))
-    {
-      return;
-    }
-    fs.renameSync(fullPath + '\\' + f,fullPath + '\\' + `ren_${f}`);
-  })
+  try{
+    let dir = fs.readdirSync(fullPath)
+    dir.forEach((f) => {
+      if(f.startsWith("ren"))
+      {
+        return;
+      }
+      let existing = path.resolve(fullPath + '/' + f);
+      let destination = path.resolve(fullPath + '/' + `ren_${f}`);
+      fs.renameSync(existing,destination);
+    })
+  }catch(error)
+  {
+    console.error(error)
+  }
 }
 
 // Llamar a la función principal al iniciar la aplicación
