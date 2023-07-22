@@ -5,9 +5,10 @@ const fs = require('fs');
 const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
 const { token } = require('../../config/token.json');
 const fsExtra = require('fs-extra');
-const { fullPath } = require('./logsConfig.json')
+const { fullPath, unparsedLogsPath } = require('./logsConfig.json')
 const { calculateWinners } = require('../ranking/ranking')
 const { getLastDemoZip, getDemos } = require('./getdemos');
+const { constants } = require('fs/promises');
 
 
 const filepath = path.join(__dirname)
@@ -288,16 +289,24 @@ async function downloadFiles() {
 
 function renameLogFiles(){
   try{
-    let d = new Date();
-    let dir = fs.readdirSync(fullPath)
+    if(!fs.existsSync(fullPath))
+    {
+      fs.mkdirSync(fullPath)
+    }
+    let dir = fs.readdirSync(unparsedLogsPath)
     dir.forEach((f) => {
       if(f.startsWith("ren"))
       {
         return;
       }
-      let existing = path.resolve(fullPath + '/' + f);
-      let destination = path.resolve(fullPath + '/' + `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}_${f}`);
-      fs.renameSync(existing,destination);
+      let existing = path.resolve(unparsedLogsPath + '/' + f);
+      let destination = path.resolve(fullPath + `/ren_latam_${f}`);
+      try{
+        fs.copyFileSync(existing,destination,constants.COPYFILE_EXCL);
+      }catch(err)
+      {
+        //ignored
+      }
     })
   }catch(error)
   {
