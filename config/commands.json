@@ -1,6 +1,7 @@
 {
     "addCommands": ["+", "add"],
     "removeCommands": ["-", "leave", "l", "remove"],
+    "addWithWait": ["*"],
     "preventQueueExpiration": ["preserve"],
 
     "serverUp": ["svup", "serverup"],
