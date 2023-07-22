@@ -2,13 +2,14 @@ const path = require('path');
 const FormData = require('form-data');
 const axios = require('axios');
 const fs = require('fs');
-const { Client, GatewayIntentBits, AttachmentBuilder } = require('discord.js');
+const { AttachmentBuilder } = require('discord.js');
 const { token } = require('../../config/token.json');
 const fsExtra = require('fs-extra');
 const { fullPath, unparsedLogsPath } = require('./logsConfig.json')
 const { calculateWinners } = require('../ranking/ranking')
 const { getLastDemoZip, getDemos } = require('./getdemos');
 const { constants } = require('fs/promises');
+const { retrieveConnection } = require('../discord/discord')
 
 
 const filepath = path.join(__dirname)
@@ -183,15 +184,6 @@ async function downloadFiles() {
       }
 
       fs.writeFileSync(filepath + "/prevlog.json", JSON.stringify(data))
-      const client = new Client({
-        intents: [
-          GatewayIntentBits.Guilds,
-          GatewayIntentBits.GuildMembers,
-          GatewayIntentBits.GuildMessages,
-          GatewayIntentBits.MessageContent,
-          GatewayIntentBits.GuildMessageReactions,
-        ],
-      });
 
       const carpeta = path.join(__dirname, "../match/matchlog/");
 
@@ -218,7 +210,7 @@ async function downloadFiles() {
         // Extraer el valor de "map"
         const map = datosJSON.map;
         try {
-          await client.login(token);
+          let client = await retrieveConnection();
           let att = null;
           try {
             await getDemos();
