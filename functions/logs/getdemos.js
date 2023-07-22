@@ -42,7 +42,7 @@ async function getDemos() {
                     if (filesToCompressFiltered.length === 0) {
                         throw new Error('There were no files beyond 10MB Size.');
                     }
-                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${getLastPickup() ?? "tfcmap"}.zip`);
+                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${getLastPickup() ?? "tfcmap"}.zip`);
                     // Crea un flujo de escritura para el archivo comprimido
                     const writeStream = fs.createWriteStream(demosZipPath);
 

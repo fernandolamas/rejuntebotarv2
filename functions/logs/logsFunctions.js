@@ -288,6 +288,7 @@ async function downloadFiles() {
 
 function renameLogFiles(){
   try{
+    let d = new Date();
     let dir = fs.readdirSync(fullPath)
     dir.forEach((f) => {
       if(f.startsWith("ren"))
@@ -295,7 +296,7 @@ function renameLogFiles(){
         return;
       }
       let existing = path.resolve(fullPath + '/' + f);
-      let destination = path.resolve(fullPath + '/' + `ren_${f}`);
+      let destination = path.resolve(fullPath + '/' + `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}_${f}`);
       fs.renameSync(existing,destination);
     })
   }catch(error)
