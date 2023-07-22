@@ -231,10 +231,12 @@ async function downloadFiles() {
           //1132076066232602685 test2channel
           const channel = await client.channels.fetch('1113175589583585371');
           if (blargResponse.length !== 0) {
+            let dcMessage = "";
             blargResponse.forEach(async (v) => {
-              channel.send(`STATS: ${v} - ${map}`);
-              console.log(`STATS: ${v} - ${map}`)
+              dcMessage = dcMessage === "" ? `STATS: ${map} \n${v}\n` : `${dcMessage} ${v}`;
             })
+            console.log(dcMessage);
+            channel.send(dcMessage)
             if(att === null)
             {
               return;
