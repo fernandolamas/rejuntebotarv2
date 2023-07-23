@@ -45,9 +45,6 @@ function turnOnRconConnection(message, _servername) {
     }).on('error', function () {
         console.log("Error while trying to connect to the hlds server ", _servername, " by rcon");
     });
-
-    message.channel.send("Estableciendo conneccion rcon con el servidor");
-
     return conn;
 }
 

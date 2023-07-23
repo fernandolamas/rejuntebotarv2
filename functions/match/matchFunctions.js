@@ -1,4 +1,4 @@
-const { getQueue, deleteQueue } = require("../queue/queueHandler");
+const { getQueue, deleteQueue, getDelayedPlayers, clearDelayedPlayers} = require("../queue/queueHandler");
 const { MessageEmbed } = require("discord.js");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
@@ -6,6 +6,7 @@ const Path = require('path');
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled, getMatchByID, modifyMatch } = require("./matchHandler");
 const { turnOnServerWithTimer } = require('../server/serverFunctions');
 const { turnOnRconConnection } = require('../server/rcon/rconFunctions');
+const { convertIDtoString } = require('../generalFunctions');
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 const errorTime = 45000;
@@ -156,6 +157,17 @@ function showMatch(message, server, map) {
         setTimeout(function() {conn = turnOnRconConnection(message,"brasil") },60000);
     }catch(e){
         console.log(`The system was unable to establish rcon connection ${e}`);
+    }
+    let delayedPlayers = getDelayedPlayers()
+    if(delayedPlayers.length > 0)
+    {
+        delayedPlayers = convertIDtoString(null,delayedPlayers);
+        let str = ""
+        delayedPlayers.split(',').forEach((v) => {
+            str = str === "" ? v : `${str}, ${v}` ; 
+        })
+        message.channel.send(`The players: ${str} will need between 5-10 minutes to play the match`)
+        clearDelayedPlayers();
     }
     deleteQueue();
 }

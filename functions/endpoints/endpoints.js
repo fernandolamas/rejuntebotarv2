@@ -54,6 +54,22 @@ const teamsEndpoint = () => {
         }
     })
 }
+const testEndpoint = () => {
+    _app.get("/api/test", async (req,res) => {
+        try{
+            let { retrieveConnection } = require('../discord/discord.js');
+            let client = await retrieveConnection();
+            //718271966800248844 testing channel
+          //1113175589583585371
+          //1132076066232602685 test2channel
+          const channel = await client.channels.fetch('1132076066232602685');
+          channel.send("test")
+        }catch(err)
+        {
+            console.error(err);
+        }
+    })
+}
 
 
 const registerEndpoints = (app) => {
@@ -62,6 +78,7 @@ const registerEndpoints = (app) => {
     winnersEndpoint();
     ladderEndpoint();
     teamsEndpoint();
+    testEndpoint();
 }
 
 module.exports = { registerEndpoints }  

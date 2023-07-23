@@ -5,7 +5,7 @@ const { turnOnServer, turnOffServer, sendServerInfo } = require('../functions/se
 const { getDemos } = require('../functions/demos/demosFunctions');
 
 const { voteFor } = require('../functions/generalFunctions');
-const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue } = require('../functions/queue/queueFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer } = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch, shuffleTeams, reRollMaps } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 const { checkStatus } = require('../functions/status/statusFunctions');
@@ -47,9 +47,13 @@ const handleMessage = async (msg) => {
             leaveToQueue(msg)
             return;
         }
+        if (aliases.addWithWait.includes(command)) {
+            registerDelayedPlayer(msg)
+            return;
+        }
 
         if (aliases.downloadDemoCommands.includes(command)) {
-            getDemos(msg);
+            //getDemos(msg); unused
             return;
         }
 

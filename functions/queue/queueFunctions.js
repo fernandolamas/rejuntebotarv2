@@ -1,12 +1,10 @@
 const fs = require('fs');
 const config = require('../../config/config.json')
-const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, deleteQueue } = require('./queueHandler');
+const { getQueue, updateQueue, getBansID, updateBans, addToBans, timeoutBans, deleteQueue, getDelayedPlayers, addDelayedPlayer } = require('./queueHandler');
 const { createMatch } = require('../match/matchFunctions');
 const { queueEmbed } = require('./queueEmbeds');
 const { getUserFromMention } = require('../generalFunctions');
-const {getLastGameLogs} = require('../logs/logsFunctions.js');
 const { getUsersInMatchsIncomplete, getAvailableServers, getMatchIncomplete, setMatchCancelled } = require('../match/matchHandler');
-var queueShouldExpire = true;
 
 function checkInMatchIncomplete(message) {
     var usersInMatch = getUsersInMatchsIncomplete();
@@ -120,6 +118,24 @@ function addToQueue(message) {
     }
 }
 
+function registerDelayedPlayer(message){
+    addToQueue(message);
+    let delayedPlayers = getDelayedPlayers() ?? []
+    queue = getQueue()
+    if(delayedPlayers.includes(message.author.id))
+    {
+        return;
+    }
+    if(!queue.includes(message.author.id))
+    {
+        return;
+    }
+    delayedPlayers.push(message.author.id);
+    addDelayedPlayer(delayedPlayers);
+    return;
+}
+
+
 function leaveToQueue(message) {
 
     if (checkInMatchIncomplete(message)) {
@@ -221,4 +237,4 @@ function removeTimeoutFromCurrentQueue()
     return;
 }
 
-module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue }
+module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer }

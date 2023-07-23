@@ -1,6 +1,8 @@
 const fs = require('fs')
 const path = './functions/queue/queueData.json';
 const pathBan = './functions/queue/queuePlayerBan.json'
+const Path = require('path');
+const delayedPath = Path.resolve(__dirname + '/delayedPlayers.json');
 
 function getBansID() {
     var file = fs.readFileSync(pathBan);
@@ -70,4 +72,18 @@ function deleteQueue() {
     fs.writeFileSync(path, data);
 }
 
-module.exports = { getQueue, updateQueue, deleteQueue, addToBans, getBans, getBansID, updateBans, timeoutBans }
+function getDelayedPlayers(){
+    let delayedPlayers = fs.readFileSync(delayedPath);
+    return JSON.parse(delayedPlayers);
+}
+function addDelayedPlayer(delayedPlayers){
+    fs.writeFileSync(delayedPath,JSON.stringify(delayedPlayers));
+    return;
+}
+
+function clearDelayedPlayers(){
+    fs.writeFileSync(delayedPath, JSON.stringify([]));
+    return;
+}
+
+module.exports = { getQueue, updateQueue, deleteQueue, addToBans, getBans, getBansID, updateBans, timeoutBans, getDelayedPlayers, addDelayedPlayer, clearDelayedPlayers}
