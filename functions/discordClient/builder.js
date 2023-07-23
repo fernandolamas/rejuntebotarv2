@@ -34,7 +34,7 @@ function createDiscordInstance() {
     }),
 
         client.on('messageCreate', async msg => {
-            handleMessage(msg);
+            handleMessage(msg, client);
         }),
 
         await client.login(discordToken)
@@ -50,8 +50,11 @@ function createDiscordInstance() {
     })
 }
 
-async function retrieveConnection() {
-    return discordInstance === null ? discordInstance = await createDiscordInstance() : discordInstance;
+async function retrieveDiscordConnection() {
+    return new Promise(async (resolve, reject) => {
+        discordInstance === null ? discordInstance = await createDiscordInstance() : discordInstance;
+        resolve(discordInstance)
+    })
 }
 
-module.exports = { retrieveConnection }
+module.exports = { retrieveDiscordConnection }

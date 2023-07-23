@@ -1,22 +1,22 @@
 const { retrieveConnection } = require('../database/database')
 const { EmbedBuilder } = require('discord.js');
 
-async function showLadder(message) {
+let ladderMessage = null;
+
+async function showLadder(discordClient) {
     let con = await retrieveConnection();
     const playersQuery = "SELECT p.Nickname,r.Position, r.Win, r.Lose, r.Tie from players p, ranking r WHERE p.SteamID = r.SteamID ORDER BY r.Position;"
-    con.query(playersQuery, (err, result) => {
+    con.query(playersQuery, async (err, result) => {
         if (err) {
-            console.log(err)
+            console.log(err);
             return;
         }
 
         let playerList = '';
         result.forEach(e => {
-            if(e.Position === null) 
-            {
+            if (e.Position === null) {
                 return;
             }
-            //playerList += `**Player:** ${e.Nickname || 'Unknown Player'}\n**Position:** ${e.Position.toString() || 'Unknown Position'}\n**Stats:** ( W ${e.Win.toString()} | L ${e.Lose.toString()} | T ${e.Tie.toString()}  )\n\n`;
             playerList += `${e.Position.toString() || 'Unknown Position'} - ${e.Nickname || 'Unknown Player'} (${e.Win.toString()} | ${e.Lose.toString()} | ${e.Tie.toString()})\n`;
         });
 
@@ -24,10 +24,39 @@ async function showLadder(message) {
             .setColor('#fca903')
             .setTitle('Ranking TFC.latam')
             .setDescription(playerList)
-            .setFooter({ text: 'Stats: (Win|Lose|Tie)' })
+            .setFooter({ text: 'Stats: (Win|Lose|Tie)' });
 
-        message.channel.send({ embeds: [ladderEmbed] });
+        
+
+        const sendDiscordMessage = async (ladderEmbed) => {
+            try {
+                let channelId = "1128808340793868410"
+                const rankingChat = discordClient.channels.cache.get(channelId);
+                rankingChat.send({
+                    embeds: [ladderEmbed]
+                }).then(msg => ladderMessage = msg).catch(console.error)
+            } catch (err) {
+                console.error(`Unable to retrieve ranking channel ${err}`)
+            }
+        }
+
+
+        //TODO: check if message exists before sending/editing
+        if (ladderMessage) {
+            ladderMessage.edit({ embeds: [ladderEmbed] })
+                .catch((err) => {
+                    console.error(err)
+                    //Probably the message was deleted by an user
+                    sendDiscordMessage(ladderEmbed);
+                });
+        } else {
+            sendDiscordMessage(ladderEmbed);
+        }
     });
+}
+async function getLadder(message, client) {
+    await showLadder(client);
+    message.author.send("Ranking ladder was updated at #ranking channel");
 }
 
 
@@ -69,4 +98,4 @@ async function calculateLadder() {
 
 
 
-module.exports = { showLadder, calculateLadder }
+module.exports = { showLadder, calculateLadder, getLadder }

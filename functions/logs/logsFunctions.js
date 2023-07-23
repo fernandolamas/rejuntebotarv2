@@ -9,7 +9,6 @@ const { fullPath, unparsedLogsPath } = require('./logsConfig.json')
 const { calculateWinners } = require('../ranking/ranking')
 const { getLastDemoZip, getDemos } = require('./getdemos');
 const { constants } = require('fs/promises');
-const { retrieveConnection } = require('../discord/discord')
 
 
 const filepath = path.join(__dirname)
@@ -77,7 +76,7 @@ async function getDirectoryContentsWithSize(directoryPath) {
   });
 }
 
-async function downloadFiles() {
+async function downloadFiles(discordClient) {
 
   console.log(fullPath);
   if (!fs.existsSync(fullPath)) {
@@ -210,7 +209,6 @@ async function downloadFiles() {
         // Extraer el valor de "map"
         const map = datosJSON.map;
         try {
-          let client = await retrieveConnection();
           let att = null;
           try {
             await getDemos();
@@ -222,7 +220,7 @@ async function downloadFiles() {
           //718271966800248844 testing channel
           //1113175589583585371
           //1132076066232602685 test2channel
-          const channel = await client.channels.fetch('1113175589583585371');
+          const channel = await discordClient.channels.fetch('1113175589583585371');
           if (blargResponse.length !== 0) {
             let dcMessage = "";
             blargResponse.forEach(async (v) => {

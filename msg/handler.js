@@ -11,16 +11,14 @@ const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 const { checkStatus } = require('../functions/status/statusFunctions');
 const { downloadFiles } = require('../functions/logs/logsFunctions.js');
 const { registerPlayer } = require('../functions/database/dbFunctions/register');
-const { showLadder } = require('../functions/ranking/ladder');
-
+const { getLadder } = require('../functions/ranking/ladder');
 
 
 function checkHasStaffRole(message) {
     return message.member.roles.cache.some(role => role.id == staffRoleID);
 }
 
-const handleMessage = async (msg) => {
-
+const handleMessage = async (msg, client) => {
     var havePrefix = false;
 
     for (let index = 0; index < prefix.length; index++) {
@@ -94,7 +92,7 @@ const handleMessage = async (msg) => {
 
         if (aliases.ranking.includes(command))
         {
-            await showLadder(msg);
+            await getLadder(msg, client);
             return;
         }
 
