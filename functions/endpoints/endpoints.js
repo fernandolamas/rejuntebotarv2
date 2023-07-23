@@ -4,11 +4,11 @@ const { calculateLadder } = require('../ranking/ladder.js');
 const { sendTeamsToTheServer } = require('../server/rcon/rconFunctions')
 let _app;
 
-const logsEndpoint = () => {
+const logsEndpoint = (discordClient) => {
     _app.get("/api/logs", (req, res) => {
         console.log("Server listening to logs endpoint")
         try{
-            downloadFiles()
+            downloadFiles(discordClient)
         }catch(error){
             console.log(error)
         }finally{
@@ -72,9 +72,9 @@ const testEndpoint = () => {
 }
 
 
-const registerEndpoints = (app) => {
+const registerEndpoints = (app, discordClient) => {
     _app = app
-    logsEndpoint();
+    logsEndpoint(discordClient);
     winnersEndpoint();
     ladderEndpoint();
     teamsEndpoint();

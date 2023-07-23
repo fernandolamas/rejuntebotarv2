@@ -3,10 +3,10 @@ const { EmbedBuilder } = require('discord.js');
 
 let ladderMessage = null;
 
-async function showLadder(message) {
+async function showLadder(discordClient) {
     let con = await retrieveConnection();
     const playersQuery = "SELECT p.Nickname,r.Position, r.Win, r.Lose, r.Tie from players p, ranking r WHERE p.SteamID = r.SteamID ORDER BY r.Position;"
-    con.query(playersQuery, (err, result) => {
+    con.query(playersQuery, async (err, result) => {
         if (err) {
             console.log(err);
             return;
@@ -25,15 +25,20 @@ async function showLadder(message) {
             .setTitle('Ranking TFC.latam')
             .setDescription(playerList)
             .setFooter({ text: 'Stats: (Win|Lose|Tie)' });
+
         
-        
-        const sendDiscordMessage = () =>{
-            //const rankingChat = client.channels.cache.get("1128808340793868410");
-            //rankingChat.send({ embeds: [ladderEmbed] }) 
-            message.channel.send({ embeds: [ladderEmbed] })
-                .then(msg => ladderMessage = msg)
-                .catch(console.error);
-         }
+
+        const sendDiscordMessage = async (ladderEmbed) => {
+            try {
+                let channelId = "1128808340793868410"
+                const rankingChat = discordClient.channels.cache.get(channelId);
+                rankingChat.send({
+                    embeds: [ladderEmbed]
+                }).then(msg => ladderMessage = msg).catch(console.error)
+            } catch (err) {
+                console.error(`Unable to retrieve ranking channel ${err}`)
+            }
+        }
 
 
         //TODO: check if message exists before sending/editing
@@ -42,12 +47,16 @@ async function showLadder(message) {
                 .catch((err) => {
                     console.error(err)
                     //Probably the message was deleted by an user
-                    sendDiscordMessage();
+                    sendDiscordMessage(ladderEmbed);
                 });
         } else {
-            sendDiscordMessage();
+            sendDiscordMessage(ladderEmbed);
         }
     });
+}
+async function getLadder(message, client) {
+    await showLadder(client);
+    message.author.send("Ranking ladder was updated at #ranking channel");
 }
 
 
@@ -89,4 +98,4 @@ async function calculateLadder() {
 
 
 
-module.exports = { showLadder, calculateLadder }
+module.exports = { showLadder, calculateLadder, getLadder }
