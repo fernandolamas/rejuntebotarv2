@@ -2,7 +2,6 @@ const { staffRoleID, prefix } = require('../config/config.json');
 const aliases = require('../config/commands.json');
 
 const { turnOnServer, turnOffServer, sendServerInfo } = require('../functions/server/serverFunctions')
-const { getDemos } = require('../functions/demos/demosFunctions');
 
 const { voteFor } = require('../functions/generalFunctions');
 const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer } = require('../functions/queue/queueFunctions');
@@ -47,11 +46,6 @@ const handleMessage = async (msg, client) => {
         }
         if (aliases.addWithWait.includes(command)) {
             registerDelayedPlayer(msg)
-            return;
-        }
-
-        if (aliases.downloadDemoCommands.includes(command)) {
-            //getDemos(msg); unused
             return;
         }
 
