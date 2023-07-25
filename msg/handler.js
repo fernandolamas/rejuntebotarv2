@@ -115,6 +115,14 @@ const handleMessage = async (msg, client) => {
                 return;
             }
 
+            if(aliases.countRanking.includes(command))
+            {
+                downloadFiles();
+                let d = new Date()
+                msg.channel.send(`Ranking updated at ${d}`);
+                return;
+            }
+
             if (args.length > 0) {
                 if(aliases.checkStatus.includes(command)) {
                     //checkStatus(msg,args)

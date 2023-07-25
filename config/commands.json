@@ -42,5 +42,7 @@
 
     "ranking": ["ranking"],
     
-    "clearqueue": ["clear"]
+    "clearqueue": ["clear"],
+
+    "countRanking": ["matchfinished"]
 }
