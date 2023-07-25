@@ -91,7 +91,7 @@ function matchEmbed(message, team1, team2, server, map, id, shuffleteams) {
 		const filter = (reaction, user) =>{
 			return emojisRoll.includes(reaction.emoji.name) && user.id !==embedMessage.author.id && bothTeams.includes(user.id) && !usersStored.includes(user.id);
 		};
-		const collector = embedMessage.createReactionCollector({ filter, max: config.matchSize, time: errorTime, errors: ['time'] });
+		const collector = embedMessage.createReactionCollector({ filter, max: config.matchsize, time: errorTime, errors: ['time'] });
 
 		collector.on('collect', (reaction, user) => {
 			if(reaction.emoji.name === `${emojisRoll[0]}`)
@@ -101,7 +101,7 @@ function matchEmbed(message, team1, team2, server, map, id, shuffleteams) {
 			usersStored.push(user.id);
 		});
 		collector.on('end', collected => {
-			if(votes[0] >= (config.matchSize/2) ){
+			if(votes[0] >= (config.matchsize/2) ){
 				embedMessage.delete();
 				shuffleteams(message, id)
 				return;
