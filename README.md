@@ -50,6 +50,6 @@ In order to have the discord bot installed and working, follow these steps
    
 4. Write a token for your discord bot in the file named token.json inside the config folder 
 
-5. Try to run the project using node .
+5. Try to run the project from a terminal using the command "node ." without quotes
 
 6. If any json is missing, you can use the examples provided in the project to create your own files with the right credentials, ie: discord token credentials
