@@ -223,11 +223,11 @@ function insertPlayerIntoQueue(message, args) {
         createMatch(message);
     }
 }
-function noticeCurrentPickup(message)
+function noticeCurrentPickup(message, role)
 {
-    
+    showQueue(message);
     var queue = getQueue();
-    message.channel.send(`<@&1125413526429765682> ${queue.length}/${config.matchsize} !ADD`)
+    message.channel.send(`<@&${role}> ${queue.length}/${config.matchsize} !ADD`)
     setTimeout()
 }
 

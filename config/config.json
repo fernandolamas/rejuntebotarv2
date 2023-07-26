@@ -4,5 +4,6 @@
     "matchTimeout": 1500000,
     "mapTimeout": 21600000,
     "staffRoleID": 718708366725087263,
-    "adminRoleID": 737088122017284107
+    "adminRoleID": 737088122017284107,
+    "noticeRoleID": "1125413526429765682"
 }

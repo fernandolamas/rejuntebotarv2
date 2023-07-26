@@ -6,7 +6,7 @@ const Path = require('path');
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled, getMatchByID, modifyMatch } = require("./matchHandler");
 const { turnOnServerWithTimer } = require('../server/serverFunctions');
 const { turnOnRconConnection } = require('../server/rcon/rconFunctions');
-const { convertIDtoString } = require('../generalFunctions');
+const { convertIDtoString, getUserFromMention } = require('../generalFunctions');
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 const errorTime = 45000;
@@ -172,6 +172,37 @@ function showMatch(message, server, map) {
     deleteQueue();
 }
 
+function replacePlayerInsideMatch(message, player1, player2)
+{
+
+    let currentPickups = getMatchIncomplete();
+    if(currentPickups.length === 0)
+    {
+        message.channel.send("There are no pickups beign played right now");
+        return;
+    }
+    let pickup = currentPickups.pop();
+    let thePlayer = getUserFromMention(player2);
+    let incomingPlayer = getUserFromMention(player1);
+    if(pickup.team1.includes(thePlayer) || pickup.team2.includes(thePlayer))
+    {
+        if(pickup.team1.includes(thePlayer))
+        {
+            let i = pickup.team1.indexOf(thePlayer);
+            pickup.team1[i] = incomingPlayer;
+        }else{
+            let i = pickup.team2.indexOf(thePlayer);
+            pickup.team2[i] = incomingPlayer;
+        }
+        modifyMatch(pickup);
+        message.channel.send(`Player ${player1} was replaced for ${player2} in the current match`)
+        return;
+    }else{
+        message.channel.send(`${player2} is not in last match`);
+        return;
+    }
+}
+
 function createMatch(message) {
 
     //voteServer(message)
@@ -296,4 +327,4 @@ function reRollMaps(message){
     });
 }
 
-module.exports = { shuffleTeams , createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch }
+module.exports = { shuffleTeams , createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch, replacePlayerInsideMatch}

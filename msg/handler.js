@@ -1,11 +1,11 @@
-const { staffRoleID, adminRoleID, prefix } = require('../config/config.json');
+const { staffRoleID, adminRoleID, prefix, noticeRoleID } = require('../config/config.json');
 const aliases = require('../config/commands.json');
 
 const { turnOnServer, turnOffServer, sendServerInfo } = require('../functions/server/serverFunctions')
 
 const { voteFor } = require('../functions/generalFunctions');
 const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer } = require('../functions/queue/queueFunctions');
-const { showMatchIncompletes, cancelMatch, shuffleTeams, reRollMaps } = require('../functions/match/matchFunctions');
+const { showMatchIncompletes, cancelMatch, shuffleTeams, reRollMaps, replacePlayerInsideMatch } = require('../functions/match/matchFunctions');
 const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
 const { checkStatus } = require('../functions/status/statusFunctions');
 const { downloadFiles } = require('../functions/logs/logsFunctions.js');
@@ -48,6 +48,7 @@ const handleMessage = async (msg, client) => {
             leaveToQueue(msg)
             return;
         }
+
         if (aliases.addWithWait.includes(command)) {
             registerDelayedPlayer(msg)
             return;
@@ -73,6 +74,7 @@ const handleMessage = async (msg, client) => {
             voteFor(msg, args);
             return;
         }
+
         if (aliases.serverInfoCommands.includes(command)) {
             sendServerInfo(msg, args[0])
             return;
@@ -82,14 +84,23 @@ const handleMessage = async (msg, client) => {
             removeTimeoutFromCurrentQueue()
             return;
         }
+
         if (aliases.noticePickup.includes(command)) {
-            noticeCurrentPickup(msg)
+            noticeCurrentPickup(msg, noticeRoleID)
             return;
         }
 
         if (aliases.ranking.includes(command)) {
             await getLadder(msg, client);
             return;
+        }
+        
+        if (aliases.subAPlayer.includes(command))
+        {
+            if(args.length === 0){
+                msg.channel.send(`<@&${noticeRoleID}> The player <@!${msg.author.id}> needs sub!`)
+                return;
+            }
         }
 
         if (checkHasStaffRole(msg)) {
@@ -112,7 +123,9 @@ const handleMessage = async (msg, client) => {
             if (aliases.countRanking.includes(command)) {
                 downloadFiles(client);
                 let d = new Date()
-                msg.channel.send(`Ranking updated at ${d}`);
+                let log = `Ranking updated at ${d} by <@!${msg.author.id}>`;
+                console.log(log)
+                msg.channel.send(log);
                 return;
             }
 
@@ -128,6 +141,11 @@ const handleMessage = async (msg, client) => {
                         setManualRankingByName(msg,args[0],args[1],args[2])
                         return;
                     }
+                }
+                if (aliases.subAPlayer.includes(command))
+                {
+                    replacePlayerInsideMatch(msg, args[0], args[2])
+                    return;
                 }
 
                 if (aliases.checkStatus.includes(command)) {

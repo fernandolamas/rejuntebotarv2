@@ -13,7 +13,7 @@
 
     "downloadDemoCommands": ["demos"],
 
-    "matchViewCommands": ["matches"],
+    "matchViewCommands": ["matches","teams","match"],
     "matchAbortCommands": ["cancel"],
 
     "matchShuffleCommands": ["shuffle"],
@@ -48,5 +48,7 @@
 
     "setRanking": ["setrank"],
     
-    "setRankingByName": ["setrankbyname"]
+    "setRankingByName": ["setrankbyname"],
+
+    "subAPlayer": ["sub"]
 }
