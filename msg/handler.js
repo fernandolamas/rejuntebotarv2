@@ -1,4 +1,4 @@
-const { staffRoleID, prefix } = require('../config/config.json');
+const { staffRoleID, adminRoleID, prefix } = require('../config/config.json');
 const aliases = require('../config/commands.json');
 
 const { turnOnServer, turnOffServer, sendServerInfo } = require('../functions/server/serverFunctions')
@@ -11,10 +11,14 @@ const { checkStatus } = require('../functions/status/statusFunctions');
 const { downloadFiles } = require('../functions/logs/logsFunctions.js');
 const { registerPlayer } = require('../functions/database/dbFunctions/register');
 const { getLadder } = require('../functions/ranking/ladder');
+const { setManualRanking, setManualRankingByName } = require('../functions/ranking/counters');
 
 
 function checkHasStaffRole(message) {
     return message.member.roles.cache.some(role => role.id == staffRoleID);
+}
+function checkHasAdminRole(message) {
+    return message.member.roles.cache.some(role => role.id == adminRoleID);
 }
 
 const handleMessage = async (msg, client) => {
@@ -54,38 +58,36 @@ const handleMessage = async (msg, client) => {
             return;
         }
 
-        if(aliases.queueCommands.includes(command)){
+        if (aliases.queueCommands.includes(command)) {
             showQueue(msg);
             return;
         }
 
-        if(aliases.rconCommands.includes(command)){
+        if (aliases.rconCommands.includes(command)) {
             //command:rcon  args:brasil teams which the server is [0] in the array brasil
             sendRconResponse(msg, args)
             return;
         }
-        
-        if (aliases.voteForCommand.includes(command)){
-            voteFor(msg,args);
+
+        if (aliases.voteForCommand.includes(command)) {
+            voteFor(msg, args);
             return;
         }
-        if (aliases.serverInfoCommands.includes(command)){
-            sendServerInfo(msg,args[0])
+        if (aliases.serverInfoCommands.includes(command)) {
+            sendServerInfo(msg, args[0])
             return;
         }
 
-        if (aliases.preventQueueExpiration.includes(command))
-        {
+        if (aliases.preventQueueExpiration.includes(command)) {
             removeTimeoutFromCurrentQueue()
             return;
         }
-        if (aliases.noticePickup.includes(command)){
+        if (aliases.noticePickup.includes(command)) {
             noticeCurrentPickup(msg)
             return;
         }
 
-        if (aliases.ranking.includes(command))
-        {
+        if (aliases.ranking.includes(command)) {
             await getLadder(msg, client);
             return;
         }
@@ -97,20 +99,17 @@ const handleMessage = async (msg, client) => {
                 return;
             }
 
-            if (aliases.reRollMaps.includes(command))
-            {
+            if (aliases.reRollMaps.includes(command)) {
                 reRollMaps(msg);
                 return;
             }
 
-            if(aliases.clearqueue.includes(command))
-            {
+            if (aliases.clearqueue.includes(command)) {
                 clearQueue(msg);
                 return;
             }
 
-            if(aliases.countRanking.includes(command))
-            {
+            if (aliases.countRanking.includes(command)) {
                 downloadFiles(client);
                 let d = new Date()
                 msg.channel.send(`Ranking updated at ${d}`);
@@ -118,18 +117,31 @@ const handleMessage = async (msg, client) => {
             }
 
             if (args.length > 0) {
-                if(aliases.checkStatus.includes(command)) {
+                if (checkHasAdminRole(msg)) {
+                    if(aliases.setRanking.includes(command))
+                    {
+                        setManualRanking(msg,args[0],args[1],args[2])
+                        return;
+                    }
+                    if(aliases.setRankingByName.includes(command))
+                    {
+                        setManualRankingByName(msg,args[0],args[1],args[2])
+                        return;
+                    }
+                }
+
+                if (aliases.checkStatus.includes(command)) {
                     //checkStatus(msg,args)
                     console.log("Obsolete function !status")
                     return;
                 }
                 if (aliases.insertCommands.includes(command)) {
-                    insertPlayerIntoQueue(msg,args)
+                    insertPlayerIntoQueue(msg, args)
                     return;
                 }
 
                 if (aliases.swapCommands.includes(command)) {
-                    swapPlayerFromQueue(msg,args);
+                    swapPlayerFromQueue(msg, args);
                     return;
                 }
 
@@ -168,8 +180,7 @@ const handleMessage = async (msg, client) => {
                     return;
                 }
 
-                if (aliases.registerPlayers.includes(command))
-                {
+                if (aliases.registerPlayers.includes(command)) {
                     registerPlayer(msg, args[0], args[1], args[2], args[3]);
                 }
             } else {

@@ -44,5 +44,9 @@
     
     "clearqueue": ["clear"],
 
-    "countRanking": ["matchfinished"]
+    "countRanking": ["matchfinished"],
+
+    "setRanking": ["setrank"],
+    
+    "setRankingByName": ["setrankbyname"]
 }

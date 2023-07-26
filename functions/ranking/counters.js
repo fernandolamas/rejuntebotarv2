@@ -1,5 +1,5 @@
 
-let { retrieveConnection } = require('../database/database')
+let { retrieveConnection, doQuery } = require('../database/database')
 let { calculateLadder } = require('./ladder') 
 let i = 0;
 async function countAsResultForPlayer(steamID, matchResult) {
@@ -41,4 +41,59 @@ function reachedMaxPlayers()
     i = 0;
 }
 
-module.exports = { countAsResultForPlayer }
+async function setManualRanking(message,steamId,condition,number)
+{
+    try{
+        checkPossibleResults(condition);
+    }catch(err)
+    {
+        message.channel.send(err);
+        return;
+    }
+
+
+    let query = `UPDATE ranking SET ${condition} = ${number} WHERE SteamID = '${steamId}'`
+    await doQuery(query).then((result) => {
+
+        message.channel.send("Updated ranked for SteamId "+ JSON.stringify(result))
+    })
+    .catch((err) => {
+        message.channel.send("Error while updating result: " + JSON.stringify(err));
+    })
+    return;
+}
+
+async function setManualRankingByName(message,nickname,condition,number)
+{
+    try{
+        checkPossibleResults(condition);
+    }catch(err)
+    {
+        message.channel.send(err);
+        return;
+    }
+
+    let query = `SELECT SteamID from players where Nickname = '${nickname}' LIMIT 1`;
+    await doQuery(query).then( async (result) => {
+        if(!Array.isArray(result))
+        {
+            message.channel.send("The player was not found")
+            throw "Player searched for ranking update was not found";
+        }
+        await setManualRanking(message, result[0].SteamID, condition, number);
+    }).catch((err) => {
+        message.channel.send("Error while searching for player: ", err);
+    })
+}
+
+function checkPossibleResults(condition)
+{
+    let possibleResults = ['Win','Lose','Tie'];
+    if(!possibleResults.includes(condition))
+    {
+        throw "Only possible results are: Win, Lose, Tie";
+    }
+    return;
+}
+
+module.exports = { countAsResultForPlayer, setManualRanking, setManualRankingByName}

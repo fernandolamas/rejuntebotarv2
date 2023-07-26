@@ -23,10 +23,26 @@ function connectToMySQLDatabaseAsync()
       });
 }
 
+async function doQuery(query)
+{
+  const con = await retrieveConnection();
+  return new Promise((resolve,reject) => {
+    con.query(query, (err, result) => {
+      if(err)
+      {
+        reject(err);
+      }
+      if(result){
+        resolve(result);
+      }
+    });
+  })
+}
+
 async function retrieveConnection() {
   con = con === null ? await connectToMySQLDatabaseAsync() : con
   return con;
 }
 
 
-module.exports = { retrieveConnection }
+module.exports = { retrieveConnection, doQuery }
