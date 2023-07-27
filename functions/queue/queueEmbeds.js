@@ -1,5 +1,5 @@
 const config = require('../../config/config.json')
-const {convertIDtoString} = require('../generalFunctions')
+const {convertIDtoString, convertIDtoEmoji} = require('../generalFunctions')
 const {EmbedBuilder} = require("discord.js");
 const path = './functions/match/matchTemplate.json';
 const fs = require('fs')
@@ -9,7 +9,7 @@ function queueEmbed(message, queue)
     var file = fs.readFileSync(path);
     let matchJson = JSON.parse(file);
 
-    var players = convertIDtoString(message, queue);
+    var players = convertIDtoEmoji(message, queue);
     var playersList = Array.isArray(players) ? players.join('\n') : players;
     playersList = playersList.replace(/, /g, '\n'); // Agrega saltos de línea después de cada coma y espacio
     //console.log(playersList);
@@ -23,6 +23,7 @@ function queueEmbed(message, queue)
     message.channel.send({embeds: [queueEmbed]});
     return matchJson.id;
 }
+
 
 
 module.exports = { queueEmbed }

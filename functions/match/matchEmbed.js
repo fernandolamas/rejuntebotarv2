@@ -1,5 +1,5 @@
 const { getQueue } = require("../queue/queueHandler");
-const {convertIDtoString} = require("../generalFunctions")
+const {convertIDtoString, convertIDtoEmoji} = require("../generalFunctions")
 const {queueEmbed} = require("../queue/queueEmbeds")
 const footer = "45s to vote";
 const {EmbedBuilder} = require("discord.js");
@@ -39,8 +39,8 @@ function serverEmbed(message, emojis, servers) {
 }
 
 function matchEmbedIncomplete(message, team1, team2, map){
-    var cTeam1 = convertIDtoString(message, team1);
-    var cTeam2 = convertIDtoString(message, team2);
+    var cTeam1 = convertIDtoEmoji(message, team1);
+    var cTeam2 = convertIDtoEmoji(message, team2);
     
 	const fields = [
 		{ name: '**Server**', value: "TFC Argieland" || 'Unknown Server' },
@@ -60,8 +60,8 @@ function matchEmbedIncomplete(message, team1, team2, map){
 
 function matchEmbed(message, team1, team2, server, map, id, shuffleteams) {
 	let bothTeams = team1.concat(team2);
-	var cTeam1 = convertIDtoString(message, team1);
-	var cTeam2 = convertIDtoString(message, team2);
+	var cTeam1 = convertIDtoEmoji(message, team1);
+	var cTeam2 = convertIDtoEmoji(message, team2);
   	
 	var cTeam1List = Array.isArray(cTeam1) ? cTeam1.join('\n') : cTeam1;
 	cTeam1List = cTeam1List.replace(/, /g, '\n'); // Agrega saltos de línea después de cada coma y espacio
