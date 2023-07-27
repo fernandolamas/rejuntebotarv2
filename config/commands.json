@@ -50,5 +50,11 @@
     
     "setRankingByName": ["setrankbyname"],
 
-    "subAPlayer": ["sub"]
+    "subAPlayer": ["sub"],
+
+    "testMatchEmbed": ["testm"],
+
+    "timeleft": ["timeleft"],
+    
+    "changeMap": ["map"]
 }

@@ -10,7 +10,7 @@ const options = {
 
 };
 
-const conn = {
+let conn = {
     brasil: {
         name: 'brasil',
         connection: undefined
@@ -24,14 +24,16 @@ const conn = {
         connection: undefined
     }
 }
+let lastResponse = "";
 
 function retrieveConnectionFromServer(name)
 {
     //to-do if conn null, then re-establish the connection
+    conn = conn[name].connection === undefined ? turnOnRconConnection("brasil") : conn
     return conn[name].connection;
 }
 
-function turnOnRconConnection(message, _servername) {
+function turnOnRconConnection(_servername) {
     const serverCredentialsFile = fs.readFileSync(pathCredentials)
     const serverCredentials = JSON.parse(serverCredentialsFile);
     conn[_servername].connection = new Rcon(serverCredentials[_servername].ip, serverCredentials[_servername].port, serverCredentials[_servername].rconPassword, options);
@@ -45,7 +47,7 @@ function turnOnRconConnection(message, _servername) {
 
     }).on('response', function (str) {
         console.log("The server ", _servername, " answered : \n" + str);
-
+        lastResponse = str;
     }).on('end', function () {
         console.log("The connection with server ", _servername, " has been closed");
     }).on('error', function () {
@@ -104,7 +106,7 @@ function sendTeamsToTheServer(client) {
     }
     
     //to-do multiserver
-    const rcon = retrieveConnectionFromServer(brasil);
+    const rcon = retrieveConnectionFromServer("brasil");
     let currentMatch = currentMatches.pop();
     //if is asking for the teams, share the teams
             
@@ -125,5 +127,28 @@ function sendTeamsToTheServer(client) {
 
 }
 
+async function getTimeoutFromServer(message)
+{
+    await sendToRcon("amx_timeleft")
+    setTimeout(() => {
+        message.channel.send(`Timeleft: ${lastResponse === "" ? "" : lastResponse.match(/\d{1,2}:?\d{1,2}/g).pop()}`);
+    },3000)
+    return;
+}
+async function changeServerMap(message, map)
+{
+    await sendToRcon(`changelevel ${map}`);
+    message.channel.send(`Map changed to ${map} by <@!${message.author.id}>`);
+    return;
+}
 
-module.exports = { turnOnRconConnection, sendRconResponse, sendTeamsToTheServer };
+async function sendToRcon(command)
+{
+    const rcon = retrieveConnectionFromServer("brasil");
+    setTimeout(() =>{
+        rcon.send(command)
+    },1000);
+    return;
+}
+
+module.exports = { turnOnRconConnection, sendRconResponse, sendTeamsToTheServer, getTimeoutFromServer, changeServerMap };

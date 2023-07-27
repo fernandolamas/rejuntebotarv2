@@ -1,13 +1,15 @@
 const { staffRoleID, adminRoleID, prefix, noticeRoleID } = require('../config/config.json');
 const aliases = require('../config/commands.json');
-
 const { turnOnServer, turnOffServer, sendServerInfo } = require('../functions/server/serverFunctions')
-
 const { voteFor } = require('../functions/generalFunctions');
-const { addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, showQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer } = require('../functions/queue/queueFunctions');
-const { showMatchIncompletes, cancelMatch, shuffleTeams, reRollMaps, replacePlayerInsideMatch } = require('../functions/match/matchFunctions');
-const { sendRconResponse } = require('../functions/server/rcon/rconFunctions');
-const { checkStatus } = require('../functions/status/statusFunctions');
+const { addToQueue, leaveToQueue, banPlayerFromQueue,
+    unbanPlayerFromQueue, kickFromQueue, showQueue,
+    swapPlayerFromQueue, insertPlayerIntoQueue,
+    noticeCurrentPickup, removeTimeoutFromCurrentQueue,
+    clearQueue, registerDelayedPlayer } = require('../functions/queue/queueFunctions');
+const { showMatchIncompletes, cancelMatch, shuffleTeams,
+    reRollMaps, replacePlayerInsideMatch, testMatchEmbed } = require('../functions/match/matchFunctions');
+const { sendRconResponse, getTimeoutFromServer, changeServerMap } = require('../functions/server/rcon/rconFunctions');
 const { downloadFiles } = require('../functions/logs/logsFunctions.js');
 const { registerPlayer } = require('../functions/database/dbFunctions/register');
 const { getLadder } = require('../functions/ranking/ladder');
@@ -94,13 +96,17 @@ const handleMessage = async (msg, client) => {
             await getLadder(msg, client);
             return;
         }
-        
-        if (aliases.subAPlayer.includes(command))
-        {
-            if(args.length === 0){
+
+        if (aliases.subAPlayer.includes(command)) {
+            if (args.length === 0) {
                 msg.channel.send(`<@&${noticeRoleID}> The player <@!${msg.author.id}> needs sub!`)
                 return;
             }
+        }
+
+        if (aliases.timeleft.includes(command)) {
+            getTimeoutFromServer(msg);
+            return;
         }
 
         if (checkHasStaffRole(msg)) {
@@ -129,21 +135,29 @@ const handleMessage = async (msg, client) => {
                 return;
             }
 
+            if (aliases.testMatchEmbed.includes(command)) {
+                testMatchEmbed(msg);
+                return;
+            }
+            
+            if (aliases.changeMap.includes(command))
+            {
+                changeServerMap(msg, args[0]);
+                return;
+            }
+
             if (args.length > 0) {
                 if (checkHasAdminRole(msg)) {
-                    if(aliases.setRanking.includes(command))
-                    {
-                        setManualRanking(msg,args[0],args[1],args[2])
+                    if (aliases.setRanking.includes(command)) {
+                        setManualRanking(msg, args[0], args[1], args[2])
                         return;
                     }
-                    if(aliases.setRankingByName.includes(command))
-                    {
-                        setManualRankingByName(msg,args[0],args[1],args[2])
+                    if (aliases.setRankingByName.includes(command)) {
+                        setManualRankingByName(msg, args[0], args[1], args[2])
                         return;
                     }
                 }
-                if (aliases.subAPlayer.includes(command))
-                {
+                if (aliases.subAPlayer.includes(command)) {
                     replacePlayerInsideMatch(msg, args[0], args[2])
                     return;
                 }

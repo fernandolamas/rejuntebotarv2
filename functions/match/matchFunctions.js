@@ -154,7 +154,9 @@ function showMatch(message, server, map) {
     //turnOnServerWithTimer(message,server);
     //no servers to choose, for now it will be only Brasil
     try{
-        setTimeout(function() {conn = turnOnRconConnection(message,"brasil") },60000);
+        setTimeout(function() {
+            conn = turnOnRconConnection("brasil") 
+        },60000);
     }catch(e){
         console.log(`The system was unable to establish rcon connection ${e}`);
     }
@@ -327,4 +329,17 @@ function reRollMaps(message){
     });
 }
 
-module.exports = { shuffleTeams , createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch, replacePlayerInsideMatch}
+function testMatchEmbed(message)
+{
+    let arr = ['726662949464178751','726662949464178751','726662949464178751','726662949464178751'];
+    let arr2 = ['726662949464178751','726662949464178751','726662949464178751','181121093342461952'];
+    matchEmbed(message,arr,arr2,'brasil','fry_baked_lg',getMatchId(),shuffleTeams)
+
+    try{
+        setTimeout(function() {conn = turnOnRconConnection("brasil") },60000);
+    }catch(e){
+        console.log(`The system was unable to establish rcon connection ${e}`);
+    }
+}
+
+module.exports = { shuffleTeams , createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch, replacePlayerInsideMatch, testMatchEmbed}
