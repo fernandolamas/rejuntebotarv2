@@ -25,6 +25,12 @@ const conn = {
     }
 }
 
+function retrieveConnectionFromServer(name)
+{
+    //to-do if conn null, then re-establish the connection
+    return conn[name].connection;
+}
+
 function turnOnRconConnection(message, _servername) {
     const serverCredentialsFile = fs.readFileSync(pathCredentials)
     const serverCredentials = JSON.parse(serverCredentialsFile);
@@ -89,35 +95,33 @@ function sendRconResponse(message, args) {
     message.channel.send("Sending teams info to the server");
 }
 
-function sendTeamsToTheServer(server = 'brasil') {
+function sendTeamsToTheServer(client) {
 
     let currentMatches = getMatchIncomplete();
-    let currentMatch;
-    currentMatches.forEach(m => {
-        if (m.server === server) {
-            currentMatch = m;
-        }
-    })
-    //if is asking for the teams, share the teams
-    if(!currentMatch)
+    if(currentMatches.length === 0)
     {
         return;
     }
+    
+    //to-do multiserver
+    const rcon = retrieveConnectionFromServer(brasil);
+    let currentMatch = currentMatches.pop();
+    //if is asking for the teams, share the teams
             
     var team1 = "";
     currentMatch.team1.forEach(async uid => {
-        let user = await message.client.users.fetch(uid);
+        let user = await client.users.fetch(uid);
         team1 += user.username + " ";
     })
     var team2 = "";
     currentMatch.team2.forEach(async uid => {
-        let user = await message.client.users.fetch(uid);
+        let user = await client.users.fetch(uid);
         team2 += user.username + " ";
     })
-    setTimeout(() => {
-        conn[currentMatch.server].connection.send("say Red Team " + team1);
-        conn[currentMatch.server].connection.send("say Blue Team " + team2);
-    }, 6000);
+    setTimeout(() =>{
+        rcon.send("say Red Team " + team1);
+        rcon.send("say Blue Team " + team2);
+    },6000)
 
 }
 

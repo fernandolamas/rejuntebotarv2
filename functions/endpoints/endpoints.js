@@ -42,11 +42,11 @@ const ladderEndpoint = () => {
         }
     })
 }
-const teamsEndpoint = () => {
+const teamsEndpoint = (discordClient) => {
     _app.get("/api/teams", (req, res) => {
         console.log("Server is listening to teams endpoint")
         try{
-            sendTeamsToTheServer();
+            sendTeamsToTheServer(discordClient);
         }catch(error){
             console.log(error);
         }finally{
@@ -77,7 +77,7 @@ const registerEndpoints = (app, discordClient) => {
     logsEndpoint(discordClient);
     winnersEndpoint();
     ladderEndpoint();
-    teamsEndpoint();
+    teamsEndpoint(discordClient);
     testEndpoint();
 }
 
