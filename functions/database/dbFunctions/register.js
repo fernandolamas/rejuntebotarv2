@@ -21,7 +21,7 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
         message.channel.send("discordname needed")
         return;
     }
-    const search = `SELECT * FROM Players WHERE SteamID = '${steamID}';`;
+    const search = `SELECT * FROM players WHERE SteamID = '${steamID}';`;
 
     con.query(search, (err, result) => {
         if (err) {
@@ -29,7 +29,7 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
             return;
         }
         if (result.length > 0) {
-            const updateQuery = `UPDATE Players SET DiscordID = '${discordID}', DiscordName = '${discordName}' WHERE SteamID = '${steamID}';`;
+            const updateQuery = `UPDATE players SET DiscordID = '${discordID}', DiscordName = '${discordName}' WHERE SteamID = '${steamID}';`;
             con.query(updateQuery, (err))
             {
                 if (err) {
@@ -39,7 +39,7 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
                 message.channel.send('Player updated successfully.');
             }
         } else {
-            const insertQuery = `INSERT INTO Players (SteamID, Nickname, DiscordID, DiscordName) VALUES ('${steamID}', '', '${discordID}', '${discordName}');`;
+            const insertQuery = `INSERT INTO players (SteamID, Nickname, DiscordID, DiscordName) VALUES ('${steamID}', '', '${discordID}', '${discordName}');`;
 
             // Ejecutar la consulta de inserción
             con.query(insertQuery, (error) => {
