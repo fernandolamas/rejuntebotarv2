@@ -111,7 +111,7 @@ async function downloadFiles(discordClient) {
         fs.mkdirSync(logsFolder)
       }
       try {
-        await calculateWinners()
+        //await calculateWinners()
       } catch (err) {
         console.log(`Error while calculating the winners ${err}`)
       }
