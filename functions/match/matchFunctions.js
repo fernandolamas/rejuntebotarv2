@@ -1,20 +1,15 @@
 const { getQueue, deleteQueue, getDelayedPlayers, clearDelayedPlayers} = require("../queue/queueHandler");
-const { MessageEmbed } = require("discord.js");
 const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
 const config = require("../../config/config.json");
 const Path = require('path');
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled, getMatchByID, modifyMatch } = require("./matchHandler");
-const { turnOnServerWithTimer } = require('../server/serverFunctions');
 const { turnOnRconConnection } = require('../server/rcon/rconFunctions');
 const { convertIDtoString, getUserFromMention } = require('../generalFunctions');
 const emojisServer = ["1️⃣", "2️⃣", "3️⃣"]
 const emojisMap = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 const errorTime = 45000;
-const minvote = (config.matchsize/2)+1;
 const fs = require('fs');
 
-//server rcon connection
-let conn = require('../server/rcon/rconFunctions');
 
 
 function hasEnoughPlayers(message) {

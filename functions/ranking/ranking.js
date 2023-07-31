@@ -1,6 +1,8 @@
 const { retrieveConnection } = require('../database/database')
 const { registerPlayerFromEndpoint } = require('../database/dbFunctions/register')
 const { countAsResultForPlayer } = require('./counters')
+const { getLastMatch } = require('../match/matchFunctions');
+const { retrieveSteamId } = require('./searcher');
 
 async function calculateWinners() {
   // Realiza operaciones con la conexión a la base de datos
@@ -33,11 +35,9 @@ const getResults = (query) => {
 }
 
 function evaluateRounds(games) {
-  let maps = require('../match/maps/mapsData.json');
-  let isRankedMap = maps.includes(games[0].Mapname);
-  if(!isRankedMap)
-  {
-    return 
+  let isRankedMap = checkIfMapIsRankedMap(games[0].Mapname);
+  if (!isRankedMap) {
+    return;
   }
 
   const matchesResult = {
@@ -81,4 +81,47 @@ function loadPlayersResults(steamIdArr, nickArr, condition) {
     }
   })
 }
-module.exports = { calculateWinners }
+
+async function declareDiscordRanking(message, option, condition) {
+  await countResultByCondition(option, condition).catch((err) => {
+    console.error(err)
+    message.channel.send(`Error: ${err}`);
+  }).then((res) => {
+    message.channel.send(`Result: ${res}`)
+  })
+
+}
+
+function countResultByCondition(option, condition) {
+  return new Promise(async (resolve, reject) => {
+    let lastPickup = getLastMatch()
+    let team = lastPickup[option]
+    var finalResult = []
+    team.forEach(async (id) => {
+      await retrieveSteamId('DiscordID', id)
+        .then(async (result) => {
+          await countAsResultForPlayer(result[0].SteamId, condition)
+          .catch((err) => {
+            finalResult.push(err);
+          }).then((res) => {
+            finalResult.push(res);
+          })
+        })
+        .catch((err) => {
+          console.error(err)
+          finalResult.push(err);
+        })
+    });
+    // Timeout hack by loop promise
+    setTimeout(() => {
+      resolve(finalResult);
+    },6000)
+  })
+}
+
+
+function checkIfMapIsRankedMap(map) {
+  let maps = require('../match/maps/mapsData.json');
+  return maps.includes(map);
+}
+module.exports = { calculateWinners, declareDiscordRanking }

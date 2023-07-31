@@ -14,6 +14,8 @@ const { downloadFiles } = require('../functions/logs/logsFunctions.js');
 const { registerPlayer } = require('../functions/database/dbFunctions/register');
 const { getLadder } = require('../functions/ranking/ladder');
 const { setManualRanking, setManualRankingByName } = require('../functions/ranking/counters');
+const { declareDiscordRanking } = require('../functions/ranking/ranking');
+
 
 
 function checkHasStaffRole(message) {
@@ -159,6 +161,11 @@ const handleMessage = async (msg, client) => {
                 }
                 if (aliases.subAPlayer.includes(command)) {
                     replacePlayerInsideMatch(msg, args[0], args[2])
+                    return;
+                }
+
+                if (aliases.declareResult.includes(command)){
+                    declareDiscordRanking(msg,args[0],args[1]);
                     return;
                 }
 
