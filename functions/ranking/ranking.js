@@ -1,8 +1,8 @@
 const { retrieveConnection } = require('../database/database')
 const { registerPlayerFromEndpoint } = require('../database/dbFunctions/register')
-const { countAsResultForPlayer } = require('./counters')
+const { countAsResultForPlayer,changeResultToPlayer } = require('./counters')
 const { getLastMatch } = require('../match/matchFunctions');
-const { retrieveSteamId } = require('./searcher');
+const { retrieveSteamId, retrieveSteamIdFromPlayers } = require('./searcher');
 
 async function calculateWinners() {
   // Realiza operaciones con la conexión a la base de datos
@@ -100,7 +100,7 @@ function countResultByCondition(option, condition) {
     team.forEach(async (id) => {
       await retrieveSteamId('DiscordID', id)
         .then(async (result) => {
-          await countAsResultForPlayer(result[0].SteamId, condition)
+          await countAsResultForPlayer(result, condition)
           .catch((err) => {
             finalResult.push(err);
           }).then((res) => {
@@ -124,4 +124,23 @@ function checkIfMapIsRankedMap(map) {
   let maps = require('../match/maps/mapsData.json');
   return maps.includes(map);
 }
-module.exports = { calculateWinners, declareDiscordRanking }
+
+async function sumResultToPlayerFromDiscordMessage(message,condition, id, operation)
+{
+  await changeResultToPlayer(condition,id, operation).then((res) => {
+    message.channel.send(`Player ranking updated succesfully ${condition}: ${res}`)
+  }).catch((err) => {
+    message.channel.send(`Error updating player ${err}`)
+  });
+}
+
+async function showPlayersBySteamIdAtRanking(message)
+{
+  await retrieveSteamIdFromPlayers().then((res) => {
+    message.channel.send(`Result:\n ${JSON.stringify(res)}`);
+  }).catch((err) => {
+    console.error(err)
+    message.channel.send(`Error: ${err}`);
+  })
+}
+module.exports = { calculateWinners, declareDiscordRanking, sumResultToPlayerFromDiscordMessage, showPlayersBySteamIdAtRanking }

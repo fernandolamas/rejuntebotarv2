@@ -260,9 +260,13 @@ function getLastMatch()
     {
         throw "No pickups were played still"; 
     }
-    let lastIDFileName = getMatchId();
-    let lastPickup = require(Path.resolve(pickupsFolder + '/' + `match_${lastIDFileName - 1}`))
-    return lastPickup
+    lastPickupName.sort((a, b) => {
+        const numA = parseInt(a.match(/\d+/)[0]);
+        const numB = parseInt(b.match(/\d+/)[0]);
+        return numB - numA;
+      });
+    let lastIDFileName = parseInt(lastPickupName[0].match(/\d+/)[0]);
+    return require(Path.resolve(pickupsFolder + '/' + `match_${lastIDFileName}`))
 }
 
 function reRollMaps(message){

@@ -58,5 +58,11 @@
     
     "changeMap": ["map"],
 
-    "declareResult": ["setdiscordresult"]
+    "declareResult": ["setdiscordresult"],
+
+    "retrieveLastSteamId": ["laststeamid"],
+
+    "changeConditionAtRanking": ["changeranking"],
+
+    "displayPlayersBySteamId": ["showplayersatranking"]
 }

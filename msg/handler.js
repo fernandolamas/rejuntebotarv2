@@ -14,7 +14,8 @@ const { downloadFiles } = require('../functions/logs/logsFunctions.js');
 const { registerPlayer } = require('../functions/database/dbFunctions/register');
 const { getLadder } = require('../functions/ranking/ladder');
 const { setManualRanking, setManualRankingByName } = require('../functions/ranking/counters');
-const { declareDiscordRanking } = require('../functions/ranking/ranking');
+const { declareDiscordRanking, sumResultToPlayerFromDiscordMessage, showPlayersBySteamIdAtRanking } = require('../functions/ranking/ranking');
+const { retrieveLastSteamIdFromMatchesToDiscord } = require('../functions/ranking/searcher');
 
 
 
@@ -113,6 +114,11 @@ const handleMessage = async (msg, client) => {
 
         if (checkHasStaffRole(msg)) {
 
+            if (aliases.retrieveLastSteamId.includes(command))
+            {
+                retrieveLastSteamIdFromMatchesToDiscord(msg);
+                return;
+            }
             if (aliases.stats.includes(command)) {
                 //downloadFiles()
                 return;
@@ -148,8 +154,18 @@ const handleMessage = async (msg, client) => {
                 return;
             }
 
+            if(aliases.displayPlayersBySteamId.includes(command))
+            {
+                showPlayersBySteamIdAtRanking(msg);
+                return;
+            }
+
             if (args.length > 0) {
                 if (checkHasAdminRole(msg)) {
+                    if (aliases.changeConditionAtRanking.includes(command)) {
+                        sumResultToPlayerFromDiscordMessage(msg, args[0], args[1], args[2])
+                        return;
+                    }
                     if (aliases.setRanking.includes(command)) {
                         setManualRanking(msg, args[0], args[1], args[2])
                         return;

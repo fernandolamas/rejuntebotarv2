@@ -59,8 +59,6 @@ async function getLadder(message, client) {
     message.author.send("Ranking ladder was updated at #ranking channel");
 }
 
-
-
 async function calculateLadder() {
     let con = await retrieveConnection();
     let rankingQuery = "SELECT * FROM ranking";
@@ -95,7 +93,5 @@ async function calculateLadder() {
         })
     })
 }
-
-
 
 module.exports = { showLadder, calculateLadder, getLadder }
