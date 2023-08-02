@@ -19,6 +19,7 @@ const { retrieveLastSteamIdFromMatchesToDiscord } = require('../functions/rankin
 
 
 
+
 function checkHasStaffRole(message) {
     return message.member.roles.cache.some(role => role.id == staffRoleID);
 }
@@ -120,7 +121,8 @@ const handleMessage = async (msg, client) => {
                 return;
             }
             if (aliases.stats.includes(command)) {
-                //downloadFiles()
+                downloadFiles(client)
+                msg.channel.send("Retrieving logs...")
                 return;
             }
 

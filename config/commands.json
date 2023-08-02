@@ -30,7 +30,7 @@
 
     "noticePickup": ["notice"],
 
-    "stats": ["stats"],
+    "stats": ["stats", "logs"],
 
     "serverInfoCommands": ["serverinfo"],
     

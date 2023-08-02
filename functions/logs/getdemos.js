@@ -85,19 +85,21 @@ async function getDemos() {
         });
 }
 
-function getLastDemoZip()
-{
-    let files = fs.readdirSync(demosZippedFullpath)
-    if(!Array.isArray(files)){
-        let error = "Error getting last demo zip path"
-        throw error;
-    }
-    let lastFileName = files.pop()
-    let lastFilePath = Path.resolve(demosZippedFullpath + '/' + lastFileName);
-    return {
-        name: lastFileName,
-        path: lastFilePath
-    };
+function getLastDemoZip() {
+    return new Promise((resolve, reject) => {
+        let files = fs.readdirSync(demosZippedFullpath)
+        if (!Array.isArray(files)) {
+            let error = "Error getting last demo zip path"
+            console.error(error);
+            reject(error);
+        }
+        let lastFileName = files.pop()
+        let lastFilePath = Path.resolve(demosZippedFullpath + '/' + lastFileName);
+        resolve({
+            name: lastFileName,
+            path: lastFilePath
+        })
+    })
 }
 
 module.exports = { getDemos, getLastDemoZip }
