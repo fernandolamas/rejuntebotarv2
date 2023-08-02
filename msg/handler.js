@@ -183,7 +183,10 @@ const handleMessage = async (msg, client) => {
                 }
 
                 if (aliases.declareResult.includes(command)){
-                    declareDiscordRanking(msg,args[0],args[1]);
+                    //!setdiscordresult 119 team1 win 
+                    //team1 === team red
+                    //team2 === team blue
+                    declareDiscordRanking(msg,args[0],args[1], args[2]);
                     return;
                 }
 

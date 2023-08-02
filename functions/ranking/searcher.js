@@ -72,4 +72,15 @@ function retrieveSteamIdFromPlayers()
     })
 }
 
-module.exports = { retrieveSteamId, retrieveLastSteamIdFromMatchesToDiscord, retrieveSteamIdFromPlayers }
+function retrievePlayerNicknameBySteamId(steamId)
+{
+    return new Promise(async (resolve,reject) => {
+        let query = `SELECT Nickname from players where SteamID = '${steamId}';`
+        await doQuery(query).then((res) => {
+            resolve(res[0].Nickname)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+module.exports = { retrieveSteamId, retrieveLastSteamIdFromMatchesToDiscord, retrieveSteamIdFromPlayers, retrievePlayerNicknameBySteamId}

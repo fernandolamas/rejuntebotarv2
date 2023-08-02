@@ -1,7 +1,7 @@
 const { retrieveConnection } = require('../database/database')
 const { registerPlayerFromEndpoint } = require('../database/dbFunctions/register')
 const { countAsResultForPlayer,changeResultToPlayer } = require('./counters')
-const { getLastMatch } = require('../match/matchFunctions');
+const { getMatchByID } = require('../match/matchHandler');
 const { retrieveSteamId, retrieveSteamIdFromPlayers } = require('./searcher');
 
 async function calculateWinners() {
@@ -82,8 +82,8 @@ function loadPlayersResults(steamIdArr, nickArr, condition) {
   })
 }
 
-async function declareDiscordRanking(message, option, condition) {
-  await countResultByCondition(option, condition).catch((err) => {
+async function declareDiscordRanking(message, matchId, option, condition) {
+  await countResultByCondition(matchId, option, condition).catch((err) => {
     console.error(err)
     message.channel.send(`Error: ${err}`);
   }).then((res) => {
@@ -92,26 +92,70 @@ async function declareDiscordRanking(message, option, condition) {
 
 }
 
-function countResultByCondition(option, condition) {
+function countResultByCondition(matchId, option, condition) {
   return new Promise(async (resolve, reject) => {
-    let lastPickup = getLastMatch()
-    let team = lastPickup[option]
-    var finalResult = []
-    team.forEach(async (id) => {
-      await retrieveSteamId('DiscordID', id)
-        .then(async (result) => {
-          await countAsResultForPlayer(result, condition)
-          .catch((err) => {
-            finalResult.push(err);
-          }).then((res) => {
-            finalResult.push(res);
-          })
-        })
-        .catch((err) => {
-          console.error(err)
-          finalResult.push(err);
-        })
-    });
+    let pickup = getMatchByID(matchId)
+    let team1 = pickup[option]
+    let option2 = ""
+    if(option === "team1")
+    {
+      option2 = "team2"
+    }else{
+      if(option === "team2")
+      {
+        option2 = "team1"
+      }
+    }
+    let condition2 = "";
+    if(condition = "win")
+    {
+      condition2 = "lose";
+    }
+    if(condition = "tie")
+    {
+      condition2 = "tie"
+    }
+    if(condition = "lose")
+    {
+      condition2 = "win"
+    }
+
+    let team2 = pickup[option2]
+    const iterateOverteams = (team, condition) => 
+    {
+      return new Promise((resolve,reject) => {
+        var arrResult = []
+        team.forEach(async (id) => {
+          await retrieveSteamId('DiscordID', id)
+            .then(async (result) => {
+              await countAsResultForPlayer(result, condition)
+              .catch((err) => {
+                arrResult.push(err);
+              }).then((res) => {
+                arrResult.push(res);
+              })
+            })
+            .catch((err) => {
+              console.error(err)
+              arrResult.push(err);
+            })
+        });
+        resolve(arrResult);
+      })
+    }
+    let finalResult = []
+    iterateOverteams(team1,condition).then((res) => 
+    {
+      finalResult.push(res);
+      iterateOverteams(team2,condition2).then((res2) => {
+        finalResult.push(res2);
+      }).catch((err2) => {
+        finalResult.push(err2);
+      })
+    }).catch((err) =>  {
+      finalResult.push(err);
+    })
+
     // Timeout hack by loop promise
     setTimeout(() => {
       resolve(finalResult);

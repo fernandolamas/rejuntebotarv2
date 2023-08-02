@@ -1,7 +1,7 @@
 
 let { doQuery } = require('../database/database')
 let { calculateLadder } = require('./ladder')
-let { retrieveSteamId } = require('./searcher')
+let { retrievePlayerNicknameBySteamId } = require('./searcher')
 let i = 0;
 async function countAsResultForPlayer(steamID, matchResult) {
     return new Promise(async (resolve, reject) => {
@@ -9,22 +9,46 @@ async function countAsResultForPlayer(steamID, matchResult) {
         await doQuery(getResultsQuery).then(async (result) => {
             var theResult = result[0][matchResult];
             const insertQuery = `UPDATE ranking SET ${matchResult} = ${theResult + 1} where SteamID = '${steamID}';`;
-            await doQuery(insertQuery).then((res) => {
-                console.log(`${matchResult} updated succesfully for steam id: ${steamID}`)
-                i++
-                reachedMaxPlayers()
-                resolve(`${matchResult} updated succesfully for steam id: ${steamID}\n`);
-            }).catch((err) => {
-                let error = `Error updating ${matchResult} for player ${steamID}, error: ${err}`;
-                console.error(error);
-                i++;
-                reachedMaxPlayers();
-                reject(error);
+            await retrievePlayerNicknameBySteamId(steamID).then( async (nickName) => 
+            {
+                await updatePlayerRankingNumber(insertQuery, steamID, matchResult, nickName).then((res) => {
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                })
+            }).catch( async (err) => {
+                await updatePlayerRankingNumber(insertQuery, steamID, matchResult, null).then((res) => {
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                })
             })
+
         }).catch((error) => {
             let err = `Error getting ${matchResult} for player ${steamID} error: ${error}`;
             console.error(err)
             reject(err)
+        })
+    })
+}
+
+async function updatePlayerRankingNumber(insertQuery, steamID, matchResult, nickname)
+{
+    return new Promise( async (resolve,reject) => {
+        await doQuery(insertQuery).then(() => {
+            let msg = "";
+            msg = nickname === null ? msg = `${matchResult} updated succesfully for steam id: ${steamID}\n` : msg = `${matchResult} updated succesfully for player ${nickname} steam id: ${steamID}\n`
+            console.log(msg)
+            i++
+            reachedMaxPlayers(msg)
+            resolve(msg);
+        }).catch((err) => {
+            let error = ""
+            error = nickname === null ? error = `Error updating ${matchResult} for player ${steamID}, error: ${err}` : error = `Error updating ${matchResult} for player ${nickname} steamId ${steamID}, error: ${err}`; 
+            console.error(error);
+            i++;
+            reachedMaxPlayers();
+            reject(error);
         })
     })
 }
