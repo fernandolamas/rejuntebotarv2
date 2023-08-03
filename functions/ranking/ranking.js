@@ -97,25 +97,25 @@ function countResultByCondition(matchId, option, condition) {
     let pickup = getMatchByID(matchId)
     let team1 = pickup[option]
     let option2 = ""
-    if(option === "team1")
+    if(option.toUpperCase() === "TEAM1")
     {
       option2 = "team2"
     }else{
-      if(option === "team2")
+      if(option.toUpperCase() === "TEAM2")
       {
         option2 = "team1"
       }
     }
     let condition2 = "";
-    if(condition === "win")
+    if(condition.toUpperCase() === "WIN")
     {
       condition2 = "lose";
     }
-    if(condition === "tie")
+    if(condition.toUpperCase() === "TIE")
     {
       condition2 = "tie"
     }
-    if(condition === "lose")
+    if(condition.toUpperCase() === "LOSE")
     {
       condition2 = "win"
     }
