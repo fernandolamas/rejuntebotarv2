@@ -142,7 +142,7 @@ function countResultByCondition(matchId, option, condition) {
         });
         setTimeout(() => {
           resolve(arrResult);
-        },4000)
+        },12000)
       })
     }
     let finalResult = []
@@ -161,7 +161,7 @@ function countResultByCondition(matchId, option, condition) {
     // Timeout hack by loop promise
     setTimeout(() => {
       resolve(finalResult);
-    },12000)
+    },30000)
   })
 }
 

@@ -1,5 +1,6 @@
 const { retrieveConnection } = require('../database')
 const { countAsResultForPlayer } = require('../../ranking/counters')
+const { doQuery } = require('../database');
 
 async function registerPlayer(message, steamID, nickname, discordID, discordName) {
     const con = await retrieveConnection();
@@ -42,16 +43,25 @@ async function registerPlayer(message, steamID, nickname, discordID, discordName
             const insertQuery = `INSERT INTO players (SteamID, Nickname, DiscordID, DiscordName) VALUES ('${steamID}', '', '${discordID}', '${discordName}');`;
 
             // Ejecutar la consulta de inserción
-            con.query(insertQuery, (error) => {
+            con.query(insertQuery, async (error) => {
                 if (error) {
                     showErrorAtDiscord(message, 'Error al insertar en la base de datos:' + error);
                     return;
                 }
 
                 message.channel.send('Player created successfully.');
+                await registerPlayerOnRankingTable(steamID, nickname).then((res) => {
+                    console.log(res)
+                    message.channel.send(`Registering player at ranking table: ${res}`);
+                }).catch((err) => {
+                    console.log(err)
+                    message.channel.send(`Error while trying to register into ranked ladder ${err}`)
+                })
             })
         }
     })
+
+
 }
 
 async function registerPlayerFromEndpoint(steamID, nickname, condition) {
@@ -105,6 +115,34 @@ async function registerPlayerFromEndpoint(steamID, nickname, condition) {
             })
         }
         
+    })
+}
+
+function registerPlayerOnRankingTable(steamID, nickname)
+{
+    return new Promise((resolve,reject) => {
+        const searchPlayersTable = `SELECT SteamID FROM ranking WHERE SteamID = '${steamID}';`;
+        doQuery(searchPlayersTable).then((res) => {
+            if (res.length > 0) {
+                let err = `Player already exist on ranking table ${steamID}`
+                console.log(err)
+                reject(err)
+            }
+            const insertQuery = `INSERT INTO ranking (SteamID) VALUES ('${steamID}');`;
+            doQuery(insertQuery).then((res) => {
+                let sol = `Player ${nickname} registered successfully at ranking table`;
+                console.log(sol);
+                resolve(sol)
+            }).catch((error) => {
+                let msg = `Error at insert on ranking table ${error}`
+                showErrorOnConsole(msg);
+                reject(msg)
+            })
+        }).catch((err) => {
+            let errMsg =`Error registering player on ranking ${err}`;
+            showErrorOnConsole(errMsg)
+            reject(errMsg)
+        })
     })
 }
 
