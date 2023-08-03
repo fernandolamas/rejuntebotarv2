@@ -107,15 +107,15 @@ function countResultByCondition(matchId, option, condition) {
       }
     }
     let condition2 = "";
-    if(condition = "win")
+    if(condition === "win")
     {
       condition2 = "lose";
     }
-    if(condition = "tie")
+    if(condition === "tie")
     {
       condition2 = "tie"
     }
-    if(condition = "lose")
+    if(condition === "lose")
     {
       condition2 = "win"
     }
