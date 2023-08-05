@@ -4,6 +4,8 @@ const { showLadder } = require('../functions/ranking/ladder')
 
 const init = async (app, port) => {
     let client = await retrieveDiscordConnection();
+    const express = require('express')
+    app.use(express.json());
     app.listen(port, () => {
         console.log(`Listening to port ${port}`)
     })

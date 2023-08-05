@@ -2,6 +2,7 @@ const { downloadFiles } = require('../logs/logsFunctions.js');
 const { calculateWinners } = require('../ranking/ranking.js');
 const { calculateLadder } = require('../ranking/ladder.js');
 const { sendTeamsToTheServer } = require('../server/rcon/rconFunctions')
+const { sumAirshotToAirshotRanking } = require('../ranking/airshot/counter')
 let _app;
 
 const logsEndpoint = (discordClient) => {
@@ -71,6 +72,18 @@ const testEndpoint = () => {
     })
 }
 
+const airEndpoint = () => {
+    _app.post("/api/sumToAirshotRank", async (req,res) => {
+        let airshot = req.body;
+        await sumAirshotToAirshotRanking(airshot.ShooterID, airshot.VictimID, airshot.distance)
+        .then(() => {
+            res.send("Airshot registered and sum");
+        }).catch((err) => {
+            res.send(`Retrieved error while registering airshot to server ${err}`);
+        })
+    })
+}
+
 
 const registerEndpoints = (app, discordClient) => {
     _app = app
@@ -79,6 +92,7 @@ const registerEndpoints = (app, discordClient) => {
     ladderEndpoint();
     teamsEndpoint(discordClient);
     testEndpoint();
+    airEndpoint();
 }
 
 module.exports = { registerEndpoints }  

@@ -5,5 +5,8 @@
     "mapTimeout": 21600000,
     "staffRoleID": 718708366725087263,
     "adminRoleID": 737088122017284107,
-    "noticeRoleID": "1125413526429765682"
+    "noticeRoleID": "1125413526429765682",
+    "rankingChannnelID": "1128808340793868410",
+    "airshotRankingChannelID": "1137378256778174474",
+    "databaseCreatorPath": "../databaseCreatorPath.sql"
 }

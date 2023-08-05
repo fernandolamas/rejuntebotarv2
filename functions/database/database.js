@@ -4,6 +4,14 @@ const Path = require('path');
 const {user, pass, db, host} = require(Path.join(__dirname + '/credentialsSQL.json'))
 let con = null
 
+const tables = {
+  matches: "partidas",
+  players: "players",
+  ranking: "ranking",
+  airshot: "airshot",
+  airshotRanking: "airshotranking"
+}
+
 function connectToMySQLDatabaseAsync()
 {
     return new Promise((resolve, reject) => {
@@ -45,4 +53,4 @@ async function retrieveConnection() {
 }
 
 
-module.exports = { retrieveConnection, doQuery }
+module.exports = { retrieveConnection, doQuery, tables }

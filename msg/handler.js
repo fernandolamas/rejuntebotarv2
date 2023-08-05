@@ -16,6 +16,7 @@ const { getLadder } = require('../functions/ranking/ladder');
 const { setManualRanking, setManualRankingByName } = require('../functions/ranking/counters');
 const { declareDiscordRanking, sumResultToPlayerFromDiscordMessage, showPlayersBySteamIdAtRanking } = require('../functions/ranking/ranking');
 const { retrieveLastSteamIdFromMatchesToDiscord } = require('../functions/ranking/searcher');
+const { rankingLadders } = require('../functions/ranking/rankingLadders');
 
 
 
@@ -97,9 +98,15 @@ const handleMessage = async (msg, client) => {
         }
 
         if (aliases.ranking.includes(command)) {
-            await getLadder(msg, client);
+            await getLadder(msg, client, rankingLadders.Player);
             return;
         }
+
+        if (aliases.airshotRanking.includes(command)) {
+            await getLadder(msg, client, rankingLadders.Airshot);
+            return;
+        }
+
 
         if (aliases.subAPlayer.includes(command)) {
             if (args.length === 0) {
@@ -142,6 +149,11 @@ const handleMessage = async (msg, client) => {
                 let log = `Ranking updated at ${d} by <@!${msg.author.id}>`;
                 console.log(log)
                 msg.channel.send(log);
+                return;
+            }
+            
+            if (aliases.setEmojiToPlayer.includes(command)) {
+                addEmojiToPlayer()
                 return;
             }
 

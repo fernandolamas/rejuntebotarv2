@@ -64,5 +64,9 @@
 
     "changeConditionAtRanking": ["changeranking"],
 
-    "displayPlayersBySteamId": ["showplayersatranking"]
+    "displayPlayersBySteamId": ["showplayersatranking"],
+    
+    "setEmojiToPlayer": ["setEmoji"],
+
+    "airshotRanking": ["airranking"]
 }

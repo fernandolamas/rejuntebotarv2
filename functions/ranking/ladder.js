@@ -1,62 +1,38 @@
-const { retrieveConnection } = require('../database/database')
+const { retrieveConnection, doQuery } = require('../database/database')
+const { showLadderEmbed } = require('./ladderEmbed');
 const { EmbedBuilder } = require('discord.js');
-
-let ladderMessage = null;
+const { rankingChannnelID } = require('../../config/config.json')
+const { showAirshotLadder } = require('./airshot/ladder')
 
 async function showLadder(discordClient) {
-    let con = await retrieveConnection();
     const playersQuery = "SELECT p.Nickname,r.Position, r.Win, r.Lose, r.Tie from players p, ranking r WHERE p.SteamID = r.SteamID ORDER BY r.Position;"
-    con.query(playersQuery, async (err, result) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-
+    await doQuery(playersQuery).catch((err) => {
+        console.log(err);
+    }).then((result) => {
         let playerList = '';
-        result.forEach(e => {
+        result.forEach((e,i) => {
             if (e.Position === null) {
                 return;
             }
             playerList += `${e.Position.toString() || 'Unknown Position'} - ${e.Nickname || 'Unknown Player'} (${e.Win.toString()} | ${e.Lose.toString()} | ${e.Tie.toString()})\n`;
-        });
-
-        const ladderEmbed = new EmbedBuilder()
-            .setColor('#fca903')
-            .setTitle('Ranking TFC.latam')
-            .setDescription(playerList)
-            .setFooter({ text: 'Stats: (Win|Lose|Tie)' });
-
-        
-
-        const sendDiscordMessage = async (ladderEmbed) => {
-            try {
-                let channelId = "1128808340793868410"
-                const rankingChat = discordClient.channels.cache.get(channelId);
-                rankingChat.send({
-                    embeds: [ladderEmbed]
-                }).then(msg => ladderMessage = msg).catch(console.error)
-            } catch (err) {
-                console.error(`Unable to retrieve ranking channel ${err}`)
+            if(i === result.length-1)
+            {
+                showLadderEmbed(playerList,rankingChannnelID, discordClient, new EmbedBuilder(), "Ranking TFC.latam", 'Stats: (Win|Lose|Tie)')
             }
-        }
-
-
-        //TODO: check if message exists before sending/editing
-        if (ladderMessage) {
-            ladderMessage.edit({ embeds: [ladderEmbed] })
-                .catch((err) => {
-                    console.error(err)
-                    //Probably the message was deleted by an user
-                    sendDiscordMessage(ladderEmbed);
-                });
-        } else {
-            sendDiscordMessage(ladderEmbed);
-        }
-    });
+        });
+    })
 }
-async function getLadder(message, client) {
-    await showLadder(client);
-    message.author.send("Ranking ladder was updated at #ranking channel");
+async function getLadder(message, client, ladderName) {
+    const { rankingLadders } = require('./rankingLadders');
+    switch (ladderName) {
+        case rankingLadders.Airshot:
+            await showAirshotLadder(client)
+            break;
+        default:
+            await showLadder(client);
+            break;
+    }
+    message.author.send(`${ladderName} ranking ladder was updated at #ranking channel`);
 }
 
 async function calculateLadder() {
