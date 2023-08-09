@@ -1,6 +1,6 @@
 const { retrieveConnection } = require('../database/database')
 const { registerPlayerFromEndpoint } = require('../database/dbFunctions/register')
-const { countAsResultForPlayer,changeResultToPlayer } = require('./counters')
+const { countAsResultForPlayer, changeResultToPlayer } = require('./counters')
 const { getMatchByID } = require('../match/matchHandler');
 const { retrieveSteamId, retrieveSteamIdFromPlayers } = require('./searcher');
 
@@ -97,71 +97,63 @@ function countResultByCondition(matchId, option, condition) {
     let pickup = getMatchByID(matchId)
     let team1 = pickup[option]
     let option2 = ""
-    if(option.toUpperCase() === "TEAM1")
-    {
+    if (option.toUpperCase() === "TEAM1") {
       option2 = "team2"
-    }else{
-      if(option.toUpperCase() === "TEAM2")
-      {
+    } else {
+      if (option.toUpperCase() === "TEAM2") {
         option2 = "team1"
       }
     }
     let condition2 = "";
-    if(condition.toUpperCase() === "WIN")
-    {
+    if (condition.toUpperCase() === "WIN") {
       condition2 = "lose";
     }
-    if(condition.toUpperCase() === "TIE")
-    {
+    if (condition.toUpperCase() === "TIE") {
       condition2 = "tie"
     }
-    if(condition.toUpperCase() === "LOSE")
-    {
+    if (condition.toUpperCase() === "LOSE") {
       condition2 = "win"
     }
 
     let team2 = pickup[option2]
-    const iterateOverteams = (team, condition) => 
-    {
-      return new Promise((resolve,reject) => {
+    const iterateOverteams = (team, condition) => {
+      return new Promise((resolve, reject) => {
         var arrResult = []
-        team.forEach(async (id) => {
+        team.forEach(async (id, i) => {
           await retrieveSteamId('DiscordID', id)
             .then(async (result) => {
               await countAsResultForPlayer(result, condition)
-              .catch((err) => {
-                arrResult.push(err);
-              }).then((res) => {
-                arrResult.push(res);
-              })
+                .catch((err) => {
+                  arrResult.push(err);
+                }).then((res) => {
+                  arrResult.push(res);
+                })
             })
             .catch((err) => {
               console.error(err)
               arrResult.push(err);
             })
+          if (i === team.length - 1) {
+            resolve(arrResult);
+          }
         });
-        setTimeout(() => {
-          resolve(arrResult);
-        },12000)
       })
     }
     let finalResult = []
-    iterateOverteams(team1,condition).then((res) => 
-    {
+    iterateOverteams(team1, condition).then((res) => {
       finalResult.push(res);
-      iterateOverteams(team2,condition2).then((res2) => {
+      iterateOverteams(team2, condition2).then((res2) => {
         finalResult.push(res2);
+        resolve(finalResult);
       }).catch((err2) => {
         finalResult.push(err2);
+        reject(finalResult);
       })
-    }).catch((err) =>  {
+    }).catch((err) => {
       finalResult.push(err);
+      reject(finalResult);
     })
 
-    // Timeout hack by loop promise
-    setTimeout(() => {
-      resolve(finalResult);
-    },30000)
   })
 }
 
@@ -171,17 +163,15 @@ function checkIfMapIsRankedMap(map) {
   return maps.includes(map);
 }
 
-async function sumResultToPlayerFromDiscordMessage(message,condition, id, operation)
-{
-  await changeResultToPlayer(condition,id, operation).then((res) => {
+async function sumResultToPlayerFromDiscordMessage(message, condition, id, operation) {
+  await changeResultToPlayer(condition, id, operation).then((res) => {
     message.channel.send(`Player ranking updated succesfully ${condition}: ${res}`)
   }).catch((err) => {
     message.channel.send(`Error updating player ${err}`)
   });
 }
 
-async function showPlayersBySteamIdAtRanking(message)
-{
+async function showPlayersBySteamIdAtRanking(message) {
   await retrieveSteamIdFromPlayers().then((res) => {
     message.channel.send(`Result:\n ${JSON.stringify(res)}`);
   }).catch((err) => {
