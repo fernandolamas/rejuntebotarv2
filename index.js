@@ -2,19 +2,19 @@ let { init } = require('./discord/client.js');
 const express = require('express');
 const winston = require('winston');
 const { format } = require('winston');
-const { combine, timestamp, printf } = format;
+const { combine, printf } = format;
 const app = express();
 const port = 3000;
-const fs = require('fs');
-const util = require('util');
-let d = new Date()
+let date = new Date()
+var options = { timeZone: 'America/Argentina/Buenos_Aires', hour12: false };
+var argentinaLocalTime = date.toLocaleString('es-AR', options);
+let d = new Date(argentinaLocalTime);
 let str = `${d.getDay()}-${d.getMonth()}-${d.getFullYear()}`;
-const myFormat = printf(({ level, message, timestamp }) => {
-  return `${timestamp} ${level}: ${message}`;
+const myFormat = printf(({ level, message }) => {
+  return `${d.toLocaleTimeString()} ${level}: ${message}`;
 });
 const logger = winston.createLogger({
   format: combine(
-    timestamp(),
     myFormat
   ),
   transports: [
@@ -24,7 +24,6 @@ const logger = winston.createLogger({
 })
 const errorLogger = winston.createLogger({
   format: combine(
-    timestamp(),
     myFormat
   ),
   transports: [
