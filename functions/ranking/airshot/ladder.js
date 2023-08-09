@@ -5,7 +5,7 @@ const { EmbedBuilder } = require('discord.js');
 
 
 const showAirshotLadder = async (client) => {
-    const query = `SELECT p.Nickname, a.Amount from ${tables.airshotRanking} a, ${tables.players} p where a.SteamID = p.SteamID;`;
+    const query = `SELECT p.Nickname, a.Amount from ${tables.airshotRanking} a, ${tables.players} p where a.SteamID = p.SteamID ORDER BY a.Amount desc;`;
     await doQuery(query).then((result) => {
         let playerList = '';
         result.forEach((e, i) => {
