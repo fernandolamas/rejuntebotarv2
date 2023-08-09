@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS `airshot` (
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE IF NOT EXISTS `airshotRanking` (
+CREATE TABLE IF NOT EXISTS `airshotranking` (
   `SteamID` varchar(255) NOT NULL,
   `Amount` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`SteamID`)
