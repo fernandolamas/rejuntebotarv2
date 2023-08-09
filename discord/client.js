@@ -11,8 +11,9 @@ const init = async (app, port) => {
         console.log(`Listening to port ${port}`)
     })
     registerEndpoints(app, client);
-    await showLadder(client).catch(console.error);
-    await showAirshotLadder(client).catch(console.error);
+    await showLadder(client).catch(console.error).then(async () => {
+        await showAirshotLadder(client).catch(console.error);
+    })
 }
 
 
