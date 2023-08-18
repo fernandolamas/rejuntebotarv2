@@ -144,8 +144,8 @@ function showMatch(message, server, map) {
     let id = getMatchId();
     matchEmbed(message, team1, team2, server, map, id, shuffleTeams)
     setMatch(team1, team2, server, map);
-    setMapBan(map, server);
-    setServerBan(server);
+    //setMapBan(map, server);
+    //setServerBan(server);
     //turnOnServerWithTimer(message,server);
     //no servers to choose, for now it will be only Brasil
     try{
