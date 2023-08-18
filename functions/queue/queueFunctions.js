@@ -261,4 +261,25 @@ function removeTimeoutFromCurrentQueue()
     return;
 }
 
-module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer, noticeCoachPickup }
+function modifyQueueFromEndpoint(action,playerList, discordClient)
+{
+    if(action !== "remove")
+    {
+        return;
+    }
+    var queue = getQueue();
+    //intersection
+    let playersActive = queue.filter(e => playerList.includes(e));
+    playersActive.forEach(async (player,i) => {
+        let updatedqueue = getQueue();
+        updateQueue(updatedqueue, player, "r")
+        if(i === playersActive.length - 1)
+        {
+            await discordClient.channels.fetch(config.pickupChannelID).then(async(channel) => {
+                await channel.send("Pickup has been updated from coaches channel").catch(console.error);
+            }).catch(console.error);
+        }
+    });
+}
+
+module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer, noticeCoachPickup, modifyQueueFromEndpoint }

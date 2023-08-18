@@ -1,10 +1,10 @@
 let { init } = require('./discord/client.js');
-const express = require('express');
 const winston = require('winston');
 const { format } = require('winston');
 const { combine, printf } = format;
-const app = express();
-const port = 3000;
+
+
+
 let date = new Date()
 var options = { timeZone: 'America/Argentina/Buenos_Aires', hour12: false };
 var argentinaLocalTime = date.toLocaleString('es-AR', options);
@@ -35,7 +35,7 @@ console.log = (...args) => {logger.log('info', ...args)}
 console.error = (...args) => {errorLogger.log('error', ...args)}
 const main = async () => {
   try {
-    init(app, port);
+    init();
   } catch (error) {
     console.error(`Aborting: ${error}`);
     process.exit(0);
