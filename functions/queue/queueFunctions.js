@@ -223,12 +223,36 @@ function insertPlayerIntoQueue(message, args) {
         createMatch(message);
     }
 }
+
+let isOnCooldown = false;
 function noticeCurrentPickup(message, role)
 {
+    if(isOnCooldown)
+    {
+        message.channel.send(`Noticing pickups is on cooldown`)
+        return;
+    }
+    isOnCooldown = true;
     showQueue(message);
     var queue = getQueue();
     message.channel.send(`<@&${role}> ${queue.length}/${config.matchsize} !ADD`)
-    setTimeout()
+    setTimeout(() => {
+        isOnCooldown = false;
+    },600000)
+}
+let coachIsOnCooldown = false;
+function noticeCoachPickup(message, role)
+{
+    if(coachIsOnCooldown)
+    {
+        message.channel.send(`Noticing pickups is on cooldown`)
+        return;
+    }
+    coachIsOnCooldown = true;
+    message.channel.send(`<@&${role}> Coach 7/8 !ADD https://discord.gg/vPTs76CZ6e`)
+    setTimeout(() => {
+        coachIsOnCooldown = false;
+    },600000)
 }
 
 function removeTimeoutFromCurrentQueue()
@@ -237,4 +261,4 @@ function removeTimeoutFromCurrentQueue()
     return;
 }
 
-module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer }
+module.exports = { showQueue, addToQueue, leaveToQueue, banPlayerFromQueue, unbanPlayerFromQueue, kickFromQueue, swapPlayerFromQueue, insertPlayerIntoQueue, noticeCurrentPickup, removeTimeoutFromCurrentQueue, clearQueue, registerDelayedPlayer, noticeCoachPickup }

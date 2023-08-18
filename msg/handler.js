@@ -6,7 +6,7 @@ const { addToQueue, leaveToQueue, banPlayerFromQueue,
     unbanPlayerFromQueue, kickFromQueue, showQueue,
     swapPlayerFromQueue, insertPlayerIntoQueue,
     noticeCurrentPickup, removeTimeoutFromCurrentQueue,
-    clearQueue, registerDelayedPlayer } = require('../functions/queue/queueFunctions');
+    clearQueue, registerDelayedPlayer, noticeCoachPickup } = require('../functions/queue/queueFunctions');
 const { showMatchIncompletes, cancelMatch, shuffleTeams,
     reRollMaps, replacePlayerInsideMatch, testMatchEmbed } = require('../functions/match/matchFunctions');
 const { sendRconResponse, getTimeoutFromServer, changeServerMap } = require('../functions/server/rcon/rconFunctions');
@@ -94,6 +94,12 @@ const handleMessage = async (msg, client) => {
 
         if (aliases.noticePickup.includes(command)) {
             noticeCurrentPickup(msg, noticeRoleID)
+            return;
+        }
+        
+        if (aliases.noticeCoachPickup.includes(command))
+        {
+            noticeCoachPickup(msg, noticeRoleID);
             return;
         }
 

@@ -68,5 +68,7 @@
     
     "setEmojiToPlayer": ["setEmoji"],
 
-    "airshotRanking": ["airranking"]
+    "airshotRanking": ["airranking"],
+
+    "noticeCoachPickup": ["noticecoach"]
 }
