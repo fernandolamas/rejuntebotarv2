@@ -12,7 +12,9 @@ const init = async (app, port) => {
     })
     registerEndpoints(app, client);
     await showLadder(client).catch(console.error).then(async () => {
-        await showAirshotLadder(client).catch(console.error);
+        setTimeout(async () => {
+            await showAirshotLadder(client).catch(console.error);
+        }, 10000)
     })
 }
 
