@@ -32,16 +32,16 @@ function voteFor(message,args)
 	})
 }
 
-function convertIDtoUserWithEmoji(message, ids) {
+function convertIDtoUserWithEmoji(client, ids) {
     var users = [];
     for (let index = 0; index < ids.length; index++) {
         const userId = ids[index];
-        const member = message.guild.members.cache.get(userId);
+        const member = client.guild.members.cache.get(userId);
 
         //To-Do
-        const specificRole1 = message.guild.roles.cache.get('1133445840254554132'); // Contributors
-        const specificRole2 = message.guild.roles.cache.get('737088122017284107'); // adm
-		const specificRole3 = message.guild.roles.cache.get('724878162466570251'); // Server Booster
+        const specificRole1 = client.guild.roles.cache.get('1133445840254554132'); // Contributors
+        const specificRole2 = client.guild.roles.cache.get('737088122017284107'); // adm
+		const specificRole3 = client.guild.roles.cache.get('724878162466570251'); // Server Booster
 
         const emojiForRole1 = '🚀'; // Contributors
         const emojiForRole2 = '🤖'; // ADM

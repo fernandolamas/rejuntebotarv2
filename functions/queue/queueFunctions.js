@@ -53,7 +53,8 @@ function kickFromQueue(message, args) {
     var queue = getQueue()
     if (queue.includes(userid)) {
         updateQueue(queue, userid, "r")
-        queueEmbed(message, getQueue());
+        let embed = queueEmbed(message, getQueue());
+        message.channel.send({embeds: [embed]});
         return;
     }
 
@@ -63,7 +64,8 @@ function kickFromQueue(message, args) {
         if (m.team1.includes(userid) || m.team2.includes(userid)) {
             oldQueue = m.team1.concat(m.team2);
             updateQueue(oldQueue, userid, "r");
-            queueEmbed(message, getQueue());
+            let embed = queueEmbed(message, getQueue());
+            message.channel.send({embeds: [embed]});
             setMatchCancelled(m.id);
             message.channel.send(`User <@!${userid}> has been kicked from the queue, match has been cancelled, going to queue again...`)
         }
@@ -72,7 +74,8 @@ function kickFromQueue(message, args) {
 }
 
 function showQueue(message) {
-    queueEmbed(message, getQueue())
+    let embed = queueEmbed(message, getQueue())
+    message.channel.send({embeds: [embed]});
 }
 
 function addToQueue(message) {
@@ -106,7 +109,8 @@ function addToQueue(message) {
     if (!queue.includes(message.author.id)) {
         updateQueue(queue, message.author.id, "a")
         //message.channel.send("Added to Queue")
-        queueEmbed(message, queue);
+        let embed = queueEmbed(message, queue);
+        message.channel.send({embeds: [embed]});
     }
     else {
         message.channel.send("You are already in the Queue");
@@ -146,7 +150,8 @@ function leaveToQueue(message) {
     if (queue.includes(message.author.id)) {
         updateQueue(queue, message.author.id, "r")
         //message.channel.send("Leave from Queue")
-        queueEmbed(message, getQueue());
+        let embed = queueEmbed(message, getQueue());
+        message.channel.send({embeds: [embed]});
         if(queue.length === 1)
         {
             queueShouldExpire = true;
@@ -212,7 +217,8 @@ function insertPlayerIntoQueue(message, args) {
     if (!queue.includes(player1)) {
         updateQueue(queue, player1, "a")
         //message.channel.send("Added to Queue")
-        queueEmbed(message, queue);
+        let embed = queueEmbed(message, queue);
+        message.channel.send({embeds: [embed]});
     }
     else {
         message.channel.send("You are already in the Queue");
@@ -271,12 +277,13 @@ function modifyQueueFromEndpoint(action,playerList, discordClient)
     //intersection
     let playersActive = queue.filter(e => playerList.includes(e));
     playersActive.forEach(async (player,i) => {
-        let updatedqueue = getQueue();
-        updateQueue(updatedqueue, player, "r")
+        updateQueue(getQueue(), player, "r")
         if(i === playersActive.length - 1)
         {
             await discordClient.channels.fetch(config.pickupChannelID).then(async(channel) => {
                 await channel.send("Pickup has been updated from coaches channel").catch(console.error);
+                let embed = queueEmbed(channel,  getQueue());
+                await channel.send({embeds: [embed]}).catch(console.error);
             }).catch(console.error);
         }
     });

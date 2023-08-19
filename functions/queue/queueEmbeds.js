@@ -20,8 +20,8 @@ function queueEmbed(message, queue)
     .setDescription(`Players:\n${playersList}`)
     .setFooter({ text: `Match ID: ${matchJson.id}` });
 
-    message.channel.send({embeds: [queueEmbed]});
-    return matchJson.id;
+    
+    return queueEmbed;
 }
 
 
