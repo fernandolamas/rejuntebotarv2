@@ -2,16 +2,16 @@ let { init } = require('./discord/client.js');
 const winston = require('winston');
 const { format } = require('winston');
 const { combine, printf } = format;
-
-
-
 let date = new Date()
 var options = { timeZone: 'America/Argentina/Buenos_Aires', hour12: false };
 var argentinaLocalTime = date.toLocaleString('es-AR', options);
-let d = new Date(argentinaLocalTime);
-let str = `${d.getDay()}-${d.getMonth()}-${d.getFullYear()}`;
+
+let [fullDate, fullTime] = argentinaLocalTime.split(', '); // Separar fecha y hora
+let [day, month, year] = fullDate.split('/'); // Separar día, mes y año
+
+let str = `${day}-${month}-${year}`;
 const myFormat = printf(({ level, message }) => {
-  return `${d.toLocaleTimeString()} ${level}: ${message}`;
+  return `${fullTime} ${level}: ${message}`;
 });
 const logger = winston.createLogger({
   format: combine(
