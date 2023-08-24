@@ -24,7 +24,7 @@ The project was made using:
 - NPM packages 
 - Json files to save the execution data.
 
-As the program is made for fire and forget cases, there is no database used right now, just information inside json files which are written and replaced on demand
+This program also uses a MYSQL database, creation sql will be available soon
 
 
 **Pre-requisites**
