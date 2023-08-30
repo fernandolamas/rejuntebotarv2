@@ -72,7 +72,7 @@ function matchEmbed(message, team1, team2, server, map, id, shuffleteams) {
 
 	const matchEmbed = retrieveMatchEmbedBuilder(fields);
 
-	makeShuffleVotationWithCollector(matchEmbed, message, id, shuffleteams);
+	makeShuffleVotationWithCollector(matchEmbed, message, id, shuffleteams, true);
 }
 
 async function matchEmbedWithElo(message, team1, team2, server, map, id, shuffleteams) {
@@ -92,7 +92,7 @@ async function matchEmbedWithElo(message, team1, team2, server, map, id, shuffle
 	
 	const matchEmbed = retrieveMatchEmbedBuilder(fields);
 	
-	makeShuffleVotationWithCollector(matchEmbed, message, id, shuffleteams);
+	makeShuffleVotationWithCollector(matchEmbed, message, id, shuffleteams, false);
   }
 
   const retrieveMatchFieldsForEmbed = (server, map, team1, team2) => {
@@ -113,9 +113,12 @@ async function matchEmbedWithElo(message, team1, team2, server, map, id, shuffle
 	  .setDescription('https://tinyurl.com/tfclatam2');
   }
 
-  const makeShuffleVotationWithCollector = (matchEmbed, message, id, shuffleteams) => {
+  const makeShuffleVotationWithCollector = (matchEmbed, message, id, shuffleteams, eloshuffle) => {
 	message.channel.send({ embeds: [matchEmbed] }).then(embedMessage => {
-		// embedMessage.react(emojisRoll[0])
+		if(eloshuffle)
+		{
+			embedMessage.react(emojisRoll[0])
+		}
 
 		let usersStored = [];
 		let votes = [0];
