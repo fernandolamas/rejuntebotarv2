@@ -128,7 +128,6 @@ function voteMap(message, server, id) {
 }
 
 function shuffleFunction(queue){
-    console.log('shuffle function')
     const shuffledArray = queue.sort((a, b) => 0.5 - Math.random());
     var team1 = [];
     var team2 = [];
@@ -140,7 +139,6 @@ function shuffleFunction(queue){
 }
 
 function showMatch(message, server, map) {
-    console.log('showMatch function')
     if (!hasEnoughPlayers(message)) return;
     var queue = getQueue()
     var {team1,team2} = shuffleFunction(queue)
