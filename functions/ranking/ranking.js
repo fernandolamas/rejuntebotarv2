@@ -123,8 +123,8 @@ async function calculateEloChanges(matchId, option, condition) {
       team1Won = false
     }
   }
-  const team1get = JSON.parse(JSON.stringify(await retrieveSteamIdsAndRatingByDiscordId(pickup.team1)));
-  const team2get = JSON.parse(JSON.stringify(await retrieveSteamIdsAndRatingByDiscordId(pickup.team2)));
+  const team1get = await retrieveSteamIdsAndRatingByDiscordId(pickup.team1);
+  const team2get = await retrieveSteamIdsAndRatingByDiscordId(pickup.team2);
   let team1 = {players: team1get};
   let team2 = {players: team2get};
   const kFactor = 32; // Elo update factor

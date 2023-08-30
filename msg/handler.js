@@ -7,7 +7,7 @@ const { addToQueue, leaveToQueue, banPlayerFromQueue,
     swapPlayerFromQueue, insertPlayerIntoQueue,
     noticeCurrentPickup, removeTimeoutFromCurrentQueue,
     clearQueue, registerDelayedPlayer, noticeCoachPickup } = require('../functions/queue/queueFunctions');
-const { showMatchIncompletes, cancelMatch, shuffleTeams, shuffleBalanced,
+const { showMatchIncompletes, cancelMatch, shuffleTeams,
     reRollMaps, replacePlayerInsideMatch, testMatchEmbed } = require('../functions/match/matchFunctions');
 const { sendRconResponse, getTimeoutFromServer, changeServerMap } = require('../functions/server/rcon/rconFunctions');
 const { downloadFiles } = require('../functions/logs/logsFunctions.js');
@@ -270,7 +270,7 @@ const handleMessage = async (msg, client) => {
                 }
 
                 if (aliases.eloShuffle.includes(command)) {
-                    shuffleBalanced(msg, args[0]);
+                    shuffleTeams(msg, args[0], true);
                     return;
                 }
 
