@@ -6,15 +6,15 @@ const showLadderEmbed = (playerList, channelId, discordClient, embedBuilder, tit
         .setDescription(playerList)
         .setFooter({ text: footer });
 
-    setTimeout(() => {
-        sendDiscordMessage(ladderEmbed, channelId, discordClient);
+        setTimeout(() => {
+            sendDiscordMessage(ladderEmbed, channelId, discordClient).catch(err => console.error(err));
     },3000)
     
 }
 
 const sendDiscordMessage = async (ladderEmbed, channelId, discordClient) => {
     try {        
-        rankingChat = discordClient.channels.cache.get(channelId)
+        let rankingChat = discordClient.channels.cache.get(channelId)
         await rankingChat.messages.fetch({limit: 100}).then( async (fetched) => {
             await rankingChat.bulkDelete(fetched).catch(console.error);
         }).catch(console.error)

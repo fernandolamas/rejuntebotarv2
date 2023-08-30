@@ -14,7 +14,7 @@ const { downloadFiles } = require('../functions/logs/logsFunctions.js');
 const { registerPlayer } = require('../functions/database/dbFunctions/register');
 const { getLadder } = require('../functions/ranking/ladder');
 const { setManualRanking, setManualRankingByName } = require('../functions/ranking/counters');
-const { declareDiscordRanking, sumResultToPlayerFromDiscordMessage, showPlayersBySteamIdAtRanking } = require('../functions/ranking/ranking');
+const { declareDiscordRanking, sumResultToPlayerFromDiscordMessage, showPlayersBySteamIdAtRanking, declareEloWinner } = require('../functions/ranking/ranking');
 const { retrieveLastSteamIdFromMatchesToDiscord } = require('../functions/ranking/searcher');
 const { rankingLadders } = require('../functions/ranking/rankingLadders');
 
@@ -103,10 +103,16 @@ const handleMessage = async (msg, client) => {
             return;
         }
 
+        if (aliases.eloranking.includes(command)) {
+            await getLadder(msg, client, rankingLadders.Elo);
+            return;
+        }
+
         if (aliases.ranking.includes(command)) {
             await getLadder(msg, client, rankingLadders.Player);
             return;
         }
+        
 
         if (aliases.airshotRanking.includes(command)) {
             await getLadder(msg, client, rankingLadders.Airshot);
@@ -255,6 +261,16 @@ const handleMessage = async (msg, client) => {
 
                 if (aliases.matchShuffleCommands.includes(command)) {
                     shuffleTeams(msg, args[0])
+                    return;
+                }
+
+                if (aliases.updateEloFromResult.includes(command)) {
+                    declareEloWinner(msg, args[0], args[1], args[2]);
+                    return;
+                }
+
+                if (aliases.eloShuffle.includes(command)) {
+                    shuffleTeams(msg, args[0], true);
                     return;
                 }
 

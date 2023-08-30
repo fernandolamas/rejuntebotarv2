@@ -1,8 +1,9 @@
 const { retrieveConnection, doQuery } = require('../database/database')
 const { showLadderEmbed } = require('./ladderEmbed');
 const { EmbedBuilder } = require('discord.js');
-const { rankingChannnelID } = require('../../config/config.json')
-const { showAirshotLadder } = require('./airshot/ladder')
+const { rankingChannnelID, eloRankingChannelID } = require('../../config/config.json')
+const { showAirshotLadder } = require('./airshot/ladder');
+const { SweepFilterReturn } = require('discord.js/src/errors/ErrorCodes');
 
 async function showLadder(discordClient) {
     const playersQuery = "SELECT p.Nickname,r.Position, r.Win, r.Lose, r.Tie from players p, ranking r WHERE p.SteamID = r.SteamID ORDER BY r.Position;"
@@ -22,11 +23,36 @@ async function showLadder(discordClient) {
         });
     })
 }
+
+
+async function showEloLadder(discordClient) {
+    const playersQuery = "SELECT p.Nickname, r.rating, ROW_NUMBER() OVER (ORDER BY r.rating DESC) as Position FROM players p INNER JOIN ranking r ON p.SteamID = r.SteamID ORDER BY r.rating DESC;"
+    await doQuery(playersQuery).catch((err) => {
+        console.error(err);
+    }).then((result) => {
+        let playerList = '';
+        result.forEach((e,i) => {
+            if (e.Position === null) {
+                return;
+            }
+            playerList += `${e.Position.toString() || 'Unknown Position'} | ${'``'+e.rating.toString()+'``'} | ${e.Nickname || 'Unknown Player'}\n`; 
+            if(i === result.length-1)
+            {
+                showLadderEmbed(playerList,eloRankingChannelID, discordClient, new EmbedBuilder(), "Elo Ranking TFC.latam", ' ')
+            }
+        });
+    })
+    return;
+}
+
 async function getLadder(message, client, ladderName) {
     const { rankingLadders } = require('./rankingLadders');
     switch (ladderName) {
         case rankingLadders.Airshot:
             await showAirshotLadder(client)
+            break;
+        case rankingLadders.Elo:
+            await showEloLadder(client);
             break;
         default:
             await showLadder(client);
@@ -70,4 +96,4 @@ async function calculateLadder() {
     })
 }
 
-module.exports = { showLadder, calculateLadder, getLadder }
+module.exports = { showLadder, calculateLadder, getLadder, showEloLadder }

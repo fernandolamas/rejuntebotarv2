@@ -60,9 +60,15 @@
 
     "declareResult": ["setdiscordresult"],
 
+    "eloShuffle": ["eloshuffle"],
+
+    "updateEloFromResult": ["eloupdate"],
+
     "retrieveLastSteamId": ["laststeamid"],
 
     "changeConditionAtRanking": ["changeranking"],
+
+    "eloranking": ["eloranking"],
 
     "displayPlayersBySteamId": ["showplayersatranking"],
     

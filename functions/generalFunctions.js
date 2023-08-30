@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const { retrieveRatingByDiscordIds } = require('../functions/ranking/searcher.js');
 
 function convertIDtoString(message,ids)
 {
@@ -32,7 +33,27 @@ function voteFor(message,args)
 	})
 }
 
+async function convertIDtoUserWithEmojiElo(client, ids) {
+
+    let avgTeamRating = 0;
+    var rankings = JSON.parse(JSON.stringify(await retrieveRatingByDiscordIds(ids)));
+    const users = makeUserListWithEmoji(client,ids);
+
+    for(let u in users) {
+        avgTeamRating += parseInt(rankings[u].rating);
+        users[u] = `:military_medal:\`${rankings[u].rating}\` ` + users[u];
+    }
+    const totalRating = Math.floor(avgTeamRating);
+    avgTeamRating = Math.floor(avgTeamRating / ids.length);
+    return {users: users.join(', '), rating: avgTeamRating, totalRating};
+}
+
 function convertIDtoUserWithEmoji(client, ids) {
+    const users = makeUserListWithEmoji(client,ids);
+    return users.join(', ');
+}
+
+function makeUserListWithEmoji(client, ids) {
     var users = [];
     for (let index = 0; index < ids.length; index++) {
         const userId = ids[index];
@@ -59,7 +80,7 @@ function convertIDtoUserWithEmoji(client, ids) {
         const user = member ? `<@!${userId}>` : `<@${userId}>`;
         users.push(user + ' ' + emoji);
     }
-    return users.join(', ');
+    return users;
 }
 
-module.exports = {convertIDtoString, getUserFromMention, voteFor, convertIDtoUserWithEmoji}
+module.exports = {convertIDtoString, getUserFromMention, voteFor, convertIDtoUserWithEmoji, convertIDtoUserWithEmojiElo}

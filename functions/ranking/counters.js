@@ -53,6 +53,27 @@ async function updatePlayerRankingNumber(insertQuery, steamID, matchResult, nick
     })
 }
 
+async function updateRatings(winners, losers, pwinner, ploser) {
+    return new Promise( async (resolve,reject) => {
+        let winnerArray = [];
+        winners.map((player) => winnerArray.push(player.steamID))
+        let losersArray = [];
+        losers.map((player) => losersArray.push(player.steamID))
+        const query = `UPDATE ranking r SET rating = rating + ${pwinner} WHERE r.SteamID IN ('${winnerArray.join("','")}');`;
+        const query2 = `UPDATE ranking r SET rating = rating + ${ploser} WHERE r.SteamID IN ('${losersArray.join("','")}');`;
+        await doQuery(query).then(async() => {
+            await doQuery(query2).then(()=> {
+                resolve();
+            }).catch((err) => {
+                reject(err);
+            })
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+  //update winners
+  
 
 function reachedMaxPlayers() {
     if (i < 8) {
@@ -144,4 +165,4 @@ function changeResultToPlayer(condition, id, operation) {
 
 
 
-module.exports = { countAsResultForPlayer, setManualRanking, setManualRankingByName, changeResultToPlayer }
+module.exports = { countAsResultForPlayer, setManualRanking, setManualRankingByName, changeResultToPlayer, updateRatings }

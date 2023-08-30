@@ -9,5 +9,6 @@
     "rankingChannnelID": "1128808340793868410",
     "airshotRankingChannelID": "1137378256778174474",
     "pickupChannelID": "859925373299064842",
-    "databaseCreatorPath": "../databaseCreatorPath.sql"
+    "databaseCreatorPath": "../databaseCreatorPath.sql",
+    "eloRankingChannelID": "1146228446876405913"
 }

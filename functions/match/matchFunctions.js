@@ -1,5 +1,6 @@
 const { getQueue, deleteQueue, getDelayedPlayers, clearDelayedPlayers} = require("../queue/queueHandler");
-const { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
+const { matchEmbed, matchEmbedWithElo, serverEmbed, mapEmbed, matchEmbedIncomplete } = require("./matchEmbed");
+const { retrieveTeamDiscordIdsBySteamIds } = require("../../functions/ranking/searcher.js");
 const config = require("../../config/config.json");
 const Path = require('path');
 const { setMatch, getMaps, setMapBan, getAvailableServers, setServerBan, getMatchIncomplete, setMatchCancelled, getMatchByID, modifyMatch } = require("./matchHandler");
@@ -137,10 +138,10 @@ function shuffleFunction(queue){
     return {team1,team2}
 }
 
-function showMatch(message, server, map) {
+function showMatch(message, server, map, balanced = false) {
     if (!hasEnoughPlayers(message)) return;
     var queue = getQueue()
-    var {team1,team2} = shuffleFunction(queue)
+    var {team1,team2} = balanced?shuffleBalanced(queue):shuffleFunction(queue);
     let id = getMatchId();
     matchEmbed(message, team1, team2, server, map, id, shuffleTeams)
     setMatch(team1, team2, server, map);
@@ -167,6 +168,10 @@ function showMatch(message, server, map) {
         clearDelayedPlayers();
     }
     deleteQueue();
+}
+
+function showBalancedMatch(message, server, map) {
+    return showMatch(message, server, map, true);
 }
 
 function replacePlayerInsideMatch(message, player1, player2)
@@ -213,14 +218,19 @@ function getMatchId()
     return id
 }
 
-function shuffleTeams(message, matchid){
+async function shuffleTeams(message, matchid, balanced = false){
     var match = getMatchByID(matchid);
     var queue = match.team1.concat(match.team2)
-    var {team1,team2} = shuffleFunction(queue)
+    var {team1,team2} = balanced?await shuffleByElo(queue):shuffleFunction(queue)
     match.team1 = team1;
     match.team2 = team2;
     message.channel.send("Shuffle teams!")
-    matchEmbed(message, team1, team2, match.server, match.map, matchid, shuffleTeams)
+    if (balanced) {
+        matchEmbedWithElo(message, team1, team2, match.server, match.map, matchid, shuffleTeams)
+    } else {
+        matchEmbed(message, team1, team2, match.server, match.map, matchid, shuffleTeams)
+    }
+    
     modifyMatch(match);
 }
 
@@ -341,4 +351,79 @@ function testMatchEmbed(message)
     }
 }
 
-module.exports = { shuffleTeams , createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch, replacePlayerInsideMatch, testMatchEmbed}
+
+
+
+// Recieves a match queue (list of 8 discordId)
+// example: ['238724894424234', '238472349848', '1294129421', '12492142424', '238724894424234', '238472349848', '1294129421', '12492142424']
+// Returns an object containing both of the teams players corresponding to each team
+// example: {[]}
+async function shuffleByElo(queue) {
+    const { retrieveSteamIdsAndRatingByDiscordId } = require('../../functions/ranking/searcher.js');
+    let queryResult = await retrieveSteamIdsAndRatingByDiscordId(queue);
+    queryResult = JSON.parse(JSON.stringify(queryResult));
+
+    const players = queryResult.map(player => ({ steamId: player.steamID, elo: player.rating }));
+
+    const allCombinations = generateUniqueCombinations(players);
+
+    let bestCombination;
+    let closestRatingDifference = Infinity;
+
+    for (const combination of allCombinations) {
+        const team1 = combination.slice(0, 4);
+        const team2 = combination.slice(4);
+
+        const team1Rating = team1.reduce((sum, player) => sum + player.elo, 0);
+        const team2Rating = team2.reduce((sum, player) => sum + player.elo, 0);
+        const ratingDifference = Math.abs(team1Rating - team2Rating);
+
+        if (ratingDifference < closestRatingDifference) {
+            closestRatingDifference = ratingDifference;
+            bestCombination = combination;
+        }
+    }
+
+    const team1SteamIds = bestCombination.slice(0, 4).map(player => player.steamId);
+    const team2SteamIds = bestCombination.slice(4).map(player => player.steamId);
+
+    // Retrieve Discord IDs using the generated Steam IDs
+    const getTeam1 = JSON.parse(JSON.stringify(await retrieveTeamDiscordIdsBySteamIds(team1SteamIds))).map(value => value.DiscordID);
+    const getTeam2 = JSON.parse(JSON.stringify(await retrieveTeamDiscordIdsBySteamIds(team2SteamIds))).map(value => value.DiscordID);
+
+    return {
+        team1: getTeam1,
+        team2: getTeam2
+    };
+}
+
+// Generate all possible unique combinations of players
+function generateUniqueCombinations(arr) {
+    const combinations = [];
+
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+            for (let k = j + 1; k < arr.length; k++) {
+                for (let l = k + 1; l < arr.length; l++) {
+                    for (let m = l + 1; m < arr.length; m++) {
+                        for (let n = m + 1; n < arr.length; n++) {
+                            for (let o = n + 1; o < arr.length; o++) {
+                                for (let p = o + 1; p < arr.length; p++) {
+                                    combinations.push([arr[i], arr[j], arr[k], arr[l], arr[m], arr[n], arr[o], arr[p]]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return combinations;
+}
+
+
+
+
+
+module.exports = { shuffleTeams, createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch, replacePlayerInsideMatch, testMatchEmbed, showBalancedMatch}
