@@ -1,6 +1,7 @@
 const rankingLadders = {
     Player: "player",
-    Airshot: "airshot"
+    Airshot: "airshot",
+    Elo: "elo"
 }
 
 module.exports = { rankingLadders }

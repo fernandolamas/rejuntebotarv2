@@ -1,5 +1,5 @@
 const { getQueue } = require("../queue/queueHandler");
-const {convertIDtoString, convertIDtoUserWithEmoji} = require("../generalFunctions")
+const {convertIDtoString, convertIDtoUserWithEmoji, convertIDtoUserWithEmojiElo} = require("../generalFunctions")
 const {queueEmbed} = require("../queue/queueEmbeds")
 const footer = "45s to vote";
 const {EmbedBuilder} = require("discord.js");
@@ -110,8 +110,64 @@ function matchEmbed(message, team1, team2, server, map, id, shuffleteams) {
 			}	
 		})
 	});
+}
+
+async function matchEmbedWithElo(message, team1, team2, server, map, id, shuffleteams) {
+	let bothTeams = team1.concat(team2);
+	var {users: cTeam1, rating: rTeam1, totalRating: trTeam1} = await convertIDtoUserWithEmojiElo(message, team1);
+	var {users: cTeam2, rating: rTeam2, totalRating: trTeam2} = await convertIDtoUserWithEmojiElo(message, team2);
+  	
+	let cTeam1List = Array.isArray(cTeam1) ? cTeam1.join('\n') : cTeam1;
+	cTeam1List = cTeam1List.replace(/, /g, '\n'); // Agrega saltos de línea después de cada coma y espacio
+	cTeam1List += '\n**Total Rating**: '+ trTeam1;
+
+
+	var cTeam2List = Array.isArray(cTeam2) ? cTeam2.join('\n') : cTeam2;
+	cTeam2List = cTeam2List.replace(/, /g, '\n'); // Agrega saltos de línea después de cada coma y espacio
+	cTeam2List += '\n**Total Rating**: '+ trTeam2;
+
+	const fields = [
+	  //{ name: '**ID**', value: id},
+	  { name: '**Server**', value: "TFC Argieland" || 'Unknown Server' },
+	  { name: '**Map**', value: map || 'Unknown Map' },
+	  { name: '**🔴 Red Team**', value: cTeam1List || 'Unknown Red Team', inline: true },
+	  { name: '**🔵 Blue Team**', value: cTeam2List || 'Unknown Blue Team', inline: true },
+	];
+	
+	const matchEmbed = new EmbedBuilder()
+	  .setColor('#fca903')
+	  .setTitle('Pickup ready!')
+	  .addFields(fields)
+	  .setDescription('https://tinyurl.com/tfclatam2');
+	
+	message.channel.send({ embeds: [matchEmbed] }).then(embedMessage => {
+		// embedMessage.react(emojisRoll[0])
+
+		let usersStored = [];
+		let votes = [0];
+		const filter = (reaction, user) =>{
+			return emojisRoll.includes(reaction.emoji.name) && user.id !==embedMessage.author.id && bothTeams.includes(user.id) && !usersStored.includes(user.id);
+		};
+		const collector = embedMessage.createReactionCollector({ filter, max: config.matchsize, time: errorTime, errors: ['time'] });
+
+		collector.on('collect', (reaction, user) => {
+			if(reaction.emoji.name === `${emojisRoll[0]}`)
+			{
+				votes[0]++;
+			}
+			usersStored.push(user.id);
+		});
+		collector.on('end', collected => {
+			if(votes[0] >= (config.matchsize/2) ){
+				embedMessage.delete();
+				shuffleteams(message, id)
+				return;
+			}else{
+				embedMessage.reactions.removeAll();
+			}	
+		})
+	});
   }
   
-  
-  module.exports = { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete };
+  module.exports = { matchEmbed, serverEmbed, mapEmbed, matchEmbedIncomplete, matchEmbedWithElo };
   

@@ -1,5 +1,4 @@
-let { doQuery } = require('../database/database')
-let { getLastMatch } = require('../match/matchFunctions')
+let { doQuery } = require('../database/database');
 
 
 async function retrieveSteamId(column, id) {
@@ -24,6 +23,7 @@ async function retrieveSteamId(column, id) {
 
 async function retrieveLastSteamIdFromMatches() {
     return new Promise(async (resolve, reject) => {
+        const {getLastMatch} = require('../match/matchFunctions.js');
         let lastPickup = getLastMatch();
         let team1 = lastPickup.team1;
         let team2 = lastPickup.team2;
@@ -83,4 +83,45 @@ function retrievePlayerNicknameBySteamId(steamId)
         })
     })
 }
-module.exports = { retrieveSteamId, retrieveLastSteamIdFromMatchesToDiscord, retrieveSteamIdFromPlayers, retrievePlayerNicknameBySteamId}
+
+
+/**
+ * @param {Array.<string>} discordIds - Gets an array of discord ids, resolves their respective steamIds and rating
+ */
+function retrieveSteamIdsAndRatingByDiscordId(discordIds) {
+    return new Promise(async (resolve,reject) => {
+        let query = `SELECT p.steamID, r.rating FROM players p INNER JOIN ranking r ON p.steamID = r.SteamID WHERE p.DiscordID IN ('${discordIds.join("','")}')`
+        await doQuery(query).then((res) => {
+            resolve(res)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+/**
+* @param {Array.<string>} team - Gets an array of steam ids, resolves their respective discordIds
+*/
+function retrieveTeamDiscordIdsBySteamIds(team) {
+    return new Promise(async (resolve,reject) => {
+        let query = `SELECT p.DiscordID FROM players p WHERE p.SteamID IN ('${team.join("','")}')`
+        await doQuery(query).then((res) => {
+            resolve(res)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+function retrieveRatingByDiscordIds(discordIds) {
+    return new Promise(async (resolve,reject) => {
+        let query = `SELECT p.SteamID, r.rating FROM ranking r INNER JOIN players p ON r.SteamID = p.SteamID WHERE p.DiscordID IN ('${discordIds.join("','")}')`
+
+        await doQuery(query).then((res) => {
+            resolve(res)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+module.exports = { retrieveSteamId, retrieveLastSteamIdFromMatchesToDiscord, retrieveSteamIdFromPlayers, retrievePlayerNicknameBySteamId, retrieveSteamIdsAndRatingByDiscordId, retrieveTeamDiscordIdsBySteamIds, retrieveRatingByDiscordIds}
