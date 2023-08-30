@@ -34,36 +34,14 @@ function voteFor(message,args)
 }
 
 async function convertIDtoUserWithEmojiElo(client, ids) {
-    
-    var users = [];
+
     let avgTeamRating = 0;
     var rankings = JSON.parse(JSON.stringify(await retrieveRatingByDiscordIds(ids)));
+    const users = makeUserListWithEmoji(client,ids);
 
-    for (let index = 0; index < ids.length; index++) {
-        const userId = ids[index];
-        const member = client.guild.members.cache.get(userId);
-
-        //To-Do
-        const specificRole1 = client.guild.roles.cache.get('1133445840254554132'); // Contributors
-        const specificRole2 = client.guild.roles.cache.get('737088122017284107'); // adm
-		const specificRole3 = client.guild.roles.cache.get('724878162466570251'); // Server Booster
-
-        const emojiForRole1 = '🚀'; // Contributors
-        const emojiForRole2 = '🤖'; // ADM
-		const emojiForRole3 = '⚡'; // Server Booster
-
-        let emoji = '';
-        if (specificRole1 && member && member.roles.cache.has(specificRole1.id)) {
-            emoji = emojiForRole1;
-        } else if (specificRole2 && member && member.roles.cache.has(specificRole2.id)) {
-            emoji = emojiForRole2;
-        } else if (specificRole3 && member && member.roles.cache.has(specificRole3.id)) {
-            emoji = emojiForRole3;
-        }
-
-        const user = member ? `<@!${userId}>` : `<@${userId}>`;
-        avgTeamRating += parseInt(rankings[index].rating);
-        users.push( `:military_medal:\`${rankings[index].rating}\` ` + user + ' ' + emoji);
+    for(let u in users) {
+        avgTeamRating += parseInt(rankings[u].rating);
+        users[u] = `:military_medal:\`${rankings[u].rating}\` ` + users[u];
     }
     const totalRating = Math.floor(avgTeamRating);
     avgTeamRating = Math.floor(avgTeamRating / ids.length);
@@ -71,6 +49,11 @@ async function convertIDtoUserWithEmojiElo(client, ids) {
 }
 
 function convertIDtoUserWithEmoji(client, ids) {
+    const users = makeUserListWithEmoji(client,ids);
+    return users.join(', ');
+}
+
+function makeUserListWithEmoji(client, ids) {
     var users = [];
     for (let index = 0; index < ids.length; index++) {
         const userId = ids[index];
@@ -97,7 +80,7 @@ function convertIDtoUserWithEmoji(client, ids) {
         const user = member ? `<@!${userId}>` : `<@${userId}>`;
         users.push(user + ' ' + emoji);
     }
-    return users.join(', ');
+    return users;
 }
 
 module.exports = {convertIDtoString, getUserFromMention, voteFor, convertIDtoUserWithEmoji, convertIDtoUserWithEmojiElo}

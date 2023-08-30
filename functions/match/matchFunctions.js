@@ -138,10 +138,10 @@ function shuffleFunction(queue){
     return {team1,team2}
 }
 
-function showMatch(message, server, map) {
+function showMatch(message, server, map, balanced = false) {
     if (!hasEnoughPlayers(message)) return;
     var queue = getQueue()
-    var {team1,team2} = shuffleFunction(queue)
+    var {team1,team2} = balanced?shuffleBalanced(queue):shuffleFunction(queue);
     let id = getMatchId();
     matchEmbed(message, team1, team2, server, map, id, shuffleTeams)
     setMatch(team1, team2, server, map);
@@ -171,36 +171,7 @@ function showMatch(message, server, map) {
 }
 
 function showBalancedMatch(message, server, map) {
-    console.log('showBalancedMatch function');
-    if (!hasEnoughPlayers(message)) return;
-    var queue = getQueue()
-    var {team1,team2} = shuffleBalanced(queue)
-    let id = getMatchId();
-    matchEmbed(message, team1, team2, server, map, id, shuffleTeams)
-    setMatch(team1, team2, server, map);
-    //setMapBan(map, server);
-    //setServerBan(server);
-    //turnOnServerWithTimer(message,server);
-    //no servers to choose, for now it will be only Brasil
-    try{
-        setTimeout(function() {
-            conn = turnOnRconConnection("brasil") 
-        },60000);
-    }catch(e){
-        console.log(`The system was unable to establish rcon connection ${e}`);
-    }
-    let delayedPlayers = getDelayedPlayers()
-    if(delayedPlayers.length > 0)
-    {
-        delayedPlayers = convertIDtoString(null,delayedPlayers);
-        let str = ""
-        delayedPlayers.split(',').forEach((v) => {
-            str = str === "" ? v : `${str}, ${v}` ; 
-        })
-        message.channel.send(`The players: ${str} will need between 5-10 minutes to play the match`)
-        clearDelayedPlayers();
-    }
-    deleteQueue();
+    return showMatch(message, server, map, true);
 }
 
 function replacePlayerInsideMatch(message, player1, player2)
@@ -247,14 +218,19 @@ function getMatchId()
     return id
 }
 
-function shuffleTeams(message, matchid){
+async function shuffleTeams(message, matchid, balanced = false){
     var match = getMatchByID(matchid);
     var queue = match.team1.concat(match.team2)
-    var {team1,team2} = shuffleFunction(queue)
+    var {team1,team2} = balanced?await shuffleByElo(queue):shuffleFunction(queue)
     match.team1 = team1;
     match.team2 = team2;
     message.channel.send("Shuffle teams!")
-    matchEmbed(message, team1, team2, match.server, match.map, matchid, shuffleTeams)
+    if (balanced) {
+        matchEmbedWithElo(message, team1, team2, match.server, match.map, matchid, shuffleTeams)
+    } else {
+        matchEmbed(message, team1, team2, match.server, match.map, matchid, shuffleTeams)
+    }
+    
     modifyMatch(match);
 }
 
@@ -375,16 +351,7 @@ function testMatchEmbed(message)
     }
 }
 
-async function shuffleBalanced(message, matchid){
-    var match = getMatchByID(matchid);
-    var queue = match.team1.concat(match.team2)
-    var {team1,team2} = await shuffleByElo(queue)
-    match.team1 = team1;
-    match.team2 = team2;
-    message.channel.send("Shuffle teams!")
-    matchEmbedWithElo(message, team1, team2, match.server, match.map, matchid, shuffleBalanced)
-    modifyMatch(match);
-}
+
 
 
 // Recieves a match queue (list of 8 discordId)
@@ -459,4 +426,4 @@ function generateUniqueCombinations(arr) {
 
 
 
-module.exports = { shuffleTeams , shuffleBalanced, createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch, replacePlayerInsideMatch, testMatchEmbed, showBalancedMatch}
+module.exports = { shuffleTeams, createMatch, showMatchIncompletes, cancelMatch, reRollMaps, getLastMatch, replacePlayerInsideMatch, testMatchEmbed, showBalancedMatch}
