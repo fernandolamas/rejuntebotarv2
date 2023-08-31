@@ -26,7 +26,7 @@ async function showLadder(discordClient) {
 
 
 async function showEloLadder(discordClient) {
-    const playersQuery = "SELECT p.Nickname, r.rating, ROW_NUMBER() OVER (ORDER BY r.rating DESC) as Position FROM players p INNER JOIN ranking r ON p.SteamID = r.SteamID ORDER BY r.rating DESC;"
+    const playersQuery = "SELECT p.Nickname, r.rating, ROW_NUMBER() OVER (ORDER BY r.rating DESC) as Position FROM players p INNER JOIN ranking r ON p.SteamID = r.SteamID;"
     await doQuery(playersQuery).catch((err) => {
         console.error(err);
     }).then((result) => {
