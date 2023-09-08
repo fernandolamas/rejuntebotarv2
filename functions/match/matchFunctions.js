@@ -363,29 +363,61 @@ async function shuffleByElo(queue) {
     let queryResult = await retrieveSteamIdsAndRatingByDiscordId(queue);
     queryResult = JSON.parse(JSON.stringify(queryResult));
 
-    const players = queryResult.map(player => ({ steamId: player.steamID, elo: player.rating }));
+    let rplayers = queryResult.map(player => ({ steamId: player.steamID, elo: player.rating }));
+    rplayers = rplayers.sort((a, b) =>  b.elo - a.elo)
 
-    const allCombinations = generateUniqueCombinations(players);
+    let mitad1 = [];
+    let mitad2 = [];
 
-    let bestCombination;
-    let closestRatingDifference = Infinity;
-
-    for (const combination of allCombinations) {
-        const team1 = combination.slice(0, 4);
-        const team2 = combination.slice(4);
-
-        const team1Rating = team1.reduce((sum, player) => sum + player.elo, 0);
-        const team2Rating = team2.reduce((sum, player) => sum + player.elo, 0);
-        const ratingDifference = Math.abs(team1Rating - team2Rating);
-
-        if (ratingDifference < closestRatingDifference) {
-            closestRatingDifference = ratingDifference;
-            bestCombination = combination;
+    let bandera = true;
+    rplayers.forEach((value) =>{
+        if(bandera) {
+            mitad1.push(value);
+        } else {
+            mitad2.push(value);
         }
-    }
+        bandera = !bandera;
+    })
 
-    const team1SteamIds = bestCombination.slice(0, 4).map(player => player.steamId);
-    const team2SteamIds = bestCombination.slice(4).map(player => player.steamId);
+    let totalEloMitad1 = 0;
+
+    mitad1.forEach((value) => {
+        totalEloMitad1 += parseInt(value.elo)
+    })
+
+    let totalEloMitad2 = 0;
+
+    mitad2.forEach((value) => {
+        totalEloMitad2 += parseInt(value.elo)
+    })
+
+    // let eloDiff = Math.abs(totalEloMitad1 - totalEloMitad2)
+
+    mitad1.forEach((player,index) => {
+        let tempTotalEloMitad1 = totalEloMitad1;
+        let tempTotalEloMitad2 = totalEloMitad2;
+        let tempEloDiff = Math.abs(tempTotalEloMitad1 - tempTotalEloMitad2);
+
+        tempTotalEloMitad1 -= player.elo;
+        tempTotalEloMitad2 -= mitad2[index];
+        let newTempEloDiff = Math.abs(totalEloMitad1 - totalEloMitad2);
+
+        if(newTempEloDiff < tempEloDiff) {
+            totalEloMitad1 = tempTotalEloMitad1;
+            totalEloMitad2 = tempTotalEloMitad2;
+            //swap
+            mitad1[index] = mitad2[index];
+            mitad2[index] = player;
+        }
+    })
+    
+
+    let players = [];
+    mitad1.forEach(value => players.push(value));
+    mitad2.forEach(value => players.push(value));
+
+    const team1SteamIds = players.slice(0, 4).map(player => player.steamId);
+    const team2SteamIds = players.slice(4).map(player => player.steamId);
 
     // Retrieve Discord IDs using the generated Steam IDs
     const getTeam1 = JSON.parse(JSON.stringify(await retrieveTeamDiscordIdsBySteamIds(team1SteamIds))).map(value => value.DiscordID);
@@ -395,31 +427,6 @@ async function shuffleByElo(queue) {
         team1: getTeam1,
         team2: getTeam2
     };
-}
-
-// Generate all possible unique combinations of players
-function generateUniqueCombinations(arr) {
-    const combinations = [];
-
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = i + 1; j < arr.length; j++) {
-            for (let k = j + 1; k < arr.length; k++) {
-                for (let l = k + 1; l < arr.length; l++) {
-                    for (let m = l + 1; m < arr.length; m++) {
-                        for (let n = m + 1; n < arr.length; n++) {
-                            for (let o = n + 1; o < arr.length; o++) {
-                                for (let p = o + 1; p < arr.length; p++) {
-                                    combinations.push([arr[i], arr[j], arr[k], arr[l], arr[m], arr[n], arr[o], arr[p]]);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return combinations;
 }
 
 
