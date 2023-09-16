@@ -352,8 +352,13 @@ function testMatchEmbed(message)
 }
 
 
-
-
+function calculateTeamElo(team){
+    let resultado = 0;
+    team.forEach((value, index) => {
+            resultado+=value.elo;
+    })
+    return resultado;
+} 
 // Recieves a match queue (list of 8 discordId)
 // example: ['238724894424234', '238472349848', '1294129421', '12492142424', '238724894424234', '238472349848', '1294129421', '12492142424']
 // Returns an object containing both of the teams players corresponding to each team
@@ -379,37 +384,24 @@ async function shuffleByElo(queue) {
         bandera = !bandera;
     })
 
-    let totalEloMitad1 = 0;
-
-    mitad1.forEach((value) => {
-        totalEloMitad1 += parseInt(value.elo)
-    })
-
-    let totalEloMitad2 = 0;
-
-    mitad2.forEach((value) => {
-        totalEloMitad2 += parseInt(value.elo)
-    })
-
     // let eloDiff = Math.abs(totalEloMitad1 - totalEloMitad2)
 
-    mitad1.forEach((player,index) => {
-        let tempTotalEloMitad1 = totalEloMitad1;
-        let tempTotalEloMitad2 = totalEloMitad2;
-        let tempEloDiff = Math.abs(tempTotalEloMitad1 - tempTotalEloMitad2);
+    for(let i = 0;i < 4;i++) {
+        let teamEloDiff = Math.abs(calculateTeamElo(mitad1)- calculateTeamElo(mitad2));
 
-        tempTotalEloMitad1 -= player.elo;
-        tempTotalEloMitad2 -= mitad2[index];
-        let newTempEloDiff = Math.abs(totalEloMitad1 - totalEloMitad2);
+        let buffer = mitad1[i];
+        mitad1[i] = mitad2[i];
+        mitad2[i] = buffer;
 
-        if(newTempEloDiff < tempEloDiff) {
-            totalEloMitad1 = tempTotalEloMitad1;
-            totalEloMitad2 = tempTotalEloMitad2;
-            //swap
-            mitad1[index] = mitad2[index];
-            mitad2[index] = player;
+        let newTeamEloDiff = Math.abs(calculateTeamElo(mitad1)- calculateTeamElo(mitad2));
+
+        if(teamEloDiff < newTeamEloDiff) {
+            let buffer = mitad1[i];
+            mitad1[i] = mitad2[i];
+            mitad2[i] = buffer;
         }
-    })
+
+    }
     
 
     let players = [];
