@@ -371,42 +371,42 @@ async function shuffleByElo(queue) {
     let rplayers = queryResult.map(player => ({ steamId: player.steamID, elo: player.rating }));
     rplayers = rplayers.sort((a, b) =>  b.elo - a.elo)
 
-    let mitad1 = [];
-    let mitad2 = [];
+    let half1 = [];
+    let half2 = [];
 
-    let bandera = true;
+    let flag = true;
     rplayers.forEach((value) =>{
-        if(bandera) {
-            mitad1.push(value);
+        if(flag) {
+            half1.push(value);
         } else {
-            mitad2.push(value);
+            half2.push(value);
         }
-        bandera = !bandera;
+        flag = !flag;
     })
 
-    // let eloDiff = Math.abs(totalEloMitad1 - totalEloMitad2)
+    // let eloDiff = Math.abs(totalElohalf1 - totalElohalf2)
 
     for(let i = 0;i < 4;i++) {
-        let teamEloDiff = Math.abs(calculateTeamElo(mitad1)- calculateTeamElo(mitad2));
+        let teamEloDiff = Math.abs(calculateTeamElo(half1)- calculateTeamElo(half2));
 
-        let buffer = mitad1[i];
-        mitad1[i] = mitad2[i];
-        mitad2[i] = buffer;
+        let buffer = half1[i];
+        half1[i] = half2[i];
+        half2[i] = buffer;
 
-        let newTeamEloDiff = Math.abs(calculateTeamElo(mitad1)- calculateTeamElo(mitad2));
+        let newTeamEloDiff = Math.abs(calculateTeamElo(half1)- calculateTeamElo(half2));
 
         if(teamEloDiff < newTeamEloDiff) {
-            let buffer = mitad1[i];
-            mitad1[i] = mitad2[i];
-            mitad2[i] = buffer;
+            let buffer = half1[i];
+            half1[i] = half2[i];
+            half2[i] = buffer;
         }
 
     }
     
 
     let players = [];
-    mitad1.forEach(value => players.push(value));
-    mitad2.forEach(value => players.push(value));
+    half1.forEach(value => players.push(value));
+    half2.forEach(value => players.push(value));
 
     const team1SteamIds = players.slice(0, 4).map(player => player.steamId);
     const team2SteamIds = players.slice(4).map(player => player.steamId);
