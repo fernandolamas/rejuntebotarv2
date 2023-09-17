@@ -352,8 +352,13 @@ function testMatchEmbed(message)
 }
 
 
-
-
+function calculateTeamElo(team){
+    let result = 0;
+    team.forEach((value, index) => {
+        result+=value.elo;
+    })
+    return result;
+} 
 // Recieves a match queue (list of 8 discordId)
 // example: ['238724894424234', '238472349848', '1294129421', '12492142424', '238724894424234', '238472349848', '1294129421', '12492142424']
 // Returns an object containing both of the teams players corresponding to each team
@@ -366,55 +371,42 @@ async function shuffleByElo(queue) {
     let rplayers = queryResult.map(player => ({ steamId: player.steamID, elo: player.rating }));
     rplayers = rplayers.sort((a, b) =>  b.elo - a.elo)
 
-    let mitad1 = [];
-    let mitad2 = [];
+    let half1 = [];
+    let half2 = [];
 
-    let bandera = true;
+    let flag = true;
     rplayers.forEach((value) =>{
-        if(bandera) {
-            mitad1.push(value);
+        if(flag) {
+            half1.push(value);
         } else {
-            mitad2.push(value);
+            half2.push(value);
         }
-        bandera = !bandera;
+        flag = !flag;
     })
 
-    let totalEloMitad1 = 0;
+    // let eloDiff = Math.abs(totalElohalf1 - totalElohalf2)
 
-    mitad1.forEach((value) => {
-        totalEloMitad1 += parseInt(value.elo)
-    })
+    for(let i = 0;i < 4;i++) {
+        let teamEloDiff = Math.abs(calculateTeamElo(half1)- calculateTeamElo(half2));
 
-    let totalEloMitad2 = 0;
+        let buffer = half1[i];
+        half1[i] = half2[i];
+        half2[i] = buffer;
 
-    mitad2.forEach((value) => {
-        totalEloMitad2 += parseInt(value.elo)
-    })
+        let newTeamEloDiff = Math.abs(calculateTeamElo(half1)- calculateTeamElo(half2));
 
-    // let eloDiff = Math.abs(totalEloMitad1 - totalEloMitad2)
-
-    mitad1.forEach((player,index) => {
-        let tempTotalEloMitad1 = totalEloMitad1;
-        let tempTotalEloMitad2 = totalEloMitad2;
-        let tempEloDiff = Math.abs(tempTotalEloMitad1 - tempTotalEloMitad2);
-
-        tempTotalEloMitad1 -= player.elo;
-        tempTotalEloMitad2 -= mitad2[index];
-        let newTempEloDiff = Math.abs(totalEloMitad1 - totalEloMitad2);
-
-        if(newTempEloDiff < tempEloDiff) {
-            totalEloMitad1 = tempTotalEloMitad1;
-            totalEloMitad2 = tempTotalEloMitad2;
-            //swap
-            mitad1[index] = mitad2[index];
-            mitad2[index] = player;
+        if(teamEloDiff < newTeamEloDiff) {
+            let buffer = half1[i];
+            half1[i] = half2[i];
+            half2[i] = buffer;
         }
-    })
+
+    }
     
 
     let players = [];
-    mitad1.forEach(value => players.push(value));
-    mitad2.forEach(value => players.push(value));
+    half1.forEach(value => players.push(value));
+    half2.forEach(value => players.push(value));
 
     const team1SteamIds = players.slice(0, 4).map(player => player.steamId);
     const team2SteamIds = players.slice(4).map(player => player.steamId);

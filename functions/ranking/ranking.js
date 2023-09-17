@@ -101,6 +101,20 @@ async function declareEloWinner(message, matchId, option, condition) {
   })
 }
 
+function calculateElo(team1, team2, team1Won) {
+  const K = 32;
+  const P1 = 1 / (1 + Math.pow(10, -(team1 - team2) / 400));
+  const P2 = 1 - P1;
+  let team1NewElo = team1 + K * (team1Won - P1);
+  let team2NewElo = team2 + K * (1 - team1Won - P2);
+  const team1EloChange = team1NewElo - team1;
+  const team2EloChange = team2NewElo - team2;
+  const numPlayers = 4;
+  const t1newEloChange = team1EloChange / numPlayers;
+  const t2newEloChange = team2EloChange / numPlayers;
+  return [Math.ceil(t1newEloChange), Math.ceil(t2newEloChange)];
+}
+
 // Calculate elo given 2 teams and a winner, if team1Won = true team 1 wins otherwise team2 wins
 // Example of a team:
 // BalancedTeam = 
@@ -115,19 +129,17 @@ async function declareEloWinner(message, matchId, option, condition) {
 // }
 async function calculateEloChanges(matchId, option, condition) {
   let pickup = getMatchByID(matchId)
-  let team1Won = '';
   if (option.toUpperCase() === "TEAM1") {
-    team1Won = true
+    var team1Won = true
   } else {
     if (option.toUpperCase() === "TEAM2") {
-      team1Won = false
+      var team1Won = false
     }
   }
   const team1get = await retrieveSteamIdsAndRatingByDiscordId(pickup.team1);
   const team2get = await retrieveSteamIdsAndRatingByDiscordId(pickup.team2);
   let team1 = {players: team1get};
   let team2 = {players: team2get};
-  const kFactor = 32; // Elo update factor
 
   let totalEloTeam1 = 0;
   let totalEloTeam2 = 0;
@@ -138,35 +150,13 @@ async function calculateEloChanges(matchId, option, condition) {
   for(let elo in team2.players) {
       totalEloTeam2 += team2.players[elo].rating;
   }
-  const team1AverageElo = totalEloTeam1 / (team1.length || 1);
-  const team2AverageElo = totalEloTeam2 / (team2.length || 1);
-  
-  const team1ExpectedWinProbability = 1 / (1 + Math.pow(10, (team2AverageElo - team1AverageElo) / 400));
-  const team2ExpectedWinProbability = 1 - team1ExpectedWinProbability;
-  
-  const updatedTeam1 = team1.players.map(player => ({ ...player }));
-  const updatedTeam2 = team2.players.map(player => ({ ...player }));
-  
-  function getPointsWon() {
-      const actualScore = team1Won ? 1 : 0;   
-      const expectedScore = team1ExpectedWinProbability;
-      const eloChange = kFactor * (actualScore - expectedScore);
-      return Math.floor(eloChange);
-  }
-  
-  function getPointsLost() {
-      const actualScore = team1Won ? 0 : 1;
-      const expectedScore = team2ExpectedWinProbability;
-      const eloChange = kFactor * (actualScore - expectedScore);
-      return Math.floor(eloChange);
-  }
 
-  const winnerTeam = team1Won?team1.players:team2.players;
-  const loserTeam = team1Won?team2.players:team1.players;
-  const pointsWon = getPointsWon();
-  const pointsLost = getPointsLost();
+  const [team1newElo, team2NewElo] = calculateElo(totalEloTeam1, totalEloTeam2, team1Won);
+  team1.players.map(player => ({ ...player }));
+  team2.players.map(player => ({ ...player }));
 
-  await updateRatings(winnerTeam, loserTeam, pointsWon, pointsLost);
+
+  await updateRatings(team1.players, team2.players, team1newElo, team2NewElo);
 
   return;
 }
