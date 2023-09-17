@@ -353,11 +353,11 @@ function testMatchEmbed(message)
 
 
 function calculateTeamElo(team){
-    let resultado = 0;
+    let result = 0;
     team.forEach((value, index) => {
-            resultado+=value.elo;
+        result+=value.elo;
     })
-    return resultado;
+    return result;
 } 
 // Recieves a match queue (list of 8 discordId)
 // example: ['238724894424234', '238472349848', '1294129421', '12492142424', '238724894424234', '238472349848', '1294129421', '12492142424']
