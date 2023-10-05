@@ -55,14 +55,7 @@ async function getDemos() {
                     const ultimoMapaArchivo = filesToCompressFiltered[filesToCompressFiltered.length -1];
                     const ultimoMapaNombre = extraerNombreDeMapa(ultimoMapaArchivo.filePath.split('/').pop());
 
-                    let nombreDePickup = '';
-                    if(ultimoMapaNombre !== getLastPickup()){
-                        nombreDePickup = ultimoMapaNombre;
-                    } else {
-                        nombreDePickup = getLastPickup()
-                    }
-
-                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${nombreDePickup ?? "tfcmap"}.zip`);
+                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${ultimoMapaNombre ?? "tfcmap"}.zip`);
                     // Crea un flujo de escritura para el archivo comprimido
                     const writeStream = fs.createWriteStream(demosZipPath);
 
