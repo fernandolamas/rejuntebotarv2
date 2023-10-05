@@ -25,6 +25,15 @@ function getLastPickup(){
     }
 }
 
+function extractMapName(filename) {
+    const regex = /LATAM-\d+-([\w-]+)\.dem/;
+    const match = filename.match(regex);
+    if (match) {
+      return match[1];
+    }
+    return null;
+  }
+
 // Función para comprimir los archivos que pesan más de 10 MB
 async function getDemos() {
     return readdirAsync(demosFullPath)
@@ -42,7 +51,17 @@ async function getDemos() {
                     if (filesToCompressFiltered.length === 0) {
                         throw new Error('There were no files beyond 10MB Size.');
                     }
-                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${getLastPickup() ?? "tfcmap"}.zip`);
+                    const ultimoMapaArchivo = filesToCompressFiltered[filesToCompressFiltered.length -1];
+                    const ultimoMapaNombre = extractMapName(ultimoMapaArchivo.filePath.split('/').pop());
+
+                    let nombreDePickup = '';
+                    if(ultimoMapaNombre !== getLastPickup()){
+                        nombreDePickup = ultimoMapaNombre;
+                    } else {
+                        nombreDePickup = getLastPickup()
+                    }
+
+                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${nombreDePickup ?? "tfcmap"}.zip`);
                     // Crea un flujo de escritura para el archivo comprimido
                     const writeStream = fs.createWriteStream(demosZipPath);
 
