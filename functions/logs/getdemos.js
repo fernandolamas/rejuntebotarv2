@@ -26,9 +26,9 @@ function getLastPickup(){
 }
 
 //Extrae el nombre del mapa del nombre de un archivo .dem
-function extraerNombreDeMapa(nombrearchivo) {
+function clipMapName(filename) {
     const regex = /LATAM-\d+-([\w-]+)\.dem/;
-    const match = nombrearchivo.match(regex);
+    const match = filename.match(regex);
     if (match) {
       return match[1];
     }
@@ -52,10 +52,10 @@ async function getDemos() {
                     if (filesToCompressFiltered.length === 0) {
                         throw new Error('There were no files beyond 10MB Size.');
                     }
-                    const ultimoMapaArchivo = filesToCompressFiltered[filesToCompressFiltered.length -1];
-                    const ultimoMapaNombre = extraerNombreDeMapa(ultimoMapaArchivo.filePath.split('/').pop());
+                    const lastMapFile = filesToCompressFiltered[filesToCompressFiltered.length -1];
+                    const lastMapName = clipMapName(lastMapFile.filePath.split('/').pop());
 
-                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${ultimoMapaNombre ?? "tfcmap"}.zip`);
+                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${lastMapName ?? "tfcmap"}.zip`);
                     // Crea un flujo de escritura para el archivo comprimido
                     const writeStream = fs.createWriteStream(demosZipPath);
 
