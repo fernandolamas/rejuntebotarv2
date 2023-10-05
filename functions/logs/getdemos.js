@@ -25,9 +25,10 @@ function getLastPickup(){
     }
 }
 
-function extractMapName(filename) {
+//Extrae el nombre del mapa del nombre de un archivo .dem
+function extraerNombreDeMapa(nombrearchivo) {
     const regex = /LATAM-\d+-([\w-]+)\.dem/;
-    const match = filename.match(regex);
+    const match = nombrearchivo.match(regex);
     if (match) {
       return match[1];
     }
@@ -52,7 +53,7 @@ async function getDemos() {
                         throw new Error('There were no files beyond 10MB Size.');
                     }
                     const ultimoMapaArchivo = filesToCompressFiltered[filesToCompressFiltered.length -1];
-                    const ultimoMapaNombre = extractMapName(ultimoMapaArchivo.filePath.split('/').pop());
+                    const ultimoMapaNombre = extraerNombreDeMapa(ultimoMapaArchivo.filePath.split('/').pop());
 
                     let nombreDePickup = '';
                     if(ultimoMapaNombre !== getLastPickup()){
