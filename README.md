@@ -2,7 +2,16 @@
 
 A project made for the Team Fortress Classic Argentina community
 
-**Purpose**
+<br>
+
+**Topics**
+
+[Purpose](#purpose)<br>
+[Running the project](#resources)<br>
+[Pre-requisites](#pre-requisites)<br>
+[Installation](#installation)<br>
+
+## Purpose
 
 <p>
 A small community from Team Fortress Classic Argentina were playing competitive games, in each of these games they must have a captain fighting to choose first, and then, choosing the whole team on each turn.
@@ -17,7 +26,7 @@ Once finished voting, it provides a link to the current server where they will b
 </p>
 
 
-**Resources**
+## Resources
 
 The project was made using:
 - Nodejs
@@ -27,7 +36,7 @@ The project was made using:
 This program also uses a MYSQL database, creation sql will be available soon
 
 
-**Pre-requisites**
+## Pre-requisites
 
 Please make sure you have the pre-requisited steps before doing the installation
 
@@ -38,7 +47,7 @@ Please make sure you have the pre-requisited steps before doing the installation
 3. Make sure you have Node JS and NPM working in your system enviroment (IE: You can access to Node, using "node" in your system terminal)
 
 
-**Installation**
+## Installation 
 
 In order to have the discord bot installed and working, follow these steps
 
