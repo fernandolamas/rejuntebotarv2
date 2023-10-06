@@ -10,7 +10,6 @@ let d = new Date();
 let { getLastMatch } = require('../match/matchFunctions');
 
 
-// Función para obtener el tamaño de un archivo en bytes
 async function getFileSize(filename) {
     return statAsync(filename).then((stats) => stats.size);
 }
@@ -25,7 +24,15 @@ function getLastPickup(){
     }
 }
 
-// Función para comprimir los archivos que pesan más de 10 MB
+function clipMapName(filename) {
+    const regex = /LATAM-\d+-([\w-]+)\.dem/;
+    const match = filename.match(regex);
+    if (match) {
+      return match[1];
+    }
+    return null;
+  }
+
 async function getDemos() {
     return readdirAsync(demosFullPath)
         .then((files) => {
@@ -42,17 +49,18 @@ async function getDemos() {
                     if (filesToCompressFiltered.length === 0) {
                         throw new Error('There were no files beyond 10MB Size.');
                     }
-                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${getLastPickup() ?? "tfcmap"}.zip`);
-                    // Crea un flujo de escritura para el archivo comprimido
+                    const lastMapFile = filesToCompressFiltered[filesToCompressFiltered.length -1];
+                    const lastMapName = clipMapName(lastMapFile.filePath.split('/').pop());
+
+                    let demosZipPath = Path.resolve(demosZippedFullpath +`/${d.getFullYear()}-${d.getMonth()}-${d.getDate()}-${d.getHours()}-${d.getMinutes()}-${lastMapName ?? "tfcmap"}.zip`);
                     const writeStream = fs.createWriteStream(demosZipPath);
 
                     const archive = archiver('zip', {
-                        zlib: { level: 9 } // Nivel de compresión máximo (mejor calidad, más lento)
+                        zlib: { level: 9 } 
                       });
 
                     archive.pipe(writeStream);
 
-                    // Pipe los flujos de lectura de los archivos al flujo de compresión y luego al flujo de escritura
                     let lastTwoFiles = []
                     lastTwoFiles.push(filesToCompressFiltered.pop())
                     lastTwoFiles.push(filesToCompressFiltered.pop())
@@ -65,12 +73,10 @@ async function getDemos() {
                     
 
                     return new Promise((resolve, reject) => {
-                        // Adjunta un evento 'finish' para indicar que el proceso ha terminado
                         writeStream.on('finish', () => {
                             resolve('Files zipped correctly.');
                         });
 
-                        // Manejo de errores durante la compresión
                         writeStream.on('error', (err) => {
                             reject(err);
                         });
